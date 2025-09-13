@@ -1,0 +1,19 @@
+{
+  "portsAttributes": {
+    "8501": {
+      "label": "Application",
+      "onAutoForward": "openPreview"
+    },
+    "5001": {
+      "label": "Backend API",
+      "onAutoForward": "silent",
+      "protocol": "https",
+      "requireLocalPort": true,
+      "cors": true
+    }
+  },
+  "forwardPorts": [
+    8501,
+    5001
+  ]
+}

@@ -1,44 +1,30 @@
-// Clave para guardar los datos en sessionStorage
-const SESSION_KEY = 'horarioAppState';
-
-/**
- * Guarda el estado actual de la aplicación en sessionStorage.
- * @param {object} state - El objeto de estado a guardar.
- */
-export const saveStateToSession = (state) => {
-  try {
-    const serializedState = JSON.stringify(state);
-    sessionStorage.setItem(SESSION_KEY, serializedState);
-  } catch (error) {
-    console.error("No se pudo guardar el estado en la sesión:", error);
-  }
-};
-
-/**
- * Carga el estado de la aplicación desde sessionStorage.
- * @returns {object | null} El estado guardado o null si no hay nada.
- */
-export const loadStateFromSession = () => {
-  try {
-    const serializedState = sessionStorage.getItem(SESSION_KEY);
-    if (serializedState === null) {
-      return undefined; // No hay estado guardado
+export function saveStateToSession(state) {
+    try {
+        const serializedState = JSON.stringify(state);
+        sessionStorage.setItem('appState', serializedState);
+    } catch (e) {
+        console.warn("Could not save state to session storage", e);
     }
-    return JSON.parse(serializedState);
-  } catch (error) {
-    console.error("No se pudo cargar el estado de la sesión:", error);
-    return undefined;
-  }
-};
+}
 
-/**
- * Limpia el estado guardado de la aplicación de sessionStorage.
- */
-export const clearSession = () => {
-  try {
-    sessionStorage.removeItem(SESSION_KEY);
-  } catch (error) {
-    console.error("No se pudo limpiar el estado de la sesión:", error);
-  }
-};
+export function loadStateFromSession() {
+    try {
+        const serializedState = sessionStorage.getItem('appState');
+        if (serializedState === null) {
+            return undefined;
+        }
+        return JSON.parse(serializedState);
+    } catch (e) {
+        console.warn("Could not load state from session storage", e);
+        return undefined;
+    }
+}
 
+// 1. Nueva función para limpiar la sesión.
+export function clearSession() {
+    try {
+        sessionStorage.removeItem('appState');
+    } catch (e) {
+        console.warn("Could not clear session storage", e);
+    }
+}

@@ -1,124 +1,177 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { fetchFormOptions, fetchMajors } from '../services/siiauApi.js';
+import React, { useState, useEffect } from 'react';
 
-export const ConsultaForm = ({ onConsultar, loading }) => {
-    const [formData, setFormData] = useState({ ciclop: '', cup: '', majrp: '' });
-    const [options, setOptions] = useState({ cycles: [], centers: [], majors: {} });
-    const [optionsLoading, setOptionsLoading] = useState({ initial: true, majors: false });
-    const [error, setError] = useState(null);
+export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
+    
+    const [params, setParams] = useState({
+        centro: '',
+        carrera: '',
+        calendario: initialParams.calendario || '',
+    });
 
+    const [centros, setCentros] = useState([]);
+    const [calendarios, setCalendarios] = useState([]);
+    const [carreras, setCarreras] = useState([]);
+    const [loadingCarreras, setLoadingCarreras] = useState(false);
+    
+    const [optionsLoaded, setOptionsLoaded] = useState(false);
+
+    // Efecto para cargar los ciclos y centros desde la API.
     useEffect(() => {
-        const loadInitialOptions = async () => {
-            try {
-                setError(null);
-                const formOptions = await fetchFormOptions();
-                const cycles = formOptions.ciclop || [];
-                const centers = formOptions.cup || [];
-                setOptions(prev => ({ ...prev, cycles, centers }));
+        fetch('/api/form-options')
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error(`Error en la respuesta del servidor: ${res.status}`);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const ciclosApi = data.ciclop || [];
+                const centrosApi = data.cup || [];
 
-                if (cycles.length > 0) {
-                    setFormData(prev => ({ ...prev, ciclop: cycles[0].value }));
+                setCalendarios(ciclosApi);
+                setCentros(centrosApi);
+
+                if (!initialParams.calendario && ciclosApi.length > 0) {
+                    setParams(p => ({ ...p, calendario: ciclosApi[0].value }));
                 }
-                if (centers.length > 0) {
-                    setFormData(prev => ({ ...prev, cup: centers[0].value }));
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setOptionsLoading(prev => ({ ...prev, initial: false }));
-            }
-        };
-        loadInitialOptions();
+            })
+            .catch(error => {
+                console.error('Error crítico al cargar opciones del formulario. Revisa el endpoint /api/form-options:', error);
+                setCentros([]);
+                setCalendarios([]);
+            })
+            .finally(() => {
+                setOptionsLoaded(true);
+            });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const loadMajors = useCallback(async () => {
-        if (!formData.cup) return;
-
-        setOptionsLoading(prev => ({ ...prev, majors: true }));
-        setFormData(prev => ({ ...prev, majrp: '' })); // Reset selection
-        try {
-            setError(null);
-            const majorsData = await fetchMajors(formData.cup);
-            setOptions(prev => ({ ...prev, majors: majorsData || {} }));
-            const firstMajorKey = Object.keys(majorsData)[0] || '';
-            setFormData(prev => ({ ...prev, majrp: firstMajorKey }));
-        } catch (err) {
-            setError(err.message);
-            setOptions(prev => ({ ...prev, majors: {} }));
-        } finally {
-            setOptionsLoading(prev => ({ ...prev, majors: false }));
-        }
-    }, [formData.cup]);
-
+    
+    // Efecto para restaurar la selección del 'centro' guardado en caché.
     useEffect(() => {
-        loadMajors();
-    }, [loadMajors]);
+        if (optionsLoaded && initialParams.centro) {
+            setParams(p => ({ ...p, centro: initialParams.centro }));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [optionsLoaded]);
+
+    // Efecto para cargar las carreras cuando 'params.centro' cambia.
+    useEffect(() => {
+        if (params.centro) {
+            setLoadingCarreras(true);
+            setCarreras([]); 
+            
+            fetch(`/api/majors?cup=${params.centro}`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`Error HTTP: ${res.status} ${res.statusText}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    let fetchedCarreras = [];
+                    // --- CAMBIO CLAVE: TRANSFORMAR EL OBJETO EN ARREGLO ---
+                    // Se verifica si 'data' es un objeto, no nulo y no un arreglo.
+                    if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+                        // Se convierte el objeto {key: value} en un arreglo [{id: key, name: value}]
+                        fetchedCarreras = Object.entries(data).map(([id, name]) => ({
+                            id: id,
+                            name: name
+                        }));
+                    } else if (Array.isArray(data)) {
+                        // Si la API alguna vez devuelve un arreglo, también funciona.
+                        fetchedCarreras = data;
+                    } else {
+                        console.warn('La API /api/majors devolvió una respuesta con un formato inesperado.', data);
+                    }
+                    
+                    setCarreras(fetchedCarreras);
+
+                    if (initialParams.carrera && fetchedCarreras.some(c => c.id === initialParams.carrera)) {
+                        setParams(p => ({ ...p, carrera: initialParams.carrera }));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener las carreras:', error);
+                    setCarreras([]);
+                })
+                .finally(() => {
+                    setLoadingCarreras(false);
+                });
+        } else {
+            setCarreras([]); 
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.centro]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setParams(prevParams => ({
+            ...prevParams,
+            [name]: value,
+            ...(name === 'centro' && { carrera: '' })
+        }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (!formData.ciclop || !formData.cup || !formData.majrp) {
-            setError("Por favor, completa todas las selecciones.");
-            return;
-        }
-        setError(null);
-        onConsultar(formData);
+        onConsultar(params);
     };
 
-    if (optionsLoading.initial) {
-        return <p>Cargando opciones de consulta...</p>;
-    }
-
     return (
-        <div className="card">
-            <form onSubmit={handleSubmit} className="consulta-form">
-                <div className="form-group">
-                    <label htmlFor="ciclop">Ciclo Escolar:</label>
-                    <select id="ciclop" name="ciclop" value={formData.ciclop} onChange={handleChange} required>
-                        {options.cycles.map(cycle => (
-                            <option key={cycle.value} value={cycle.value}>
-                                {cycle.description} ({cycle.value})
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="cup">Centro Universitario:</label>
-                    <select id="cup" name="cup" value={formData.cup} onChange={handleChange} required>
-                        {options.centers.map(center => (
-                            <option key={center.value} value={center.value}>
-                                {center.description} ({center.value})
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="majrp">Carrera:</label>
-                    <select id="majrp" name="majrp" value={formData.majrp} onChange={handleChange} disabled={optionsLoading.majors} required>
-                        <option value="" disabled>
-                            {optionsLoading.majors ? 'Cargando...' : 'Selecciona una carrera'}
-                        </option>
-                        {Object.entries(options.majors).map(([key, value]) => (
-                            <option key={key} value={key}>
-                                {value} ({key})
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                
-                {error && <p className="error-message-form">{error}</p>}
-                
-                <button type="submit" className="primary-button" disabled={loading || optionsLoading.majors}>
-                    {loading ? 'Consultando...' : 'Consultar Oferta'}
-                </button>
-            </form>
-        </div>
+        <form onSubmit={handleSubmit} className="card consulta-form">
+            <p>Selecciona los siguientes campos para buscar la oferta académica.</p>
+            <div className="form-group">
+                <label htmlFor="calendario">Ciclo Escolar:</label>
+                <select
+                    id="calendario"
+                    name="calendario"
+                    value={params.calendario}
+                    onChange={handleChange}
+                    required
+                    disabled={!optionsLoaded}
+                >
+                    {(calendarios || []).map(ciclo => (
+                        <option key={ciclo.value} value={ciclo.value}>{ciclo.description}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="form-group">
+                <label htmlFor="centro">Centro Universitario:</label>
+                <select
+                    id="centro"
+                    name="centro"
+                    value={params.centro}
+                    onChange={handleChange}
+                    required
+                    disabled={!optionsLoaded}
+                >
+                    <option value="">{optionsLoaded ? 'Selecciona un centro' : 'Cargando centros...'}</option>
+                    {(centros || []).map(centro => (
+                        <option key={centro.value} value={centro.value}>{centro.description}</option>
+                    ))}
+                </select>
+            </div>
+            <div className="form-group">
+                <label htmlFor="carrera">Programa Educativo (Carrera):</label>
+                <select
+                    id="carrera"
+                    name="carrera"
+                    value={params.carrera}
+                    onChange={handleChange}
+                    required
+                    disabled={loadingCarreras || !params.centro}
+                >
+                    <option value="">{loadingCarreras ? 'Cargando...' : 'Selecciona una carrera'}</option>
+                    {/* El resto del código funciona sin cambios gracias a la transformación de datos */}
+                    {(carreras || []).map(carrera => (
+                        <option key={carrera.id} value={carrera.id}>{carrera.name}</option>
+                    ))}
+                </select>
+            </div>
+            <button type="submit" className="primary-button" disabled={loading || !params.centro || !params.carrera}>
+                {loading ? 'Consultando...' : 'Consultar Oferta'}
+            </button>
+        </form>
     );
-};
+}
 

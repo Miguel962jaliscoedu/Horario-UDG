@@ -10,7 +10,7 @@ export function HeroSection({ onStart }) {
     // Estilos para la imagen de fondo. Se aplica un degradado oscuro
     // para asegurar que el texto blanco sea legible.
     const heroStyles = {
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1920x1080/646cff/FFFFFF?text=Universidad+de+Guadalajara')`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://res.cloudinary.com/dpiy22qku/image/upload/v1758592450/udg_0_wpbtlh.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         color: '#FFFFFF',

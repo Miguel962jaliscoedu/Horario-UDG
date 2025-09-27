@@ -16,6 +16,7 @@ function App() {
         selectedNRCs: [],
         consultaRealizada: false,
         formParams: { centro: '', carrera: '', calendario: '' },
+        calendarioLabel: '', // Guardar el texto descriptivo del calendario
     };
 
     const [view, setView] = useState(initialState.consultaRealizada ? 'app' : 'hero');
@@ -24,20 +25,23 @@ function App() {
     const [selectedNRCs, setSelectedNRCs] = useState(initialState.selectedNRCs);
     const [consultaRealizada, setConsultaRealizada] = useState(initialState.consultaRealizada);
     const [formParams, setFormParams] = useState(initialState.formParams);
+    const [calendarioLabel, setCalendarioLabel] = useState(initialState.calendarioLabel);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const stateToSave = {
             activeTab, materias, selectedNRCs, consultaRealizada, formParams,
+            calendarioLabel, // Guardar en el estado de la sesión
         };
         saveStateToSession(stateToSave);
-    }, [activeTab, materias, selectedNRCs, consultaRealizada, formParams]);
+    }, [activeTab, materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel]);
 
     const handleStart = () => setView('app');
 
-    const handleConsulta = useCallback(async (params) => {
+    const handleConsulta = useCallback(async (params, calendarioDesc) => {
         setFormParams(params);
+        setCalendarioLabel(calendarioDesc); // Guardar la descripción del calendario
         setLoading(true);
         setError(null);
         setMaterias([]);
@@ -66,6 +70,7 @@ function App() {
         setSelectedNRCs([]);
         setConsultaRealizada(false);
         setFormParams({ centro: '', carrera: '', calendario: '' });
+        setCalendarioLabel(''); // Limpiar el label del calendario
         setError(null);
     };
 
@@ -110,7 +115,10 @@ function App() {
                                 <SeleccionMaterias materias={materias} selectedNRCs={selectedNRCs} onSelectionChange={setSelectedNRCs} />
                             )}
                             {activeTab === 'horario' && consultaRealizada && (
-                                <GenerarHorario clasesSeleccionadas={clasesSeleccionadas} />
+                                <GenerarHorario 
+                                    clasesSeleccionadas={clasesSeleccionadas}
+                                    calendarioLabel={calendarioLabel} // Pasar el label para el PDF
+                                />
                             )}
                         </div>
                     </>

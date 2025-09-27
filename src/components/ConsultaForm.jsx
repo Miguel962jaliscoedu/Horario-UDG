@@ -114,7 +114,10 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onConsultar(params);
+        // Encontrar la descripción del calendario seleccionado para pasarla al componente padre
+        const calendarioSeleccionado = calendarios.find(c => c.value === params.calendario);
+        const calendarioLabel = calendarioSeleccionado ? calendarioSeleccionado.description : '';
+        onConsultar(params, calendarioLabel);
     };
 
     return (
@@ -174,4 +177,3 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
         </form>
     );
 }
-

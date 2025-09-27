@@ -16,7 +16,8 @@ function App() {
         selectedNRCs: [],
         consultaRealizada: false,
         formParams: { centro: '', carrera: '', calendario: '' },
-        calendarioLabel: '', // Guardar el texto descriptivo del calendario
+        calendarioLabel: '',
+        theme: 'dark', // Guardar el tema en sesión
     };
 
     const [view, setView] = useState(initialState.consultaRealizada ? 'app' : 'hero');
@@ -28,20 +29,29 @@ function App() {
     const [calendarioLabel, setCalendarioLabel] = useState(initialState.calendarioLabel);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [theme, setTheme] = useState(initialState.theme);
 
+    // Efecto para aplicar la clase del tema al body y guardar en sesión
     useEffect(() => {
+        document.body.classList.remove('light-theme', 'dark-theme');
+        document.body.classList.add(`${theme}-theme`);
+        
         const stateToSave = {
-            activeTab, materias, selectedNRCs, consultaRealizada, formParams,
-            calendarioLabel, // Guardar en el estado de la sesión
+            activeTab, materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel, theme
         };
         saveStateToSession(stateToSave);
-    }, [activeTab, materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel]);
+    }, [theme, activeTab, materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel]);
+
+
+    const toggleTheme = () => {
+        setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
+    };
 
     const handleStart = () => setView('app');
 
-    const handleConsulta = useCallback(async (params, calendarioDesc) => {
+    const handleConsulta = useCallback(async (params, calendarioLabel) => {
         setFormParams(params);
-        setCalendarioLabel(calendarioDesc); // Guardar la descripción del calendario
+        setCalendarioLabel(calendarioLabel);
         setLoading(true);
         setError(null);
         setMaterias([]);
@@ -70,7 +80,7 @@ function App() {
         setSelectedNRCs([]);
         setConsultaRealizada(false);
         setFormParams({ centro: '', carrera: '', calendario: '' });
-        setCalendarioLabel(''); // Limpiar el label del calendario
+        setCalendarioLabel('');
         setError(null);
     };
 
@@ -83,11 +93,16 @@ function App() {
                     <h1>📅 Planeador de Horarios UDG</h1>
                     <p>Consulta la oferta académica y organiza tu semestre sin conflictos.</p>
                 </div>
-                {view === 'app' && consultaRealizada && (
-                    <button onClick={handleNewQuery} className="primary-button" style={{ marginTop: 0 }}>
-                        Nueva Consulta
+                <div className="header-controls">
+                    {view === 'app' && consultaRealizada && (
+                        <button onClick={handleNewQuery} className="primary-button" style={{ marginTop: 0 }}>
+                            Nueva Consulta
+                        </button>
+                    )}
+                    <button onClick={toggleTheme} className="theme-toggle-button" aria-label="Cambiar tema">
+                        {theme === 'light' ? '🌙' : '☀️'}
                     </button>
-                )}
+                </div>
             </header>
             
             <main>
@@ -117,7 +132,8 @@ function App() {
                             {activeTab === 'horario' && consultaRealizada && (
                                 <GenerarHorario 
                                     clasesSeleccionadas={clasesSeleccionadas}
-                                    calendarioLabel={calendarioLabel} // Pasar el label para el PDF
+                                    calendarioLabel={calendarioLabel}
+                                    theme={theme}
                                 />
                             )}
                         </div>
@@ -131,3 +147,4 @@ function App() {
 }
 
 export default App;
+

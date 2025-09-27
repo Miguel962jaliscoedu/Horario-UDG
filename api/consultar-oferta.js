@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { load } from 'cheerio';
+import iconv from 'iconv-lite';
 
 const POST_URL = "https://siiauescolar.siiau.udg.mx/wal/sspseca.consulta_oferta";
 
@@ -60,8 +61,14 @@ export default async function handler(req, res) {
             ordenp: "0"
         });
         
-        const response = await axios.post(POST_URL, postData.toString(), { headers, timeout: 15000 });
-        const html = response.data;
+        const response = await axios.post(POST_URL, postData.toString(), { 
+            headers, 
+            timeout: 15000,
+            responseType: 'arraybuffer' // 1. Pedir la respuesta como buffer
+        });
+
+        // 2. Decodificar el buffer usando la codificación correcta
+        const html = iconv.decode(response.data, 'iso-8859-1');
         
         if (html.includes("ORA-01403: no data found")) {
             return res.status(404).json({ error: "No se encontraron datos para los filtros seleccionados." });
@@ -79,11 +86,9 @@ export default async function handler(req, res) {
         const allRowsExpanded = [];
 
         dataRows.each((i, row) => {
-            // CORRECCIÓN: Se usa .children('td') para obtener solo los <td> hijos directos de la fila.
-            // Esto evita que se incluyan las celdas de las tablas anidadas de horario y profesor.
             const cells = $(row).children('td');
             
-            if (cells.length < 9) return; // Si no tiene las 9 columnas principales, se ignora.
+            if (cells.length < 9) return;
 
             const baseInfo = {
                 nrc: cells.eq(0).text().trim(),
@@ -95,21 +100,17 @@ export default async function handler(req, res) {
                 disponibles: cells.eq(6).text().trim(),
             };
             
-            // Extracción del profesor
             let profesor_asignado = "No asignado";
-            const profNameCell = cells.eq(8).find('td.tdprofesor').eq(1); // El nombre es usualmente la segunda celda
+            const profNameCell = cells.eq(8).find('td.tdprofesor').eq(1); 
             if (profNameCell.length > 0) {
                 profesor_asignado = profNameCell.text().trim();
             } else {
-                // Caso para materias sin horario donde el profesor es la única celda
                 const singleProfCell = cells.eq(8).find('td.tdprofesor');
                 if (singleProfCell.length === 1 && !/^\d+$/.test(singleProfCell.text().trim())) {
                      profesor_asignado = singleProfCell.text().trim();
                 }
             }
 
-
-            // Extracción de las sesiones de horario
             const sesiones = [];
             cells.eq(7).find('table tr').each((j, sesRow) => {
                 const sesCells = $(sesRow).find('td');
@@ -123,7 +124,6 @@ export default async function handler(req, res) {
                 }
             });
 
-            // Expansión de las filas por cada día y sesión
             if (sesiones.length === 0) {
                 const finalEntry = { ...baseInfo, profesor: profesor_asignado, hora_inicio: null, hora_fin: null, dia: null, edificio: null, aula: null };
                 allRowsExpanded.push(finalEntry);
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
                     const hora_inicio = parseTime(hora_inicio_raw);
                     const hora_fin = parseTime(hora_fin_raw);
 
-                    if (dias.length === 0 && sesion.edificio) { // Para sesiones sin día pero con ubicación
+                    if (dias.length === 0 && sesion.edificio) {
                          const finalEntry = { ...baseInfo, profesor: profesor_asignado, hora_inicio, hora_fin, dia: null, edificio: sesion.edificio, aula: sesion.aula };
                          allRowsExpanded.push(finalEntry);
                     } else {
@@ -158,4 +158,3 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: `Ocurrió un error interno al consultar la oferta: ${error.message}` });
     }
 }
-

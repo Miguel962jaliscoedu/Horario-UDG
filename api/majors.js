@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { load } from 'cheerio'; // CORRECCIÓN: Se importa la función 'load' directamente.
+import { load } from 'cheerio';
+import iconv from 'iconv-lite';
 
-// Se agrega una cabecera de User-Agent para simular una petición desde un navegador.
 const headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 };
@@ -21,10 +21,15 @@ export default async function handler(req, res) {
     const MAJORS_URL = `https://siiauescolar.siiau.udg.mx/wal/sspseca.lista_carreras?cup=${cup}`;
 
     try {
-        // Se incluyen las cabeceras en la petición de Axios.
-        const response = await axios.get(MAJORS_URL, { headers, timeout: 10000 });
-        const html = response.data;
-        const $ = load(html); // CORRECCIÓN: Se usa 'load' directamente.
+        const response = await axios.get(MAJORS_URL, { 
+            headers, 
+            timeout: 10000,
+            responseType: 'arraybuffer' // 1. Pedir la respuesta como buffer
+        });
+
+        // 2. Decodificar el buffer usando la codificación correcta
+        const html = iconv.decode(response.data, 'iso-8859-1');
+        const $ = load(html);
 
         const table = $('table');
         if (table.length === 0) {
@@ -33,7 +38,6 @@ export default async function handler(req, res) {
 
         const majors = {};
         $('tr').each((i, row) => {
-            // Ignorar la fila del encabezado
             if (i === 0) return;
 
             const cells = $(row).find('td');
@@ -57,4 +61,3 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: `Ocurrió un error al procesar las carreras: ${error.message}` });
     }
 }
-

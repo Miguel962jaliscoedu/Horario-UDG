@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { load } from 'cheerio'; // CORRECCIÓN: Se importa la función 'load' directamente.
+import { load } from 'cheerio';
+import iconv from 'iconv-lite';
 
 const FORM_URL = "https://siiauescolar.siiau.udg.mx/wal/sspseca.forma_consulta";
 
@@ -14,9 +15,15 @@ export default async function handler(req, res) {
     }
 
     try {
-        const response = await axios.get(FORM_URL, { headers, timeout: 10000 });
-        const html = response.data;
-        const $ = load(html); // CORRECCIÓN: Se usa 'load' directamente.
+        const response = await axios.get(FORM_URL, { 
+            headers, 
+            timeout: 10000,
+            responseType: 'arraybuffer' // 1. Pedir la respuesta como buffer
+        });
+
+        // 2. Decodificar el buffer usando la codificación correcta
+        const html = iconv.decode(response.data, 'iso-8859-1');
+        const $ = load(html);
 
         const optionsData = {};
         const importantFields = ["ciclop", "cup"];
@@ -49,4 +56,3 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: `Falló la obtención de opciones del formulario: ${error.message}` });
     }
 }
-

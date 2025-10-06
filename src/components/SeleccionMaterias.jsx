@@ -120,13 +120,7 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
 
     const mensajesCruces = useMemo(() => {
         const clasesSeleccionadas = materias.filter(m => selectedNRCs.includes(m.nrc));
-        const dayMap = { L: 'Lunes', M: 'Martes', I: 'Miércoles', J: 'Jueves', V: 'Viernes', S: 'Sábado' };
-        const clasesDesglosadas = clasesSeleccionadas.flatMap(clase => {
-            const [hora_inicio, hora_fin] = (clase.hora || " - ").split('-');
-            const dias = (clase.dias || "").split('');
-            return dias.map(diaChar => ({ ...clase, dia: dayMap[diaChar] || clase.dia, hora_inicio, hora_fin }));
-        });
-        const crucesDetectados = detectarCruces(clasesDesglosadas);
+        const crucesDetectados = detectarCruces(clasesSeleccionadas);
         return generarMensajeCruces(crucesDetectados);
     }, [materias, selectedNRCs]);
 
@@ -224,4 +218,3 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
         </div>
     );
 }
-

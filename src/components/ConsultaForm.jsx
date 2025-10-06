@@ -178,10 +178,12 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                     ))}
                 </select>
             </div>
-            <button type="submit" className="primary-button" disabled={loading || !params.centro || !params.carrera}>
-                {loading ? 'Consultando...' : 'Consultar Oferta'}
-            </button>
+            {/* Se envuelve el botón en un div para aplicar espaciado */}
+            <div className="form-submit-container">
+                <button type="submit" className="primary-button" disabled={loading || !params.centro || !params.carrera}>
+                    {loading ? 'Consultando...' : 'Consultar Oferta'}
+                </button>
+            </div>
         </form>
     );
 }
-

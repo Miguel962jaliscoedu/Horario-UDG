@@ -202,6 +202,13 @@ body {
 /* ---------------------------------- */
 /* FORMULARIO Y MODALES */
 /* ---------------------------------- */
+.consulta-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Añade espacio entre los elementos del formulario */
+    max-width: 500px;
+    margin: 0 auto;
+}
 .form-group {
   display: flex;
   flex-direction: column;
@@ -227,7 +234,11 @@ body {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
-
+.form-submit-container {
+    margin-top: 1rem; /* Ajusta el espacio sobre el botón */
+    display: flex;
+    justify-content: center;
+}
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -468,6 +479,22 @@ body {
 }
 
 /* ---------------------------------- */
+/* ESTILOS PARA CRUCES DE HORARIO */
+/* ---------------------------------- */
+
+/* Tema Oscuro */
+body.dark-theme .clase-card-inner.cruce-horario {
+    background-color: #5A2A2A; /* Un rojo oscuro de fondo */
+    border-left: 4px solid #F44336; /* Un borde rojo brillante */
+}
+
+/* Tema Claro */
+body.light-theme .clase-card-inner.cruce-horario {
+    background-color: #FFCDD2; /* Un rojo claro de fondo */
+    border-left: 4px solid #E53935; /* Un borde rojo más intenso */
+}
+
+/* ---------------------------------- */
 /* SECCIÓN HERO */
 /* ---------------------------------- */
 .hero-section {
@@ -550,4 +577,3 @@ body {
     margin-top: 1rem;
     width: 100%;
 }
-

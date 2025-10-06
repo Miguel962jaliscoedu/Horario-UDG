@@ -56,13 +56,14 @@ export const detectarCruces = (clases) => {
 
 
 /**
- * Genera mensajes legibles para los cruces detectados.
+ * Genera mensajes legibles para los cruces detectados, eliminando duplicados.
  * @param {Array<Array<object>>} cruces - El array de pares de clases con conflicto.
- * @returns {Array<string>} - Un array de mensajes de error formateados.
+ * @returns {Array<string>} - Un array de mensajes de error formateados y únicos.
  */
 export const generarMensajeCruces = (cruces) => {
     const mensajes = cruces.map(([clase1, clase2]) => {
         return `El día ${clase1.dia}, la materia "${clase1.materia}" (${clase1.hora_inicio} - ${clase1.hora_fin}) se cruza con "${clase2.materia}" (${clase2.hora_inicio} - ${clase2.hora_fin}).`;
     });
-    return mensajes;
+    // Eliminar mensajes duplicados para una UI más limpia
+    return [...new Set(mensajes)];
 };

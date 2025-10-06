@@ -1,7 +1,9 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+// 1. Importar la función para detectar cruces
+import { detectarCruces } from '../services/scheduleUtils';
 
 // Función para convertir la hora "HH:MM" a minutos para cálculos precisos.
 const timeToMinutes = (timeStr) => {
@@ -10,8 +12,8 @@ const timeToMinutes = (timeStr) => {
     return hours * 60 + minutes;
 };
 
-// Componente para la tarjeta de clase en la VISTA WEB.
-const ClaseCard = ({ clase }) => {
+// 2. Modificar ClaseCard para aceptar y usar la nueva prop 'tieneCruce'
+const ClaseCard = ({ clase, tieneCruce }) => {
     const dayToColumn = {
         'Lunes': 2, 'Martes': 3, 'Miércoles': 4, 'Jueves': 5, 'Viernes': 6, 'Sábado': 7,
     };
@@ -20,14 +22,19 @@ const ClaseCard = ({ clase }) => {
     const startRow = Math.floor((startMinutes - 420) / 60) + 2;
     const durationInRows = Math.ceil((endMinutes - startMinutes) / 60);
     const endRow = startRow + durationInRows;
+    
+    // Añade una clase CSS si hay un cruce
+    const cardClassName = `clase-card-inner ${tieneCruce ? 'cruce-horario' : ''}`;
+
     const cardStyle = {
         gridColumn: dayToColumn[clase.dia],
         gridRow: `${startRow} / ${endRow}`,
         pointerEvents: 'auto',
     };
+
     return (
         <div className="clase-card" style={cardStyle}>
-            <div className="clase-card-inner">
+            <div className={cardClassName}>
                 <strong>{clase.materia}</strong>
                 <span>{clase.edificio} - {clase.aula}</span>
                 <span>{clase.profesor}</span>
@@ -36,7 +43,7 @@ const ClaseCard = ({ clase }) => {
     );
 };
 
-// Componente de la imagen del horario estilizado para fondos de pantalla
+// ... (El componente HorarioImagen permanece igual)
 const HorarioImagen = React.forwardRef(({ clases, calendarioLabel, aspectRatio, theme }, ref) => {
     const isVertical = aspectRatio === '9/16';
     const isLightTheme = theme === 'light';
@@ -160,6 +167,17 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme }) 
     const horas = Array.from({ length: 15 }, (_, i) => `${(i + 7).toString().padStart(2, '0')}:00`);
     const [renderSize, setRenderSize] = useState({ width: 1080, height: 1920 });
 
+    // 3. Identificar los NRCs con cruces
+    const nrcsConCruce = useMemo(() => {
+        const cruces = detectarCruces(clasesSeleccionadas);
+        const nrcs = new Set();
+        cruces.forEach(([clase1, clase2]) => {
+            nrcs.add(clase1.nrc);
+            nrcs.add(clase2.nrc);
+        });
+        return nrcs;
+    }, [clasesSeleccionadas]);
+
     const handleDownloadPdf = () => {
         let minHour = 22, maxHour = 7;
         if (clasesSeleccionadas.length > 0) {
@@ -251,7 +269,14 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme }) 
                     {horas.map(hora => (<React.Fragment key={hora}><div className="time-slot">{hora}</div>{[...Array(6)].map((_, i) => (<div key={`${hora}-${i}`} className="grid-cell"></div>))}</React.Fragment>))}
                 </div>
                 <div className="horario-grid" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    {clasesSeleccionadas.filter(c => c.dia && c.hora_inicio).map((clase, i) => (<ClaseCard key={`${clase.nrc}-${clase.dia}-${i}`} clase={clase} />))}
+                    {/* 4. Pasar la prop 'tieneCruce' a cada componente ClaseCard */}
+                    {clasesSeleccionadas.filter(c => c.dia && c.hora_inicio).map((clase, i) => (
+                        <ClaseCard 
+                            key={`${clase.nrc}-${clase.dia}-${i}`} 
+                            clase={clase}
+                            tieneCruce={nrcsConCruce.has(clase.nrc)} 
+                        />
+                    ))}
                 </div>
             </div>
             <div className="descargas">
@@ -289,4 +314,3 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme }) 
         </div>
     );
 }
-

@@ -56,7 +56,7 @@ npm install
 
 # 3. Levantar el servidor de desarrollo (Vite + Vercel)
 # Esto ejecutará el frontend y las funciones serverless de la carpeta /api
-npm run dev 
+npx vercel dev 
 Si se utiliza el entorno de contenedores, la configuración expone los puertos 8501 (Aplicación) y 5001 (Backend API) para facilitar el desarrollo.
 ```
 

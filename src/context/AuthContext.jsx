@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // Esta función de Firebase "escucha" cambios en la sesión automáticamente
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Estado de usuario cambiado:", currentUser);
       setUser(currentUser);
       setLoading(false);
     });

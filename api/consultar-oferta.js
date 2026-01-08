@@ -1,3 +1,4 @@
+// api/consultar-oferta.js
 import axios from 'axios';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
@@ -25,7 +26,7 @@ const parseTime = (timeStr) => {
 };
 
 export default async function handler(req, res) {
-    // CORS
+    // Configuración CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
@@ -36,45 +37,36 @@ export default async function handler(req, res) {
 
     try {
         const { ciclop, cup, majrp, materiap } = req.body;
-        
-        // LOG 1: Ver qué datos llegan del Frontend
-        console.log("1. Datos recibidos:", { ciclop, cup, majrp, materiap });
 
         if (!ciclop || !cup || !majrp) return res.status(400).json({ error: "Faltan parámetros requeridos." });
 
         const postData = new URLSearchParams({
             ciclop, cup, majrp,
             mostrarp: "1000", crsep: "", 
-            materiap: materiap || "", // Asegurar que no sea undefined
+            materiap: materiap || "", 
             horaip: "", horafp: "", edifp: "", aulap: "", ordenp: "0"
         });
 
         const response = await axios.post(POST_URL, postData.toString(), {
-            headers, timeout: 15000, responseType: 'arraybuffer'
+            headers, timeout: 20000, responseType: 'arraybuffer'
         });
 
         const html = iconv.decode(response.data, 'iso-8859-1');
         
-        // LOG 2: Ver si el SIIAU respondió algo coherente
-        console.log("2. Longitud HTML recibido:", html.length);
-
+        // Error explícito de base de datos SIIAU
         if (html.includes("ORA-01403")) {
-            console.log("3. Error ORA-01403 detectado (No data found)");
-            return res.status(404).json({ error: "SIIAU dice: No se encontraron datos (ORA-01403)." });
+            return res.status(404).json({ error: "No se encontraron clases para los filtros seleccionados." });
         }
 
         const $ = load(html);
         const allRowsExpanded = [];
-
-        // Buscar filas (usamos selector genérico de tabla)
         const tableRows = $('table tr'); 
-        console.log("4. Filas de tabla encontradas (bruto):", tableRows.length);
 
         tableRows.each((i, row) => {
             const cells = $(row).children('td');
             const nrcText = cells.eq(0).text().trim();
             
-            // Validamos si es una fila de materia real (tiene NRC numérico)
+            // Validación: NRC numérico y suficientes columnas
             if (cells.length >= 8 && /^\d+$/.test(nrcText)) {
                 
                 const baseInfo = {
@@ -87,7 +79,7 @@ export default async function handler(req, res) {
                     disponibles: cells.eq(6).text().trim(),
                 };
 
-                // Extracción profesor
+                // Profesor
                 let profesor_asignado = "No asignado";
                 const profCell = cells.eq(8).find('.tdprofesor');
                 if (profCell.length > 0) {
@@ -97,7 +89,7 @@ export default async function handler(req, res) {
                     if (text8 && !/^\d+$/.test(text8)) profesor_asignado = text8;
                 }
 
-                // Extracción Horarios
+                // Horarios
                 const sesiones = [];
                 const horarioTable = cells.eq(7).find('table');
                 
@@ -115,7 +107,6 @@ export default async function handler(req, res) {
                     });
                 }
 
-                // Aplanar resultados (expandir horarios)
                 if (sesiones.length === 0) {
                     allRowsExpanded.push({ ...baseInfo, profesor: profesor_asignado, hora_inicio: null, hora_fin: null, dia: null, edificio: null, aula: null });
                 } else {
@@ -137,20 +128,18 @@ export default async function handler(req, res) {
             }
         });
 
-        // LOG 5: Resultado final
-        console.log("5. Total filas procesadas y listas para enviar:", allRowsExpanded.length);
-
+        // --- MENSAJE DE ERROR AMIGABLE ACTUALIZADO ---
         if (allRowsExpanded.length === 0) {
-            // Si llegamos aquí, el HTML no tenía la estructura esperada o no había materias
-            // Imprimimos un pedazo del HTML para ver qué devolvió el SIIAU
-            console.log("DEBUG HTML (Primeros 500 chars):", html.substring(0, 500));
-            return res.status(404).json({ error: "La tabla fue encontrada pero no se extrajeron filas. Revisa los logs." });
+            // Este mensaje se mostrará en el frontend cuando la tabla esté vacía o no exista
+            return res.status(404).json({ 
+                error: "No se encontraron clases para los filtros seleccionados." 
+            });
         }
 
         return res.status(200).json(allRowsExpanded);
 
     } catch (error) {
-        console.error("Error API SIIAU:", error);
-        return res.status(500).json({ error: `Error interno: ${error.message}` });
+        console.error("Error API SIIAU:", error.message);
+        return res.status(500).json({ error: "Ocurrió un error de conexión con el SIIAU. Inténtalo de nuevo." });
     }
 }

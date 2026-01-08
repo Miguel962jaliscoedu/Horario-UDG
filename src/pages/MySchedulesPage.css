@@ -1,0 +1,430 @@
+/* src/pages/MySchedulesPage.css */
+
+.schedules-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+    min-height: 80vh;
+}
+
+/* --- HEADER --- */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--text-color);
+}
+
+.page-subtitle {
+    margin: 0.5rem 0 0 0;
+    color: var(--text-secondary-color);
+    font-size: 1rem;
+}
+
+.btn-new {
+    width: auto;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+}
+
+/* --- GRID DE TARJETAS --- */
+.schedules-grid {
+    display: grid;
+    /* Ajustado a 320px para dar más aire a la lista de materias */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+    gap: 1.5rem;
+    /* IMPORTANTE: start evita que las tarjetas vecinas se estiren cuando abres una */
+    align-items: start; 
+}
+
+/* --- TARJETA DE HORARIO --- */
+.schedule-card {
+    background-color: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+/* Barra superior decorativa */
+.card-top-bar {
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+    width: 100%;
+}
+
+.card-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.schedule-name {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    font-weight: 700;
+    line-height: 1.3;
+    
+    /* Cortar nombre largo */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition: opacity 0.2s, background 0.2s;
+    font-size: 1.1rem;
+}
+
+.btn-delete:hover {
+    opacity: 1;
+    background-color: #fee2e2; /* Rojo suave */
+}
+
+/* Meta info (Badges) */
+.schedule-meta {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.meta-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cycle-badge {
+    background-color: var(--bg-tertiary-color);
+    color: var(--text-secondary-color);
+    border: 1px solid var(--border-color);
+}
+
+.subjects-badge {
+    background-color: #dbeafe; /* Azul suave */
+    color: #1e40af; /* Azul fuerte */
+}
+[data-theme='dark'] .subjects-badge {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+/* Carrera */
+.career-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    margin: 0 0 1rem 0;
+    line-height: 1.4;
+}
+.career-text strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* --- LISTA DE MATERIAS (ACORDEÓN) - NUEVO --- */
+.subjects-list-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.subjects-list-container.open {
+    max-height: 300px; /* Altura máxima antes de scroll */
+    opacity: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+/* Scrollbar fina para la lista interna */
+.subjects-list-container.open::-webkit-scrollbar {
+    width: 4px;
+}
+.subjects-list-container.open::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 4px;
+}
+
+.subjects-divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 0.5rem 0;
+}
+
+.mini-subjects-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mini-subject-item {
+    display: flex;
+    gap: 10px;
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    align-items: center;
+}
+
+.mini-subject-item:last-child {
+    border-bottom: none;
+}
+
+.mini-subject-nrc {
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--primary-color);
+    background-color: var(--bg-tertiary-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.mini-subject-name {
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- FOOTER DE LA TARJETA --- */
+.card-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.75rem;
+}
+
+.btn-toggle-details {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-toggle-details:hover {
+    background-color: var(--bg-tertiary-color);
+}
+
+.last-update {
+    font-size: 0.75rem;
+    color: var(--text-secondary-color);
+    font-style: italic;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state-schedules {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: var(--bg-secondary-color);
+    border-radius: 16px;
+    border: 2px dashed var(--border-color);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state-schedules h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.empty-state-schedules p {
+    color: var(--text-secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+/* --- LOADING --- */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: var(--text-secondary-color);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--bg-tertiary-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 640px) {
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .btn-new {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* =========================================
+   MODAL STYLES
+   ========================================= */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-title {
+    margin-top: 0;
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.modal-content p {
+    color: var(--text-secondary-color);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.modal-content strong {
+    color: #ef4444; 
+}
+
+/* Animación de entrada */
+.animate-scale-up {
+    animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleUp {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* BOTONES DEL MODAL */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Botón rojo sólido para acciones destructivas */
+.btn-danger-solid {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+}
+
+.btn-danger-solid:hover:not(:disabled) {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.btn-danger-solid:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Botón Secundario (Cancelar) - Adaptable al tema */
+.secondary-button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary-color);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.secondary-button:hover {
+    background-color: var(--bg-tertiary-color);
+    color: var(--text-color);
+    border-color: var(--text-secondary-color);
+}
+
+.secondary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}

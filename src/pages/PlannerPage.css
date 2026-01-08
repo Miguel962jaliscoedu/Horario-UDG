@@ -1,0 +1,281 @@
+/* src/pages/PlannerPage.css */
+
+/* =========================================================
+   LAYOUT DEL PLANIFICADOR (Aislado de App.css)
+   ========================================================= */
+
+.planner-layout {
+    display: grid;
+    /* MÓVIL (Por defecto): Una sola columna vertical */
+    grid-template-columns: 1fr; 
+    gap: 1.5rem;
+    
+    width: 100%;
+    max-width: 1600px; /* Permitimos más ancho para monitores grandes */
+    margin: 0 auto;
+    padding: 1rem;
+    box-sizing: border-box;
+    align-items: start;
+}
+
+/* ESCRITORIO (Pantallas > 1024px) */
+@media (min-width: 1024px) {
+    .planner-layout {
+        /* SOLUCIÓN DE COLUMNAS:
+           - 320px: Ancho fijo para el Sidebar.
+           - minmax(0, 1fr): El resto para el contenido. 
+             El '0' es vital para evitar desbordamientos si la tabla es muy ancha.
+        */
+        grid-template-columns: 320px minmax(0, 1fr);
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    /* Sidebar pegajoso */
+    .sticky-card {
+        position: sticky;
+        top: 90px; /* Ajuste para navbar */
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+        z-index: 10;
+    }
+}
+
+/* Ajustes para asegurar que los hijos ocupen su celda correctamente */
+.layout-sidebar {
+    width: 100%;
+}
+
+.layout-content {
+    width: 100%;
+    min-width: 0; /* Permite encogerse dentro del grid */
+}
+
+/* =========================================================
+   ESTILOS GENERALES Y PANELES
+   ========================================================= */
+
+.panel-title {
+    margin: 0 0 1rem 0;
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.section-tag {
+    background-color: var(--bg-tertiary-color);
+    color: var(--text-secondary-color);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+}
+
+.content-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+/* =========================================================
+   ESTADOS DE CARGA Y VACÍO
+   ========================================================= */
+
+.loading-banner {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-secondary-color);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    background-color: var(--bg-secondary-color);
+    /* Centrado total */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.empty-state-icon {
+    opacity: 0.3;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.empty-subtitle {
+    font-size: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* =========================================================
+   BOTÓN NUEVA CONSULTA (Sidebar)
+   ========================================================= */
+.btn-new-query {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-new-query:hover {
+    background-color: rgba(220, 38, 38, 0.05); /* Rojo muy suave */
+    color: #dc2626; /* Rojo */
+    border-color: #fca5a5;
+}
+
+/* =========================================================
+   HEADER DEL HORARIO
+   ========================================================= */
+.schedule-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.schedule-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.schedule-name-tag {
+    font-size: 0.85rem;
+    background-color: var(--bg-tertiary-color);
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: var(--text-secondary-color);
+    border: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+.schedule-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    height: auto;
+    width: auto;
+}
+
+/* Badge de "Cambios sin guardar" */
+.unsaved-badge {
+    color: #ef4444;
+    font-size: 0.8rem;
+    animation: pulse 2s infinite;
+    cursor: help;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* =========================================================
+   MODAL ESPECÍFICO (Reinicio / Bloqueo)
+   ========================================================= */
+.modal-reset {
+    max-width: 450px;
+    text-align: center;
+}
+
+.modal-title {
+    margin-top: 0;
+    color: var(--text-color);
+}
+
+.modal-warning-text {
+    color: #dc2626; /* Rojo */
+    margin-bottom: 1rem;
+    background: rgba(254, 226, 226, 0.5); /* Rojo claro transparente */
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.modal-actions.vertical {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.modal-actions.vertical button {
+    width: 100%;
+}
+
+/* Botones específicos del modal */
+.btn-danger-solid {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: white;
+}
+.btn-danger-solid:hover {
+    background-color: #b91c1c;
+}
+
+.secondary-button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary-color);
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.secondary-button:hover {
+    background-color: var(--bg-tertiary-color);
+    color: var(--text-color);
+}

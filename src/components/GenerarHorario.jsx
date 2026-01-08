@@ -1,40 +1,54 @@
+// src/components/GenerarHorario.jsx
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
-// 1. Importar la función para detectar cruces
+import { createPortal } from 'react-dom';
 import { detectarCruces } from '../services/scheduleUtils';
+import './GenerarHorario.css';
 
-// Función para convertir la hora "HH:MM" a minutos para cálculos precisos.
 const timeToMinutes = (timeStr) => {
     if (!timeStr || !timeStr.includes(':')) return 0;
     const [hours, minutes] = timeStr.split(':').map(Number);
     return hours * 60 + minutes;
 };
 
-// 2. Modificar ClaseCard para aceptar y usar la nueva prop 'tieneCruce'
-const ClaseCard = ({ clase, tieneCruce }) => {
+// 1. CLASE CARD CON BOTÓN DE ELIMINAR
+const ClaseCard = ({ clase, tieneCruce, onRemove }) => {
     const dayToColumn = {
         'Lunes': 2, 'Martes': 3, 'Miércoles': 4, 'Jueves': 5, 'Viernes': 6, 'Sábado': 7,
     };
+    
     const startMinutes = timeToMinutes(clase.hora_inicio);
     const endMinutes = timeToMinutes(clase.hora_fin);
-    const startRow = Math.floor((startMinutes - 420) / 60) + 2;
+    const startRow = Math.floor((startMinutes - 420) / 60) + 2; 
     const durationInRows = Math.ceil((endMinutes - startMinutes) / 60);
     const endRow = startRow + durationInRows;
     
-    // Añade una clase CSS si hay un cruce
     const cardClassName = `clase-card-inner ${tieneCruce ? 'cruce-horario' : ''}`;
 
-    const cardStyle = {
-        gridColumn: dayToColumn[clase.dia],
-        gridRow: `${startRow} / ${endRow}`,
-        pointerEvents: 'auto',
-    };
-
     return (
-        <div className="clase-card" style={cardStyle}>
+        <div className="clase-card" style={{ 
+            gridColumn: dayToColumn[clase.dia], 
+            gridRow: `${startRow} / ${endRow}`, 
+            pointerEvents: 'auto',
+            width: '96%',
+            marginLeft: '2%',
+            zIndex: 10
+        }}>
             <div className={cardClassName}>
+                {/* Botón de eliminar (Añadido) */}
+                <button 
+                    className="card-remove-btn" 
+                    onClick={(e) => {
+                        e.stopPropagation(); // Evita clicks accidentales en la tarjeta
+                        onRemove(clase.nrc);
+                    }}
+                    title="Quitar materia"
+                >
+                    ×
+                </button>
+
                 <strong>{clase.materia}</strong>
                 <span>{clase.edificio} - {clase.aula}</span>
                 <span>{clase.profesor}</span>
@@ -43,11 +57,13 @@ const ClaseCard = ({ clase, tieneCruce }) => {
     );
 };
 
-// ... (El componente HorarioImagen permanece igual)
+// ... (El componente HorarioImagen se queda IGUAL, no lo toques) ...
+// ... (Aquí iría el código de HorarioImagen que ya tienes) ...
 const HorarioImagen = React.forwardRef(({ clases, calendarioLabel, aspectRatio, theme }, ref) => {
+    // ... Tu código existente de HorarioImagen ...
+    // (Resumido para no repetir todo el bloque, asegúrate de mantenerlo)
     const isVertical = aspectRatio === '9/16';
     const isLightTheme = theme === 'light';
-
     const lightPalette = ['#a2d2ff', '#ffb3c1', '#bde0fe', '#ffafcc', '#cdb4db', '#ffc8dd', '#d4e09b'];
     const darkPalette = ['#2980b9', '#c0392b', '#16a085', '#8e44ad', '#f39c12', '#2c3e50', '#d35400'];
     const colorPalette = isLightTheme ? lightPalette : darkPalette;
@@ -88,7 +104,7 @@ const HorarioImagen = React.forwardRef(({ clases, calendarioLabel, aspectRatio, 
 
     return (
         <div ref={ref} className="horario-wallpaper-container" style={{ ...styles.container, aspectRatio }}>
-            <style>
+             <style>
                 {`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
                 .horario-wallpaper-container {
@@ -133,13 +149,12 @@ const HorarioImagen = React.forwardRef(({ clases, calendarioLabel, aspectRatio, 
                     <div key={hour} className="wallpaper-time" style={{ ...styles.gridLabels, gridColumn: 1, gridRow: i + 2 }}>{`${hour}:00`}</div>
                 ))}
                 {clases.map((clase, index) => {
-                    if (!clase.hora_inicio) return null;
+                    if (!clase.hora_inicio || days.indexOf(clase.dia) === -1) return null;
                     const startMin = timeToMinutes(clase.hora_inicio);
                     const endMin = timeToMinutes(clase.hora_fin);
                     const startRow = Math.floor(startMin / 60) - minHour + 2;
                     const endRow = Math.ceil(endMin / 60) - minHour + 2;
                     const dayCol = days.indexOf(clase.dia) + 2;
-                    if (dayCol < 2) return null;
                     return (
                         <div key={index} className="wallpaper-clase" style={{
                             gridColumn: dayCol, gridRow: `${startRow} / ${endRow}`,
@@ -157,7 +172,10 @@ const HorarioImagen = React.forwardRef(({ clases, calendarioLabel, aspectRatio, 
 });
 HorarioImagen.displayName = 'HorarioImagen';
 
-export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme }) {
+
+// 2. COMPONENTE PRINCIPAL ACTUALIZADO
+// Recibimos 'onRemoveClase' como nueva prop
+export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme, onRemoveClase }) {
     const scheduleRef = useRef(null);
     const imageRenderRef = useRef(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -167,150 +185,139 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme }) 
     const horas = Array.from({ length: 15 }, (_, i) => `${(i + 7).toString().padStart(2, '0')}:00`);
     const [renderSize, setRenderSize] = useState({ width: 1080, height: 1920 });
 
-    // 3. Identificar los NRCs con cruces
     const nrcsConCruce = useMemo(() => {
         const cruces = detectarCruces(clasesSeleccionadas);
         const nrcs = new Set();
-        cruces.forEach(([clase1, clase2]) => {
-            nrcs.add(clase1.nrc);
-            nrcs.add(clase2.nrc);
+        cruces.forEach(([clase1, clase2]) => { 
+            nrcs.add(clase1.nrc); 
+            nrcs.add(clase2.nrc); 
         });
         return nrcs;
     }, [clasesSeleccionadas]);
 
+    // ... (El bloque handleDownloadPdf se queda igual) ...
     const handleDownloadPdf = () => {
         let minHour = 22, maxHour = 7;
-        if (clasesSeleccionadas.length > 0) {
-            clasesSeleccionadas.forEach(c => { if (c.hora_inicio) minHour = Math.min(minHour, Math.floor(timeToMinutes(c.hora_inicio) / 60)); if (c.hora_fin) maxHour = Math.max(maxHour, Math.ceil(timeToMinutes(c.hora_fin) / 60)); });
+        if (clasesSeleccionadas.length > 0) { 
+            clasesSeleccionadas.forEach(c => { 
+                if (c.hora_inicio) minHour = Math.min(minHour, Math.floor(timeToMinutes(c.hora_inicio) / 60)); 
+                if (c.hora_fin) maxHour = Math.max(maxHour, Math.ceil(timeToMinutes(c.hora_fin) / 60)); 
+            }); 
         } else { minHour = 7; maxHour = 15; }
         
         const subjectColors = {}, colorPalette = [[225, 245, 254], [255, 229, 228], [222, 247, 221], [255, 244, 222], [237, 230, 249]];
-        let colorIndex = 0;
+        let colorIndex = 0; 
         clasesSeleccionadas.forEach(c => { if (!subjectColors[c.clave]) subjectColors[c.clave] = colorPalette[colorIndex++ % colorPalette.length]; });
+        
         const hasSaturday = clasesSeleccionadas.some(c => c.dia === 'Sábado');
         const activeDays = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'].concat(hasSaturday ? ['Sábado'] : []);
         const head = [['Hora', ...activeDays]], body = [], grid = Array.from({ length: maxHour - minHour }, () => Array(activeDays.length).fill(''));
-
+        
         clasesSeleccionadas.forEach(clase => {
-            const dayIndex = activeDays.indexOf(clase.dia);
+            const dayIndex = activeDays.indexOf(clase.dia); 
             if (dayIndex === -1 || !clase.hora_inicio) return;
             const startRow = Math.floor(timeToMinutes(clase.hora_inicio) / 60) - minHour;
             const duration = Math.ceil((timeToMinutes(clase.hora_fin) - timeToMinutes(clase.hora_inicio)) / 60);
             if (startRow >= 0 && startRow < grid.length) {
-                grid[startRow][dayIndex] = {
-                    content: `${clase.materia}\n${clase.edificio} - ${clase.aula}\n${clase.profesor}`,
-                    rowSpan: duration, styles: { fillColor: subjectColors[clase.clave], textColor: [40, 40, 40] }
+                grid[startRow][dayIndex] = { 
+                    content: `${clase.materia}\n${clase.edificio} - ${clase.aula}\n${clase.profesor}`, 
+                    rowSpan: duration, 
+                    styles: { fillColor: subjectColors[clase.clave], textColor: [40, 40, 40] } 
                 };
                 for (let i = 1; i < duration; i++) if (startRow + i < grid.length) grid[startRow + i][dayIndex] = null;
             }
         });
         
         for (let i = 0; i < maxHour - minHour; i++) {
-            const hour = minHour + i, row = [`${hour}:00\nA ${hour + 1}:00`];
-            for (let j = 0; j < activeDays.length; j++) if (grid[i][j] !== null) row.push(grid[i][j]);
+            const hour = minHour + i, row = [`${hour}:00\nA ${hour + 1}:00`]; 
+            for (let j = 0; j < activeDays.length; j++) if (grid[i][j] !== null) row.push(grid[i][j]); 
             body.push(row);
         }
-
-        const tempDoc = new jsPDF(), pageHeight = tempDoc.internal.pageSize.getHeight();
-        autoTable(tempDoc, { head, body });
-        const tableHeight = tempDoc.lastAutoTable.finalY - tempDoc.lastAutoTable.startY;
-        const orientation = (tableHeight + 45 > pageHeight / 2 && hasSaturday) ? 'l' : 'p';
-        const doc = new jsPDF(orientation, 'mm', 'letter');
+        
+        const tempDoc = new jsPDF(); autoTable(tempDoc, { head, body });
+        const doc = new jsPDF((tempDoc.lastAutoTable.finalY - tempDoc.lastAutoTable.startY + 45 > tempDoc.internal.pageSize.getHeight() / 2 && hasSaturday) ? 'l' : 'p', 'mm', 'letter');
+        
         doc.setFontSize(16).setFont('helvetica', 'bold').text("Universidad de Guadalajara", doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
         doc.setFontSize(12).setFont('helvetica', 'normal').text(calendarioLabel || "Ciclo Escolar", doc.internal.pageSize.getWidth() / 2, 28, { align: 'center' });
-        autoTable(doc, { head, body, startY: 35, theme: 'grid', styles: { fontSize: 7, valign: 'middle', lineWidth: 0.1, lineColor: [200, 200, 200] }, headStyles: { fillColor: [41, 128, 185], textColor: 255 }, columnStyles: { 0: { cellWidth: 18 } } });
+        
+        autoTable(doc, { 
+            head, body, startY: 35, theme: 'grid', 
+            styles: { fontSize: 7, valign: 'middle', lineWidth: 0.1, lineColor: [200, 200, 200] }, 
+            headStyles: { fillColor: [41, 128, 185], textColor: 255 }, 
+            columnStyles: { 0: { cellWidth: 18 } } 
+        });
+        
         doc.setFontSize(8).text(`Generado el ${new Date().toLocaleDateString('es-MX')} en horarioudg.vercel.app`, doc.internal.pageSize.getWidth() / 2, doc.lastAutoTable.finalY + 10, { align: 'center' });
         doc.save('horario.pdf');
     };
 
-    const handleGenerateImage = () => {
-        setIsModalOpen(false);
-        setIsRendering(true);
-        const isVertical = aspectRatio === '9/16';
-        const newSize = { width: isVertical ? 1080 : 1920, height: isVertical ? 1920 : 1080 };
-        setRenderSize(newSize);
-        
-        // useEffect se encargará de renderizar con el nuevo tamaño
-    };
+    const handleGenerateImage = () => { setIsModalOpen(false); setIsRendering(true); const isVertical = aspectRatio === '9/16'; setRenderSize({ width: isVertical ? 1080 : 1920, height: isVertical ? 1920 : 1080 }); };
 
     useEffect(() => {
         if (isRendering) {
             const generate = async () => {
                 const elementToRender = imageRenderRef.current;
                 if (elementToRender) {
-                    const canvas = await html2canvas(elementToRender, {
-                        width: renderSize.width,
-                        height: renderSize.height,
-                        scale: 1, useCORS: true,
-                    });
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL('image/jpeg', 0.95);
-                    link.download = `horario-${aspectRatio === '9/16' ? 'telefono' : 'escritorio'}-${imageTheme}.jpeg`;
-                    link.click();
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    const canvas = await html2canvas(elementToRender, { width: renderSize.width, height: renderSize.height, scale: 1, useCORS: true, logging: false });
+                    const link = document.createElement('a'); link.href = canvas.toDataURL('image/jpeg', 0.95); link.download = `horario-${aspectRatio === '9/16' ? 'telefono' : 'escritorio'}-${imageTheme}.jpeg`; link.click();
                 }
                 setIsRendering(false);
             };
-            // Pequeño delay para que React renderice el componente con el nuevo tamaño
-            const timer = setTimeout(generate, 100);
-            return () => clearTimeout(timer);
+            generate();
         }
-    }, [isRendering, renderSize, aspectRatio, imageTheme, clasesSeleccionadas, calendarioLabel]);
-
-    const openImageModal = () => { setImageTheme(theme); setIsModalOpen(true); };
+    }, [isRendering, renderSize, aspectRatio, imageTheme]);
 
     return (
         <div className="card">
-            <h2>Horario Final</h2>
-            <p>Aquí tienes una vista visual de tu horario. Puedes descargarlo en diferentes formatos.</p>
             <div ref={scheduleRef} className="schedule-container">
                 <div className="horario-grid">
                     <div className="grid-header">Hora</div>
                     {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map(day => <div key={day} className="grid-header">{day}</div>)}
                     {horas.map(hora => (<React.Fragment key={hora}><div className="time-slot">{hora}</div>{[...Array(6)].map((_, i) => (<div key={`${hora}-${i}`} className="grid-cell"></div>))}</React.Fragment>))}
                 </div>
+                
                 <div className="horario-grid" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    {/* 4. Pasar la prop 'tieneCruce' a cada componente ClaseCard */}
                     {clasesSeleccionadas.filter(c => c.dia && c.hora_inicio).map((clase, i) => (
                         <ClaseCard 
                             key={`${clase.nrc}-${clase.dia}-${i}`} 
-                            clase={clase}
+                            clase={clase} 
                             tieneCruce={nrcsConCruce.has(clase.nrc)} 
+                            onRemove={onRemoveClase} // Pasamos la función hacia abajo
                         />
                     ))}
                 </div>
             </div>
+
             <div className="descargas">
                 <button className="primary-button" onClick={handleDownloadPdf}>📄 Descargar PDF</button>
-                <button className="primary-button" onClick={openImageModal}>🖼️ Descargar Imagen</button>
+                <button className="primary-button" onClick={() => { setImageTheme(theme); setIsModalOpen(true); }}>🖼️ Descargar Imagen</button>
             </div>
             
             {isRendering && <div className="loading-overlay">Generando imagen...</div>}
 
-            {isModalOpen && (
+            {isModalOpen && createPortal(
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h2>Configurar Imagen</h2>
-                        <p>Elige las opciones para tu fondo de pantalla.</p>
-                        <div className="image-options">
-                            <div className="option-group">
-                                <strong>Proporción:</strong>
-                                <button onClick={() => setAspectRatio('9/16')} className={aspectRatio === '9/16' ? 'active' : ''}>📱 Teléfono</button>
-                                <button onClick={() => setAspectRatio('16/9')} className={aspectRatio === '16/9' ? 'active' : ''}>💻 Escritorio</button>
-                            </div>
-                            <div className="option-group">
-                                <strong>Tema:</strong>
-                                <button onClick={() => setImageTheme('light')} className={imageTheme === 'light' ? 'active' : ''}>☀️ Claro</button>
-                                <button onClick={() => setImageTheme('dark')} className={imageTheme === 'dark' ? 'active' : ''}>🌙 Oscuro</button>
-                            </div>
+                    <div className="modal-content animate-scale-up" onClick={(e) => e.stopPropagation()}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2 style={{margin:0}}>Configurar Imagen</h2>
+                            <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>×</button>
                         </div>
-                        <button className="primary-button generate-btn" onClick={handleGenerateImage}>Generar y Descargar</button>
+                        <p style={{ marginTop: '0.5rem' }}>Personaliza el fondo de pantalla.</p>
+                        <div className="image-options">
+                            <div className="option-group"><strong>Formato</strong><button onClick={() => setAspectRatio('9/16')} className={aspectRatio === '9/16' ? 'active' : ''}>📱 Móvil</button><button onClick={() => setAspectRatio('16/9')} className={aspectRatio === '16/9' ? 'active' : ''}>💻 PC</button></div>
+                            <div className="option-group"><strong>Tema</strong><button onClick={() => setImageTheme('light')} className={imageTheme === 'light' ? 'active' : ''}>☀️ Claro</button><button onClick={() => setImageTheme('dark')} className={imageTheme === 'dark' ? 'active' : ''}>🌙 Oscuro</button></div>
+                        </div>
+                        <button className="primary-button generate-btn" onClick={handleGenerateImage}>✨ Generar y Descargar</button>
                     </div>
-                </div>
+                </div>, document.body
             )}
-            
-            <div style={{ position: 'fixed', left: '-9999px', top: 0, width: `${renderSize.width}px`, height: `${renderSize.height}px` }}>
-                 <HorarioImagen ref={imageRenderRef} clases={clasesSeleccionadas} calendarioLabel={calendarioLabel} aspectRatio={aspectRatio} theme={imageTheme} />
-            </div>
+
+            {createPortal(
+                <div style={{ position: 'fixed', left: '-9999px', top: '-9999px', width: `${renderSize.width}px`, height: `${renderSize.height}px`, zIndex: -1, backgroundColor: imageTheme === 'light' ? '#ffffff' : '#212529' }}>
+                    <HorarioImagen ref={imageRenderRef} clases={clasesSeleccionadas} calendarioLabel={calendarioLabel} aspectRatio={aspectRatio} theme={imageTheme} />
+                </div>, document.body
+            )}
         </div>
     );
 }

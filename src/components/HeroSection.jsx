@@ -1,34 +1,18 @@
+// src/components/HeroSection.jsx
 import React from 'react';
+import './HeroSection.css'; // Importa los estilos nuevos
 
-/**
- * Componente HeroSection para la página de bienvenida a pantalla completa.
- * @param {object} props - Propiedades del componente.
- * @param {function} props.onStart - Función que se ejecuta al hacer clic en el botón.
- */
-export function HeroSection({ onStart }) {
-    
-    // Estilos para la imagen de fondo. Se aplica un degradado oscuro
-    // para asegurar que el texto blanco sea legible.
-    const heroStyles = {
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://res.cloudinary.com/dpiy22qku/image/upload/v1758592450/udg_0_wpbtlh.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        color: '#FFFFFF',
-    };
-
+export function HeroSection() {
     return (
-        <div className="hero-section" style={heroStyles}>
+        <div className="hero-banner">
             <div className="hero-content">
-                <h1>Organiza tu Semestre sin estrés</h1>
+                <h1>Organiza tu Semestre</h1>
                 <p>
-                    Encuentra la oferta académica más reciente, elige tus materias y visualiza
-                    tu horario ideal en segundos. ¡Comienza a planear tu semestre perfecto ahora!
+                    Consulta la oferta académica oficial, visualiza cruces de horario 
+                    y descarga tu planeación en PDF o imagen. 
+                    Sin estrés, rápido y fácil.
                 </p>
-                <button onClick={onStart} className="primary-button cta-button">
-                    ✨ Crear mi Horario
-                </button>
             </div>
         </div>
     );
 }
-

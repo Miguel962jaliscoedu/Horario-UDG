@@ -1,0 +1,366 @@
+/* src/components/Navbar.css */
+
+.navbar {
+    background-color: var(--bg-secondary-color);
+    border-bottom: 1px solid var(--border-color);
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.navbar-container {
+    width: 100%;
+    /* max-width: 1400px;  <- Removido para ocupar todo el ancho en mobile */
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* Necesario para el menú absoluto */
+}
+
+/* --- IZQUIERDA --- */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+}
+
+.logo-text h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+}
+
+.text-highlight {
+    color: var(--primary-color);
+}
+
+/* --- ENLACES (DESKTOP) --- */
+.navbar-links {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-secondary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--bg-tertiary-color);
+    color: var(--primary-color);
+}
+
+.nav-link.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.special-link {
+    color: #eab308; /* Amarillo */
+}
+.special-link:hover {
+    color: #ca8a04;
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+/* --- DERECHA --- */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-new-query {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-new-query:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.btn-theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.btn-theme-toggle:hover {
+    background-color: var(--bg-tertiary-color);
+    transform: rotate(15deg);
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+}
+
+/* Perfil de Usuario */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 30px;
+    transition: background 0.2s;
+}
+
+.profile-link:hover {
+    background-color: var(--bg-tertiary-color);
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+.user-avatar-placeholder {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.btn-logout {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout:hover {
+    color: #ef4444; /* Rojo */
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* --- ELEMENTOS MÓVILES (Ocultos en Desktop) --- */
+.hamburger-btn, 
+.mobile-menu-header,
+.nav-overlay {
+    display: none;
+}
+
+/* =================================================================
+   RESPONSIVE DESIGN (TABLET Y MÓVIL)
+   ================================================================= */
+@media (max-width: 900px) {
+    .navbar-container {
+        padding: 0 1rem;
+    }
+
+    /* 1. MOSTRAR BOTÓN HAMBURGUESA */
+    .hamburger-btn {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 28px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1100;
+        margin-right: 12px; /* Espacio con el logo */
+    }
+
+    .hamburger-btn .bar {
+        width: 100%;
+        height: 3px;
+        background-color: var(--text-color);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    /* Animación hamburguesa a X */
+    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
+    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* 2. OCULTAR ENLACES NORMALES Y CREAR MENÚ LATERAL */
+    .navbar-links {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Oculto a la izquierda */
+        width: 75%;
+        max-width: 300px;
+        height: 100vh;
+        background-color: var(--bg-secondary-color);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 1.5rem;
+        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1001; /* Por encima de todo */
+        border-right: 1px solid var(--border-color);
+    }
+
+    .navbar-links.active {
+        left: 0; /* Aparece */
+    }
+
+    .nav-link {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.05rem;
+        border-radius: 10px;
+        margin-bottom: 5px;
+    }
+
+    /* Header dentro del menú móvil */
+    .mobile-menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .mobile-menu-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .close-menu-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-secondary-color);
+        cursor: pointer;
+    }
+
+    /* Overlay oscuro */
+    .nav-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(2px);
+    }
+
+    .nav-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* 3. AJUSTAR ACCIONES DERECHAS */
+    .navbar-actions {
+        gap: 8px;
+    }
+
+    /* Ocultar texto de "Nueva Consulta" en móvil, dejar solo icono */
+    .btn-new-query .btn-text {
+        display: none;
+    }
+    
+    .btn-new-query {
+        padding: 8px;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        justify-content: center;
+    }
+
+    .plus-icon {
+        font-size: 1.2rem;
+        line-height: 1;
+    }
+
+    /* Ocultar nombre de usuario en barra superior (ocupa mucho espacio) */
+    .desktop-only {
+        display: none;
+    }
+}

@@ -1,0 +1,85 @@
+/* src/pages/DashboardPage.css */
+
+/* === CONTENEDOR PRINCIPAL === */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1400px; /* Evita que se estire demasiado en pantallas ultra anchas */
+    margin: 0 auto;    /* Centrado horizontal */
+    padding-bottom: 2rem;
+}
+
+/* === SISTEMA DE REJILLA (GRID) === */
+.dashboard-grid {
+    display: grid;
+    gap: 1.5rem; /* Espacio entre tarjetas */
+    width: 100%;
+    
+    /* Por defecto (Móvil): 1 sola columna (apilados) */
+    grid-template-columns: 1fr;
+}
+
+/* Tablet (>= 768px): 2 columnas */
+@media (min-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Escritorio (>= 1024px): 3 columnas */
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* === ESTILOS DE TARJETAS === */
+.dashboard-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empuja el botón al final */
+    height: 100%; /* Forza a que ocupe toda la altura de la fila */
+    
+    /* Transiciones suaves para efectos visuales */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    /* Aseguramos que el fondo y borde sean consistentes */
+    background-color: var(--bg-card); 
+    border: 1px solid var(--border-color);
+}
+
+/* Efecto al pasar el mouse (Hover) */
+.dashboard-card:hover {
+    transform: translateY(-3px); /* Se levanta un poco */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Animación de rebote para los iconos al hacer hover */
+.dashboard-card:hover span {
+    display: inline-block;
+    animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* === UTILIDADES === */
+
+/* Hace que el elemento ocupe todas las columnas disponibles (para el Header) */
+.col-span-full {
+    grid-column: 1 / -1;
+}
+
+/* Elimina el subrayado y color azul por defecto de los Links */
+.no-underline-card {
+    text-decoration: none;
+    color: inherit; /* Mantiene el color del texto del tema */
+}
+
+/* Forza el cursor de mano para indicar que es clicable */
+.cursor-pointer {
+    cursor: pointer;
+}

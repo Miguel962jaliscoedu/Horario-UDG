@@ -19,6 +19,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;       /* Asegura que el hijo (.app-root) pueda expandirse */
+  flex-direction: column;
+}
+
 a {
   font-weight: 500;
   color: #646cff;

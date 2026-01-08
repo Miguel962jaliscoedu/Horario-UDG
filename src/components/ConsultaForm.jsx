@@ -1,4 +1,38 @@
-import React, { useState, useEffect } from 'react';
+// src/components/ConsultaForm.jsx
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import './ConsultaForm.css';
+
+const NOMBRES_CENTROS = {
+    '3': 'CUTLAJO - Centro Universitario de Tlajomulco',
+    '4': 'CUGDL - Centro Universitario de Guadalajara',
+    '5': 'CUTLAQUEPAQUE - Centro Universitario de Tlaquepaque',
+    '6': 'CUCHAPALA - Centro Universitario de Chapala',
+    'A': 'CUAAD - Centro Universitario de Arte, Arquitectura y Diseño',
+    'B': 'CUCBA - Centro Universitario de Ciencias Biológicas y Agropecuarias',
+    'C': 'CUCEA - Centro Universitario de Ciencias Económico Administrativas',
+    'D': 'CUCEI - Centro Universitario de Ciencias Exactas e Ingenierías',
+    'E': 'CUCS - Centro Universitario de Ciencias de la Salud',
+    'F': 'CUCSH - Centro Universitario de Ciencias Sociales y Humanidades',
+    'G': 'CUALTOS - Centro Universitario de los Altos',
+    'H': 'CUCIENEGA - Centro Universitario de la Ciénega',
+    'I': 'CUCOSTA - Centro Universitario de la Costa',
+    'J': 'CUCSUR - Centro Universitario de la Costa Sur',
+    'K': 'CUSUR - Centro Universitario del Sur',
+    'M': 'CUVALLES - Centro Universitario de los Valles',
+    'N': 'CUNORTE - Centro Universitario del Norte',
+    'O': 'CUCEI - Sede Valles',
+    'P': 'CUCSUR - Sede Valles',
+    'Q': 'CUCEI - Sede Norte',
+    'R': 'CUALTOS - Sede Norte',
+    'S': 'CUCOSTA - Sede Norte',
+    'T': 'CUTLAJO - Sede Tlajomulco',
+    'U': 'CULAGOS - Centro Universitario de los Lagos',
+    'V': 'CICLO DE VERANO',
+    'W': 'CUCEA - Sede Valle',
+    'X': 'SUV - Sistema de Universidad Virtual',
+    'Y': 'ESCUELAS INCORPORADAS',
+    'Z': 'CUTONALA - Centro Universitario de Tonalá'
+};
 
 export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
     
@@ -8,45 +42,85 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
         calendario: initialParams.calendario || '',
     });
 
+    // Estados de datos
     const [centros, setCentros] = useState([]);
-    const [calendarios, setCalendarios] = useState([]);
+    const [allCalendarios, setAllCalendarios] = useState([]); 
     const [carreras, setCarreras] = useState([]);
     const [loadingCarreras, setLoadingCarreras] = useState(false);
-    
     const [optionsLoaded, setOptionsLoaded] = useState(false);
+    const [showAllCycles, setShowAllCycles] = useState(false);
 
-    // Efecto para cargar los ciclos y centros desde la API.
+    // Estados para autocomplete
+    const [busquedaCarrera, setBusquedaCarrera] = useState('');
+    const [mostrarSugerencias, setMostrarSugerencias] = useState(false);
+    const wrapperRef = useRef(null); 
+
+    const ciclosVisibles = useMemo(() => {
+        if (!allCalendarios.length) return [];
+        const currentYear = new Date().getFullYear();
+        const relevantYears = [currentYear, currentYear - 1]; 
+
+        const formatLabel = (ciclo) => {
+            const year = ciclo.value.substring(0, 4);
+            const sub = ciclo.value.substring(4);
+            let label = ciclo.description;
+            if (sub === '10') label = `${year}-A`;
+            else if (sub === '20') label = `${year}-B`;
+            const isPriority = (sub === '10' || sub === '20');
+            return { ...ciclo, label, isPriority };
+        };
+
+        const formattedCycles = allCalendarios.map(formatLabel);
+        if (showAllCycles) return formattedCycles;
+
+        return formattedCycles.filter(c => {
+            const year = parseInt(c.value.substring(0, 4));
+            return relevantYears.includes(year) && c.isPriority;
+        }).sort((a, b) => b.value.localeCompare(a.value));
+    }, [allCalendarios, showAllCycles]);
+
+    const centrosFormateados = useMemo(() => {
+        return centros.map(centro => ({
+            value: centro.value,
+            label: NOMBRES_CENTROS[centro.value] || `${centro.value} - ${centro.description}`
+        })).sort((a, b) => a.label.localeCompare(b.label));
+    }, [centros]);
+
+    const carrerasFiltradas = useMemo(() => {
+        if (!busquedaCarrera) return carreras;
+        const term = busquedaCarrera.toLowerCase();
+        return carreras.filter(c => 
+            c.name.toLowerCase().includes(term) || c.id.toLowerCase().includes(term)
+        );
+    }, [carreras, busquedaCarrera]);
+
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setMostrarSugerencias(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [wrapperRef]);
+
+
     useEffect(() => {
         fetch('/api/form-options')
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Error en la respuesta del servidor: ${res.status}`);
-                }
-                return res.json();
-            })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
             .then(data => {
-                const ciclosApi = data.ciclop || [];
-                const centrosApi = data.cup || [];
-
-                setCalendarios(ciclosApi);
-                setCentros(centrosApi);
-
-                if (!initialParams.calendario && ciclosApi.length > 0) {
-                    setParams(p => ({ ...p, calendario: ciclosApi[0].value }));
+                setAllCalendarios(data.ciclop || []);
+                setCentros(data.cup || []);
+                if (!initialParams.calendario && data.ciclop?.length > 0) {
+                    setParams(p => ({ ...p, calendario: data.ciclop[0].value }));
                 }
             })
-            .catch(error => {
-                console.error('Error crítico al cargar opciones del formulario. Revisa el endpoint /api/form-options:', error);
-                setCentros([]);
-                setCalendarios([]);
-            })
-            .finally(() => {
-                setOptionsLoaded(true);
-            });
+            .catch(err => console.error(err))
+            .finally(() => setOptionsLoaded(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
-    // Efecto para restaurar la selección del 'centro' guardado en caché.
     useEffect(() => {
         if (optionsLoaded && initialParams.centro) {
             setParams(p => ({ ...p, centro: initialParams.centro }));
@@ -54,79 +128,84 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [optionsLoaded]);
 
-    // Efecto para cargar las carreras cuando 'params.centro' cambia.
     useEffect(() => {
         if (params.centro) {
             setLoadingCarreras(true);
             setCarreras([]); 
+            setBusquedaCarrera(''); 
             
             fetch(`/api/majors?cup=${params.centro}`)
-                .then(res => {
-                    if (!res.ok) {
-                        throw new Error(`Error HTTP: ${res.status} ${res.statusText}`);
-                    }
-                    return res.json();
-                })
+                .then(res => res.ok ? res.json() : Promise.reject(res))
                 .then(data => {
                     let fetchedCarreras = [];
-                    if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-                        fetchedCarreras = Object.entries(data).map(([id, name]) => ({
-                            id: id,
-                            name: name
-                        }));
+                    if (typeof data === 'object' && !Array.isArray(data)) {
+                        fetchedCarreras = Object.entries(data).map(([id, name]) => ({ id, name }));
                     } else if (Array.isArray(data)) {
                         fetchedCarreras = data;
-                    } else {
-                        console.warn('La API /api/majors devolvió una respuesta con un formato inesperado.', data);
                     }
-                    
-                    // Ordenar las carreras alfabéticamente por el texto completo
-                    fetchedCarreras.sort((a, b) => {
-                        const textA = `${a.id} - ${a.name}`;
-                        const textB = `${b.id} - ${b.name}`;
-                        return textA.localeCompare(textB, 'es', { sensitivity: 'base' });
-                    });
-                    
+                    fetchedCarreras.sort((a, b) => `${a.id} - ${a.name}`.localeCompare(`${b.id} - ${b.name}`));
                     setCarreras(fetchedCarreras);
 
-                    if (initialParams.carrera && fetchedCarreras.some(c => c.id === initialParams.carrera)) {
-                        setParams(p => ({ ...p, carrera: initialParams.carrera }));
+                    if (initialParams.carrera) {
+                        const found = fetchedCarreras.find(c => c.id === initialParams.carrera);
+                        if (found) {
+                            setParams(p => ({ ...p, carrera: found.id }));
+                            setBusquedaCarrera(`${found.id} - ${found.name}`);
+                        }
                     }
                 })
-                .catch(error => {
-                    console.error('Error al obtener las carreras:', error);
-                    setCarreras([]);
-                })
-                .finally(() => {
-                    setLoadingCarreras(false);
-                });
+                .catch(err => console.error(err))
+                .finally(() => setLoadingCarreras(false));
         } else {
-            setCarreras([]); 
+            setCarreras([]);
+            setBusquedaCarrera('');
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [params.centro]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setParams(prevParams => ({
-            ...prevParams,
-            [name]: value,
-            ...(name === 'centro' && { carrera: '' })
-        }));
+        if (name === 'calendario' && value === 'ver_mas') {
+            setShowAllCycles(true);
+            return;
+        }
+        setParams(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleCarreraSearch = (e) => {
+        setBusquedaCarrera(e.target.value);
+        setMostrarSugerencias(true);
+        if (e.target.value === '') {
+            setParams(prev => ({ ...prev, carrera: '' }));
+        }
+    };
+
+    const seleccionarCarrera = (carrera) => {
+        setParams(prev => ({ ...prev, carrera: carrera.id }));
+        setBusquedaCarrera(`${carrera.id} - ${carrera.name}`);
+        setMostrarSugerencias(false);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const calendarioSeleccionado = calendarios.find(c => c.value === params.calendario);
-        const calendarioLabel = calendarioSeleccionado ? `${calendarioSeleccionado.value} - ${calendarioSeleccionado.description}` : '';
-        onConsultar(params, calendarioLabel);
+        const calendarioSeleccionado = allCalendarios.find(c => c.value === params.calendario);
+        let labelBonito = '';
+        if (calendarioSeleccionado) {
+            const year = calendarioSeleccionado.value.substring(0,4);
+            const sub = calendarioSeleccionado.value.substring(4);
+            if(sub === '10') labelBonito = `${year}-A`;
+            else if(sub === '20') labelBonito = `${year}-B`;
+            else labelBonito = calendarioSeleccionado.description; 
+        }
+        onConsultar(params, labelBonito);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="card consulta-form">
-            <p>Selecciona los siguientes campos para buscar la oferta académica.</p>
+        <form onSubmit={handleSubmit} className="consulta-form">
+            <p>Configura los filtros para buscar materias.</p>
+            
             <div className="form-group">
-                <label htmlFor="calendario">Ciclo Escolar:</label>
+                <label htmlFor="calendario">Ciclo Escolar</label>
                 <select
                     id="calendario"
                     name="calendario"
@@ -135,15 +214,21 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                     required
                     disabled={!optionsLoaded}
                 >
-                    {(calendarios || []).map(ciclo => (
+                    {ciclosVisibles.map(ciclo => (
                         <option key={ciclo.value} value={ciclo.value}>
-                            {`${ciclo.value} - ${ciclo.description}`}
+                            {ciclo.label}
                         </option>
                     ))}
+                    {!showAllCycles && (
+                        <option value="ver_mas" style={{ fontStyle: 'italic', color: '#666' }}>
+                            ⬇ Ver ciclos anteriores...
+                        </option>
+                    )}
                 </select>
             </div>
+
             <div className="form-group">
-                <label htmlFor="centro">Centro Universitario:</label>
+                <label htmlFor="centro">Centro Universitario</label>
                 <select
                     id="centro"
                     name="centro"
@@ -152,36 +237,59 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                     required
                     disabled={!optionsLoaded}
                 >
-                    <option value="">{optionsLoaded ? 'Selecciona un centro' : 'Cargando centros...'}</option>
-                    {(centros || []).map(centro => (
+                    <option value="">Selecciona...</option>
+                    {centrosFormateados.map(centro => (
                         <option key={centro.value} value={centro.value}>
-                            {`${centro.value} - ${centro.description}`}
+                            {centro.label}
                         </option>
                     ))}
                 </select>
             </div>
-            <div className="form-group">
-                <label htmlFor="carrera">Programa Educativo (Carrera):</label>
-                <select
-                    id="carrera"
-                    name="carrera"
-                    value={params.carrera}
-                    onChange={handleChange}
-                    required
+
+            <div className="form-group" ref={wrapperRef} style={{ position: 'relative' }}>
+                <label htmlFor="carrera">Carrera</label>
+                <input
+                    type="text"
+                    id="carrera-search"
+                    className="autocomplete-input"
+                    placeholder={loadingCarreras ? "Cargando carreras..." : (!params.centro ? "Selecciona un centro primero" : "Escribe para buscar...")}
+                    value={busquedaCarrera}
+                    onChange={handleCarreraSearch}
+                    
+                    // --- MODIFICACIÓN AQUÍ: Selección automática ---
+                    onFocus={(e) => { 
+                        if(params.centro && !loadingCarreras) setMostrarSugerencias(true);
+                        e.target.select(); // Selecciona todo el texto al recibir foco
+                    }}
+                    
                     disabled={loadingCarreras || !params.centro}
-                >
-                    <option value="">{loadingCarreras ? 'Cargando...' : 'Selecciona una carrera'}</option>
-                    {(carreras || []).map(carrera => (
-                        <option key={carrera.id} value={carrera.id}>
-                            {`${carrera.id} - ${carrera.name}`}
-                        </option>
-                    ))}
-                </select>
+                    autoComplete="off"
+                />
+                
+                {mostrarSugerencias && carrerasFiltradas.length > 0 && (
+                    <ul className="suggestions-list animate-fade-in">
+                        {carrerasFiltradas.map(carrera => (
+                            <li 
+                                key={carrera.id} 
+                                onClick={() => seleccionarCarrera(carrera)}
+                            >
+                                <span className="suggestion-id">{carrera.id}</span>
+                                <span className="suggestion-name">{carrera.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                
+                {mostrarSugerencias && carrerasFiltradas.length === 0 && busquedaCarrera && (
+                    <div className="suggestions-list no-results">
+                        No se encontraron carreras.
+                    </div>
+                )}
             </div>
-            {/* Se envuelve el botón en un div para aplicar espaciado */}
+
             <div className="form-submit-container">
                 <button type="submit" className="primary-button" disabled={loading || !params.centro || !params.carrera}>
-                    {loading ? 'Consultando...' : 'Consultar Oferta'}
+                    {loading ? 'Buscando...' : 'Buscar Oferta'}
                 </button>
             </div>
         </form>

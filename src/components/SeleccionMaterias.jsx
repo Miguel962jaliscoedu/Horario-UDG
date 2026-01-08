@@ -1,41 +1,39 @@
+// src/components/SeleccionMaterias.jsx
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { detectarCruces, generarMensajeCruces } from '../services/scheduleUtils';
+import './SeleccionMaterias.css';
 
-// --- Componente Modal Mejorado ---
 const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange, onClose }) => {
-    
-    // Agrupa las sesiones de clase por NRC
     const gruposNrc = useMemo(() => {
         const agrupados = new Map();
         nrcsDisponibles.forEach(clase => {
             if (!agrupados.has(clase.nrc)) {
-                agrupados.set(clase.nrc, {
-                    ...clase, // Copia la información común de la primera sesión
-                    sesiones: []
-                });
+                agrupados.set(clase.nrc, { ...clase, sesiones: [] });
             }
-            // Añade la información específica de la sesión
             agrupados.get(clase.nrc).sesiones.push({
-                dia: clase.dia,
-                hora_inicio: clase.hora_inicio,
-                hora_fin: clase.hora_fin,
-                edificio: clase.edificio,
-                aula: clase.aula
+                dia: clase.dia, hora_inicio: clase.hora_inicio, hora_fin: clase.hora_fin,
+                edificio: clase.edificio, aula: clase.aula
             });
         });
         return Array.from(agrupados.values());
     }, [nrcsDisponibles]);
 
-    return (
+    return createPortal(
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <button className="modal-close-btn" onClick={onClose}>×</button>
-                <h2>{materia.nombre}</h2>
-                <p>Selecciona el grupo (NRC) que deseas cursar.</p>
+            <div className="modal-content animate-scale-up" onClick={(e) => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+                    <div>
+                        <h2 style={{ margin: 0, fontSize: '1.2rem' }}>{materia.nombre}</h2>
+                        <span style={{ fontSize: '0.85rem', color: '#666' }}>Clave: {materia.clave}</span>
+                    </div>
+                    <button className="modal-close-btn" onClick={onClose}>×</button>
+                </div>
+                
                 <div className="nrc-selection-container">
                     <div className="nrc-radio-group">
                         {gruposNrc.map(grupo => (
-                            <label key={grupo.nrc} className="nrc-radio-label">
+                            <label key={grupo.nrc} className={`nrc-radio-label ${selectedNrc === grupo.nrc ? 'selected' : ''}`}>
                                 <input
                                     type="radio"
                                     name={`nrc-${materia.clave}`}
@@ -44,16 +42,19 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
                                     onChange={() => onNrcChange(materia.clave, grupo.nrc)}
                                 />
                                 <div className="nrc-radio-content">
-                                    <div className="nrc-main-info">
-                                        <strong>NRC: {grupo.nrc} (Sección: {grupo.seccion})</strong>
-                                        <span>Cupos: {grupo.disponibles}/{grupo.cupos}</span>
-                                        <span>Créditos: {grupo.creditos}</span>
-                                        <span>Profesor: {grupo.profesor}</span>
+                                    <div className="nrc-header-info">
+                                        <span className="nrc-badge">{grupo.nrc}</span>
+                                        <span className={`cupos-badge ${grupo.disponibles > 0 ? 'available' : 'full'}`}>
+                                            {grupo.disponibles} lug.
+                                        </span>
                                     </div>
-                                    <div className="nrc-sesiones-list">
-                                        {grupo.sesiones.map((sesion, index) => (
-                                            <div key={index} className="nrc-sesion-item">
-                                                {sesion.dia ? `${sesion.dia} de ${sesion.hora_inicio} a ${sesion.hora_fin} en ${sesion.edificio}-${sesion.aula}` : 'Horario no especificado'}
+                                    <div className="nrc-profesor">{grupo.profesor || 'Sin profesor asignado'}</div>
+                                    <div className="nrc-sesiones-compact">
+                                        {grupo.sesiones.map((sesion, idx) => (
+                                            <div key={idx} className="sesion-row">
+                                                <strong>{sesion.dia ? sesion.dia.substring(0,3) : 'N/A'}</strong> 
+                                                {sesion.hora_inicio}-{sesion.hora_fin} 
+                                                <small>({sesion.edificio}-{sesion.aula})</small>
                                             </div>
                                         ))}
                                     </div>
@@ -63,15 +64,29 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 };
-
 
 export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [materiaEnModal, setMateriaEnModal] = useState(null);
+
+    const { mensajesCruces, nrcsConConflicto } = useMemo(() => {
+        const clasesSeleccionadas = materias.filter(m => selectedNRCs.includes(m.nrc));
+        const paresDeCruces = detectarCruces(clasesSeleccionadas);
+        const mensajes = generarMensajeCruces(paresDeCruces);
+        
+        const conflictos = new Set();
+        paresDeCruces.forEach(([c1, c2]) => {
+            conflictos.add(c1.nrc);
+            conflictos.add(c2.nrc);
+        });
+
+        return { mensajesCruces: mensajes, nrcsConConflicto: conflictos };
+    }, [selectedNRCs, materias]);
 
     useEffect(() => {
         const selectedClaves = new Set(materias.filter(m => selectedNRCs.includes(m.nrc)).map(m => m.clave));
@@ -82,21 +97,18 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
 
     const uniqueSubjects = useMemo(() => {
         const subjectMap = new Map();
-        materias.forEach(materia => {
-            if (!subjectMap.has(materia.clave)) {
-                subjectMap.set(materia.clave, { clave: materia.clave, nombre: materia.materia });
-            }
+        materias.forEach(m => {
+            if (!subjectMap.has(m.clave)) subjectMap.set(m.clave, { clave: m.clave, nombre: m.materia });
         });
         return Array.from(subjectMap.values());
     }, [materias]);
 
     const filteredSubjects = useMemo(() => {
         if (!searchTerm) return [];
+        const term = searchTerm.toLowerCase();
         return uniqueSubjects.filter(
-            subject =>
-                subject.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                !selectedSubjects.some(ss => ss.clave === subject.clave)
-        );
+            s => s.nombre.toLowerCase().includes(term) && !selectedSubjects.some(ss => ss.clave === s.clave)
+        ).slice(0, 6);
     }, [searchTerm, uniqueSubjects, selectedSubjects]);
 
     const handleAddSubject = (subject) => {
@@ -115,24 +127,24 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
         const subjectNrcs = materias.filter(m => m.clave === subjectClave).map(m => m.nrc);
         const otherSelectedNrcs = selectedNRCs.filter(nrc => !subjectNrcs.includes(nrc));
         onSelectionChange([...otherSelectedNrcs, newNrc]);
-        setMateriaEnModal(null);
+        setMateriaEnModal(null); 
     };
-
-    const mensajesCruces = useMemo(() => {
-        const clasesSeleccionadas = materias.filter(m => selectedNRCs.includes(m.nrc));
-        const crucesDetectados = detectarCruces(clasesSeleccionadas);
-        return generarMensajeCruces(crucesDetectados);
-    }, [materias, selectedNRCs]);
 
     const subjectCardsData = useMemo(() => {
         return selectedSubjects.map(subject => {
             const nrcsForSubject = materias.filter(m => m.clave === subject.clave);
             const uniqueSections = [...new Set(nrcsForSubject.map(nrc => nrc.seccion))];
-            const currentSelectedNrc = nrcsForSubject.find(nrc => selectedNRCs.includes(nrc.nrc));
-            return { ...subject, sections: uniqueSections, selectedNrc: currentSelectedNrc };
-        });
-    }, [selectedSubjects, materias, selectedNRCs]);
+            const currentSelectedNrcObj = nrcsForSubject.find(nrc => selectedNRCs.includes(nrc.nrc));
+            const hasConflict = currentSelectedNrcObj && nrcsConConflicto.has(currentSelectedNrcObj.nrc);
 
+            return { 
+                ...subject, 
+                totalSections: uniqueSections.length, 
+                selectedNrc: currentSelectedNrcObj,
+                hasConflict
+            };
+        });
+    }, [selectedSubjects, materias, selectedNRCs, nrcsConConflicto]);
 
     return (
         <div className="seleccion-materias">
@@ -146,16 +158,22 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
                 />
             )}
 
-            <div className="step-container">
-                <h2>Paso 1: Elige tus materias</h2>
-                <p>Busca por nombre y añade las materias que quieres cursar.</p>
-                <div className="subject-search-container">
-                    <input type="text" className="search-input" placeholder="Buscar materia..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            <div className="search-section">
+                <div className="search-bar-wrapper">
+                    <span className="search-icon">🔍</span>
+                    <input 
+                        type="text" 
+                        className="search-input-compact" 
+                        placeholder="Buscar materia..." 
+                        value={searchTerm} 
+                        onChange={e => setSearchTerm(e.target.value)} 
+                    />
                     {filteredSubjects.length > 0 && (
-                        <div className="search-results">
+                        <div className="search-results-dropdown">
                             {filteredSubjects.map(subject => (
-                                <button key={subject.clave} className="result-item" onClick={() => handleAddSubject(subject)}>
-                                    {subject.nombre}
+                                <button key={subject.clave} className="search-result-row" onClick={() => handleAddSubject(subject)}>
+                                    <span className="result-name">{subject.nombre}</span>
+                                    <span className="result-clave">{subject.clave}</span>
                                 </button>
                             ))}
                         </div>
@@ -163,56 +181,54 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
                 </div>
             </div>
 
-            {subjectCardsData.length > 0 && (
-                <div className="step-container">
-                    <h2>Materias Seleccionadas</h2>
-                    <p>Haz clic en una materia para elegir o cambiar el grupo (NRC).</p>
-                    <div className="subject-card-grid">
-                        {subjectCardsData.map(subject => (
-                            <div key={subject.clave} className="subject-card" onClick={() => setMateriaEnModal(subject)}>
-                                <div className="subject-card-header">
-                                    <h3>{subject.nombre}</h3>
-                                    <button className="remove-tag-btn" onClick={(e) => { e.stopPropagation(); handleRemoveSubject(subject); }}>×</button>
-                                </div>
-                                <div className="subject-card-body">
-                                    <span className="clave-tag">Clave: {subject.clave}</span>
-                                    <div className="sections-container">
-                                        <span>Secciones:</span>
-                                        <div className="sections-list">
-                                            {subject.sections.map(sec => <span key={sec} className="section-tag">{sec}</span>)}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="subject-card-footer">
-                                    {subject.selectedNrc ? (
-                                        <span className="nrc-selected-tag">NRC: {subject.selectedNrc.nrc}</span>
-                                    ) : (
-                                        <span className="nrc-missing-tag">Selecciona un NRC</span>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+            {mensajesCruces.length > 0 && (
+                <div className="conflict-alert-banner">
+                    <h4>⚠️ Atención: Cruce de horarios detectado</h4>
+                    <ul>
+                        {mensajesCruces.map((msg, i) => <li key={i}>{msg}</li>)}
+                    </ul>
                 </div>
             )}
-            
-            {selectedNRCs.length > 1 && (
-                <div className="step-container">
-                     <h2>Paso 2: Verifica tu horario</h2>
-                     <div className="cruces-container">
-                        {mensajesCruces.length > 0 ? (
-                            <div className="alert alert-error">
-                                <h4>¡Atención! Se detectaron cruces de horario:</h4>
-                                <ul>
-                                    {mensajesCruces.map((mensaje, index) => <li key={index}>{mensaje}</li>)}
-                                </ul>
+
+            {subjectCardsData.length > 0 ? (
+                <div className="compact-grid">
+                    {subjectCardsData.map(subject => (
+                        <div 
+                            key={subject.clave} 
+                            className={`mini-card ${subject.hasConflict ? 'card-conflict' : ''} ${!subject.selectedNrc ? 'card-warning' : ''}`}
+                            onClick={() => setMateriaEnModal(subject)}
+                        >
+                            <div className="mini-card-header">
+                                <span className="mini-card-clave">{subject.clave}</span>
+                                <button 
+                                    className="mini-remove-btn" 
+                                    onClick={(e) => { e.stopPropagation(); handleRemoveSubject(subject); }}
+                                >&times;</button>
                             </div>
-                        ) : (
-                            <div className="alert alert-success">
-                                <p>¡Excelente! No se encontraron cruces de horario.</p>
+                            
+                            <div className="mini-card-body">
+                                <h4 className="mini-card-title">{subject.nombre}</h4>
+                                <div className="mini-card-meta">
+                                    {subject.selectedNrc ? (
+                                        <span className={`nrc-tag ${subject.hasConflict ? 'bg-red' : 'bg-blue'}`}>
+                                            NRC: {subject.selectedNrc.nrc}
+                                        </span>
+                                    ) : (
+                                        <span className="nrc-tag bg-yellow">Seleccionar NRC</span>
+                                    )}
+                                    <span className="sections-count">{subject.totalSections} opc.</span>
+                                </div>
                             </div>
-                        )}
-                    </div>
+                            
+                            {subject.hasConflict && (
+                                <div className="conflict-strip">Choque de Horario</div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="empty-state-compact">
+                    <p>No has agregado materias aún.</p>
                 </div>
             )}
         </div>

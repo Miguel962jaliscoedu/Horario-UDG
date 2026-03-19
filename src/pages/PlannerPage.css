@@ -132,19 +132,53 @@
 }
 
 .schedule-header {
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--bg-tertiary-color);
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.schedule-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.schedule-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* Botones pequeños para acciones de cabecera */
+.btn-small {
+    width: auto !important;
+    min-width: unset !important;
+    padding: 6px 14px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .schedule-name-tag {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     background-color: var(--bg-tertiary-color);
-    padding: 4px 8px;
-    border-radius: 6px;
-    color: var(--text-secondary-color);
+    padding: 3px 10px;
+    border-radius: 20px;
+    color: var(--text-color);
     border: 1px solid var(--border-color);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .unsaved-badge {

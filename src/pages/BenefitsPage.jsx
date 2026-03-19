@@ -17,6 +17,7 @@ export function BenefitsPage() {
             name: 'AutoCAD™ / Revit',
             area: 'CUCEI, CUAAD',
             type: 'Licencia Educativa',
+            description: 'Software líder en diseño CAD 2D y 3D para ingeniería y arquitectura.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
@@ -26,8 +27,12 @@ export function BenefitsPage() {
                         <p>1 año (renovable anualmente).</p>
                     </div>
                     <div className="detail-col">
-                        <h4>📁 Documentación</h4>
-                        <p className="note">Para soporte: soporte@cucei.udg.mx</p>
+                        <h4>📁 Guías y Soporte</h4>
+                        <div className="link-group">
+                            <a href="https://beneficios.diferente.page/guias/guia_instalar_autocad.pdf" target="_blank" rel="noreferrer" className="inline-link text-small">📄 Guía Instalación</a>
+                            <a href="https://beneficios.diferente.page/guias/guia_renovar_licencia_autocad.pdf" target="_blank" rel="noreferrer" className="inline-link text-small">🔄 Guía Renovación</a>
+                            <p className="note">Soporte: soporte@cucei.udg.mx</p>
+                        </div>
                     </div>
                 </div>
             )
@@ -37,15 +42,18 @@ export function BenefitsPage() {
             name: 'SolidWorks™',
             area: 'CUCEI',
             type: 'Licencia Institucional',
+            description: 'Software CAD profesional para modelado mecánico 3D.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
                         <h4>⚙️ Descripción</h4>
-                        <p>Software CAD 3D. Licencia para hasta 10,000 máquinas.</p>
+                        <p>Licencia para hasta 10,000 máquinas. Modelado mecánico 2D/3D.</p>
+                        <h4>💻 Requisitos</h4>
+                        <p>Windows 10/11 (64 bits), 2GB VRAM mín.</p>
                     </div>
                     <div className="detail-col">
                         <h4>📍 Activación</h4>
-                        <p className="warning-text">⚠️ Requiere activación presencial en la CTA (Módulos Alfa/Beta).</p>
+                        <p className="warning-text">⚠️ Debes asistir a la CTA (Ubicada entre ALFA y BETA) con tu equipo personal para la activación.</p>
                     </div>
                 </div>
             )
@@ -53,37 +61,41 @@ export function BenefitsPage() {
         {
             id: 'MATLAB',
             name: 'MATLAB',
-            area: 'CUCEI, CUCSH',
+            area: 'Pregrado y Posgrado',
             type: 'Portal MathWorks',
+            description: 'Computación numérica y análisis de datos avanzado.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
-                        <h4>📊 Incluye</h4>
-                        <p>Todos los toolboxes. Disponible para Pregrado y Posgrado.</p>
+                        <h4>📊 Beneficios</h4>
+                        <p>Instalación ilimitada y acceso a TODOS los toolboxes oficiales.</p>
                     </div>
                     <div className="detail-col">
                         <h4>📥 Acceso</h4>
                         <a href="https://la.mathworks.com/academia/tah-portal/universidad-de-guadalajara-31544721.html" target="_blank" rel="noreferrer" className="download-btn">
-                            🔗 Ir al Portal MathWorks
+                            🔗 Portal MathWorks UDG
                         </a>
                     </div>
                 </div>
             )
         },
         {
-            id: 'StatGraphics',
-            name: 'StatGraphics',
-            area: 'CUCEI, CUCEA',
-            type: 'Licencia Académica',
+            id: 'Unity',
+            name: 'Unity Pro',
+            area: 'Desarrollo de Software',
+            type: 'Plan Estudiante',
+            description: 'Motor líder para videojuegos y apps interactivas.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
-                        <h4>📈 Uso</h4>
-                        <p>Análisis estadístico avanzado y ciencia de datos.</p>
+                        <h4>🎨 Creatividad</h4>
+                        <p>Acceso a Unity Pro, herramientas de colaboración y assets educativos.</p>
                     </div>
                     <div className="detail-col">
-                        <h4>⚠️ Nota</h4>
-                        <p>Se recomienda instalar la versión de 32 bits.</p>
+                        <h4>🚀 Activación</h4>
+                        <a href="https://unity.com/es/products/unity-student" target="_blank" rel="noreferrer" className="download-btn">
+                            🔗 Registro Unity Student
+                        </a>
                     </div>
                 </div>
             )
@@ -93,14 +105,15 @@ export function BenefitsPage() {
             name: 'JetBrains Suite',
             area: 'Todas las carreras',
             type: 'Licencia Educativa',
+            description: 'Todos los IDEs de JetBrains: IntelliJ, PyCharm, WebStorm y más.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
-                        <h4>💻 Herramientas</h4>
-                        <p>IntelliJ IDEA, PyCharm, WebStorm, PHPStorm, etc.</p>
+                        <h4>💻 IDEs Incluidos</h4>
+                        <p>IntelliJ IDEA Ultimate, PyCharm, WebStorm, PhpStorm, CLion, DataGrip, Rider.</p>
                     </div>
                     <div className="detail-col">
-                        <h4>🎓 Validación</h4>
+                        <h4>🎓 Verificación</h4>
                         <a href="https://www.jetbrains.com/student/" target="_blank" rel="noreferrer" className="download-btn">
                             🔗 Solicitar con correo @alumnos
                         </a>
@@ -111,22 +124,80 @@ export function BenefitsPage() {
         {
             id: 'Tableau',
             name: 'Tableau Desktop',
-            area: 'CUCEA, CUCEI',
+            area: 'Análisis de Datos',
             type: 'Licencia Estudiante',
+            description: 'Visualización interactiva de datos y Business Intelligence.',
             details: (
                 <div className="details-inner">
                     <div className="detail-col">
-                        <h4>📊 Descripción</h4>
-                        <p>Líder mundial en visualización de datos y Business Intelligence.</p>
+                        <h4>📈 Características</h4>
+                        <p>Dashboards profesionales, búsqueda AI y conexión a múltiples bases de datos.</p>
                     </div>
                     <div className="detail-col">
-                        <h4>📥 Descarga</h4>
+                        <h4>📥 Solicitud</h4>
                         <a href="https://www.tableau.com/academic/students" target="_blank" rel="noreferrer" className="download-btn">
-                            🔗 Tableau for Students
+                            🔗 Tableau academic portal
                         </a>
                     </div>
                 </div>
             )
+        }
+    ];
+
+    const extraBenefits = [
+        {
+            id: 'figma',
+            title: 'Figma Professional',
+            desc: 'Herramienta líder en diseño UI/UX y prototipado.',
+            icon: '🎨',
+            color: '#F24E1E',
+            benefits: ['Proyectos ilimitados', 'Colaboración en tiempo real'],
+            link: 'https://www.figma.com/education/'
+        },
+        {
+            id: 'perplexity',
+            title: 'Perplexity Pro',
+            desc: 'Investigación AI avanzada con GPT-4 y Claude.',
+            icon: '🔍',
+            color: '#12B3B3',
+            benefits: ['1 Año Gratis (Valor $200 USD)', 'Búsqueda AI ilimitada'],
+            link: 'https://www.perplexity.ai/pro?referral_code=STUDENT2024'
+        },
+        {
+            id: 'cursor',
+            title: 'Cursor AI Editor',
+            desc: 'El editor de código del futuro potenciado por IA.',
+            icon: '💻',
+            color: '#00D1FF',
+            benefits: ['Asistente de código avanzado', 'Gratis con correo .edu'],
+            link: 'https://cursor.sh/pricing'
+        },
+        {
+            id: 'azure',
+            title: 'Microsoft Azure',
+            desc: 'Computación en la nube para tus proyectos.',
+            icon: '☁️',
+            color: '#0078D4',
+            benefits: ['$100 USD en créditos', 'Sin requerir tarjeta de crédito'],
+            link: 'https://azure.microsoft.com/es-mx/free/students/'
+        },
+        {
+            id: 'apple',
+            title: 'Apple Education',
+            desc: 'Precios especiales en Mac e iPad.',
+            icon: '🍎',
+            color: '#555555',
+            benefits: ['Descuentos de hasta $3,000 MXN', 'AirPods incluidos (Temp. Limitada)'],
+            link: 'https://www.apple.com/mx-edu/store'
+        },
+        {
+            id: 'github',
+            title: 'GitHub Student Pack',
+            desc: 'El pack definitivo para desarrolladores.',
+            icon: '🐙',
+            color: '#181717',
+            benefits: ['GitHub Pro Gratis', 'Valor de +$200k USD en tools'],
+            link: 'https://education.github.com/pack'
         }
     ];
 
@@ -224,17 +295,31 @@ export function BenefitsPage() {
                         <h3 className="text-center">Adobe Creative Cloud</h3>
                         <div className="price-box">
                             <span className="old-price">$949</span>
-                            <span className="new-price">$349 MXN/mes</span>
+                            <span className="new-price">$249 MXN/mes</span>
                         </div>
-                        <p className="text-center">Photoshop, Illustrator, Premiere Pro, After Effects.</p>
-                        <p className="expiry-text">Vence: 30 Septiembre 2025</p>
+                        <p className="text-center">Todo Creative Cloud (20+ apps). Precio especial 1er año.</p>
+                        <p className="expiry-text">Términos: Compromiso anual requerido.</p>
                         <a href="https://www.adobe.com/mx/creativecloud/buy/students.html" target="_blank" rel="noreferrer" className="action-btn urgent-btn">
                             Obtener Descuento
                         </a>
                     </div>
 
                     <div className="benefit-card special-offer">
-                        <div className="badge-corner blue">Vacaciones</div>
+                        <div className="badge-corner blue">Registro 2026</div>
+                        <div className="card-top center-logo">
+                            <span className="emoji-logo">🎮</span>
+                        </div>
+                        <h3 className="text-center">Unity Pro Studen</h3>
+                        <div className="price-box">
+                            <span className="new-price">GRATIS PARA TI</span>
+                        </div>
+                        <p className="text-center">Licencia Pro, assets premium y formación oficial incluida.</p>
+                        <p className="expiry-text">Vence: 31 Diciembre 2026</p>
+                        <a href="https://unity.com/es/products/unity-student" target="_blank" rel="noreferrer" className="action-btn secondary-btn-live">Activar Mi Plan</a>
+                    </div>
+
+                    <div className="benefit-card special-offer">
+                        <div className="badge-corner orange">Fines de Ciclo</div>
                         <div className="card-top center-logo">
                             <span className="emoji-logo">🚌</span>
                         </div>
@@ -296,7 +381,7 @@ export function BenefitsPage() {
                                         </tr>
                                         {expandedRow === sw.id && (
                                             <tr className="details-row-container">
-                                                <td colspan="4">
+                                                <td colSpan="4">
                                                     <div className="details-content animate-slide-down">
                                                         {sw.details}
                                                     </div>
@@ -307,7 +392,7 @@ export function BenefitsPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colspan="4" className="no-results">
+                                    <td colSpan="4" className="no-results">
                                         No se encontraron resultados para "{searchTerm}" 😢
                                     </td>
                                 </tr>
@@ -317,40 +402,70 @@ export function BenefitsPage() {
                 </div>
             </section>
 
-            {/* SECCIÓN 4: EXTRAS */}
+            {/* SECCIÓN 4: EXTRAS (REDISEÑADA) */}
             <section id="beneficios-adicionales" className="section-container">
                 <div className="section-header">
-                    <h2>🌟 Más Beneficios Estudiantiles</h2>
+                    <h2>🌟 Otros Beneficios de Clase Mundial</h2>
+                    <p>Potencia tus habilidades con estas herramientas líderes del sector.</p>
                 </div>
-                <div className="mini-cards-grid">
-                    <a href="https://education.github.com/pack" target="_blank" rel="noreferrer" className="mini-card">
-                        <img src="https://cdn.simpleicons.org/github/181717" alt="GitHub" className="mini-brand-logo dark-invert" />
-                        <div>
-                            <h4>GitHub Pack</h4>
-                            <small>Pro + Copilot Gratis</small>
-                        </div>
+                
+                <div className="premium-extras-grid">
+                    {extraBenefits.map(benefit => (
+                        <a 
+                            key={benefit.id} 
+                            href={benefit.link} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="premium-benefit-card"
+                            style={{ '--accent-color': benefit.color }}
+                        >
+                            <div className="p-card-header">
+                                <span className="p-card-icon">{benefit.icon}</span>
+                                <h4>{benefit.title}</h4>
+                            </div>
+                            <p>{benefit.desc}</p>
+                            <ul className="p-benefit-list">
+                                {benefit.benefits.map((b, i) => <li key={i}>{b}</li>)}
+                            </ul>
+                            <div className="p-card-footer">
+                                <span>Ver beneficio</span>
+                                <span className="arrow">↗</span>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+                
+                {/* BANNER SPOTIFY/AMAZON COMPACTO */}
+                <div className="compact-benefits-row">
+                    <a href="https://www.spotify.com/mx/student/" target="_blank" rel="noreferrer" className="compact-benefit-item spotify">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify" />
+                        <span>Spotify Premium Student - <strong>50% OFF</strong></span>
                     </a>
-                    <a href="https://www.spotify.com/mx/student/" target="_blank" rel="noreferrer" className="mini-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify" className="mini-brand-logo" />
-                        <div>
-                            <h4>Spotify</h4>
-                            <small>50% Descuento</small>
-                        </div>
+                    <a href="https://www.amazon.com.mx/amazonprime" target="_blank" rel="noreferrer" className="compact-benefit-item amazon">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Amazon_icon.png" alt="Amazon" />
+                        <span>Amazon Prime - <strong>3 Meses Gratis</strong></span>
                     </a>
-                    <a href="https://www.notion.so/product/notion-for-education" target="_blank" rel="noreferrer" className="mini-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion" className="mini-brand-logo" />
-                        <div>
-                            <h4>Notion Plus</h4>
-                            <small>Gratis Ilimitado</small>
-                        </div>
-                    </a>
-                    <a href="https://www.amazon.com.mx/amazonprime" target="_blank" rel="noreferrer" className="mini-card">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Amazon_icon.png" alt="Amazon" className="mini-brand-logo" />
-                        <div>
-                            <h4>Amazon Prime</h4>
-                            <small>3 Meses Gratis</small>
-                        </div>
-                    </a>
+                </div>
+            </section>
+
+            {/* SECCIÓN 5: PREGUNTAS FRECUENTES */}
+            <section className="section-container faq-section">
+                <div className="section-header">
+                    <h2>❓ Dudas Frecuentes</h2>
+                </div>
+                <div className="faq-grid">
+                    <div className="faq-item">
+                        <h4>¿Cómo obtengo mi correo institucional?</h4>
+                        <p>Puedes solicitarlo o recuperarlo en el portal del SIIAU o contactando a la CTA de tu centro universitario.</p>
+                    </div>
+                    <div className="faq-item">
+                        <h4>¿Cuánto duran estas licencias?</h4>
+                        <p>La mayoría son anuales renovables. Se requiere verificar tu estatus de alumno activo cada año.</p>
+                    </div>
+                    <div className="faq-item">
+                        <h4>¿Tengo soporte técnico?</h4>
+                        <p>La UDG ofrece soporte base, pero para problemas específicos de software se recomienda contactar al proveedor (Autodesk, MathWorks, etc.).</p>
+                    </div>
                 </div>
             </section>
 
@@ -360,12 +475,13 @@ export function BenefitsPage() {
                     <div className="credits-info">
                         <h3>ℹ️ Información del Proyecto</h3>
                         <p>
-                            Esta sección es una adaptación integrada del proyecto comunitario original 
+                            Esta sección es una guía centralizada basada en el proyecto comunitario 
                             <strong> "Software UDG"</strong>.
                         </p>
-                        <p className="update-badge">
-                            📅 Actualizado: Septiembre 2025
-                        </p>
+                        <div className="update-status">
+                            <span className="dot"></span> 
+                            📅 Actualizado: Marzo 2026
+                        </div>
                     </div>
                     <div className="credits-action">
                         <a href="https://beneficios.diferente.page/" target="_blank" rel="noreferrer" className="original-link-btn">

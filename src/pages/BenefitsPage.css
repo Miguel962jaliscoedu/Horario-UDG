@@ -242,10 +242,23 @@
    4. SECCIÓN TIEMPO LIMITADO
    ========================================= */
 .highlight-section {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0));
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), rgba(255, 255, 255, 0.02));
     padding: 3rem 2rem;
-    border-radius: 24px;
-    border: 1px dashed rgba(255, 215, 0, 0.6);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 [data-theme='dark'] .highlight-section {
@@ -327,6 +340,26 @@
 .urgent-btn {
     background: #ef4444;
     animation: pulse 2s infinite;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.urgent-btn:hover {
+    background: #dc2626;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.5);
+}
+
+.secondary-btn-live {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.secondary-btn-live:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
 }
 
 .secondary-btn {
@@ -479,17 +512,23 @@
 .detail-col {
     flex: 1;
     min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .detail-col h4 {
-    margin: 0 0 0.8rem 0;
+    margin: 0 0 1rem 0;
     color: var(--primary-color);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-bottom: 2px solid rgba(0,0,0,0.05);
-    padding-bottom: 5px;
-    display: inline-block;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
 }
 
 .detail-col p {
@@ -534,224 +573,293 @@
 }
 
 /* =========================================
-   6. EXTRAS & CRÉDITOS
+   6. PREMIUM EXTRAS GRID (GLASSMORPHISM)
    ========================================= */
-.mini-cards-grid {
+.premium-extras-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
 }
 
-.mini-card {
+.premium-benefit-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 2rem;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.dark-theme .premium-benefit-card {
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .premium-benefit-card:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6), 0 0 10px var(--accent-color);
+    background: var(--bg-tertiary-color);
+}
+
+.premium-benefit-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--accent-color, var(--primary-color));
+    opacity: 0.6;
+    transition: height 0.3s ease;
+}
+
+.premium-benefit-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--accent-color);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+}
+
+.premium-benefit-card:hover::before {
+    height: 6px;
+    opacity: 1;
+}
+
+.p-card-header {
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.p-card-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.p-card-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 8px rgba(0,0,0,0.1));
+}
+
+.premium-benefit-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary-color);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.p-benefit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.p-benefit-list li {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.8;
+}
+
+.p-benefit-list li::before {
+    content: '✦';
+    color: var(--accent-color);
+    font-size: 1rem;
+}
+
+.p-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(128, 128, 128, 0.1);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.p-card-footer .arrow {
+    transition: transform 0.3s ease;
+}
+
+.premium-benefit-card:hover .arrow {
+    transform: translate(4px, -4px);
+}
+
+/* Row de beneficios compactos */
+.compact-benefits-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.compact-benefit-item {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
     background: var(--bg-secondary-color);
-    padding: 1.2rem;
-    border-radius: 16px;
+    padding: 1.2rem 1.8rem;
+    border-radius: 18px;
     text-decoration: none;
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
 }
 
-.mini-card:hover {
-    border-color: #FFD700;
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+.compact-benefit-item img {
+    height: 32px;
+    width: auto;
 }
 
-.mini-brand-logo {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
+.compact-benefit-item:hover {
+    transform: scale(1.03);
+    border-color: var(--primary-color);
 }
 
-[data-theme='dark'] .mini-brand-logo.dark-invert {
-    filter: invert(1) brightness(2);
+.compact-benefit-item.spotify:hover { border-color: #1DB954; }
+.compact-benefit-item.amazon:hover { border-color: #FF9900; }
+
+/* FAQ Section */
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
-.mini-card h4 {
+.faq-item {
+    background: var(--bg-secondary-color);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.faq-item h4 {
+    margin: 0 0 1rem 0;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.faq-item p {
     margin: 0;
-    font-size: 1.05rem;
-    font-weight: 700;
-}
-
-.mini-card small {
+    font-size: 0.95rem;
+    line-height: 1.6;
     color: var(--text-secondary-color);
-    font-size: 0.85rem;
 }
 
+/* Animación de entrada escalonada (ejemplo manual) */
+.premium-benefit-card:nth-child(1) { animation-delay: 0.1s; }
+.premium-benefit-card:nth-child(2) { animation-delay: 0.2s; }
+.premium-benefit-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Credits update */
+.update-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    margin-top: 1rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #10b981;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* Responsividad extra */
+@media (max-width: 600px) {
+    .premium-extras-grid {
+        grid-template-columns: 1fr;
+    }
+    .compact-benefit-item {
+        width: 100%;
+    }
+    .credits-card {
+        flex-direction: column;
+        gap: 1.5rem;
+        text-align: center;
+    }
+}
+
+/* 7. SECCIÓN DE CRÉDITOS (Restaurada) */
 .credits-container {
-    margin-top: 6rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
     border-top: 1px solid var(--border-color);
-    padding-top: 3rem;
 }
 
 .credits-card {
     background: var(--bg-secondary-color);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 .credits-info h3 {
-    margin: 0 0 0.8rem 0;
-    font-size: 1.3rem;
+    margin: 0 0 0.5rem 0;
     color: var(--text-color);
 }
 
 .credits-info p {
+    margin: 0;
     color: var(--text-secondary-color);
-    margin: 0.5rem 0;
-    font-size: 1rem;
-    line-height: 1.5;
-}
-
-.update-badge {
-    display: inline-block;
-    background: var(--bg-tertiary-color);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: 600;
-    margin-top: 1rem;
-    font-size: 0.85rem !important;
-    border: 1px solid var(--border-color);
-    color: var(--primary-color) !important;
 }
 
 .original-link-btn {
-    background: transparent;
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    padding: 12px 24px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.2s;
-    white-space: nowrap;
     display: inline-block;
+    padding: 12px 24px;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .original-link-btn:hover {
-    background: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    filter: brightness(1.1);
 }
 
 .legal-text {
     text-align: center;
-    color: var(--text-secondary-color);
+    margin-top: 2rem;
     font-size: 0.8rem;
-    margin-top: 2.5rem;
-    opacity: 0.6;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* --- ANIMACIONES --- */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-.animate-fade-in { animation: fadeInUp 0.6s ease-out forwards; }
-.animate-slide-down { animation: slideDown 0.3s ease-out forwards; }
-
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-    .benefits-hero {
-        padding: 3rem 1rem;
-    }
-    .benefits-hero h1 {
-        font-size: 2.2rem;
-    }
-    .limit-banner {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-    }
-    .credits-card {
-        flex-direction: column;
-        text-align: center;
-        align-items: stretch;
-    }
-    .original-link-btn {
-        width: 100%;
-        text-align: center;
-        box-sizing: border-box;
-    }
-
-    /* Tabla Móvil */
-    .software-table, .software-table tbody, .software-table tr, .software-table td {
-        display: block;
-        width: 100%;
-    }
-    .software-table thead {
-        display: none; 
-    }
-    .main-row {
-        margin-bottom: 1rem;
-        border-radius: 16px;
-        border: 1px solid var(--border-color);
-        padding: 1.2rem;
-        position: relative;
-    }
-    .main-row td {
-        padding: 8px 0;
-        border: none !important;
-        border-radius: 0 !important;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.95rem;
-    }
-    .main-row td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        font-size: 0.8rem;
-        color: var(--text-secondary-color);
-        margin-right: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .main-row td:last-child {
-        margin-top: 15px;
-        justify-content: center;
-        width: 100%;
-    }
-    .expand-toggle {
-        width: 100%;
-        padding: 10px;
-        background: rgba(59, 130, 246, 0.1);
-        border-radius: 8px;
-        color: var(--primary-color);
-    }
-    .details-row-container td {
-        padding: 0;
-    }
-    .details-content {
-        margin: -10px 0 1rem 0;
-        border-top: none;
-        border-radius: 0 0 16px 16px;
-        padding: 1.5rem;
-    }
+    color: var(--text-secondary-color);
+    opacity: 0.7;
+    line-height: 1.5;
 }

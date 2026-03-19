@@ -47,8 +47,8 @@ Para desplegar y desarrollar el proyecto en un entorno local, siga los siguiente
 
 ```bash
 # 1. Clonar el repositorio
-git clone [https://github.com/](https://github.com/)[SU-USUARIO]/Horario-UDG.git
-cd Horario-UDG-69c9e5799217cdbd00d87c0a06a2648c1a254093
+git clone https://github.com/Miguel962jaliscoedu/Horario-UDG.git.git
+cd Horario-UDG
 
 # 2. Instalar dependencias
 # (El proyecto utiliza npm según el package-lock.json)

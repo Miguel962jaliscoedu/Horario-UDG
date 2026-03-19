@@ -45,7 +45,8 @@ export function MySchedulesPage() {
             calendarioLabel: schedule.calendarioLabel || '',
             consultaRealizada: true,
             currentScheduleId: schedule.id,
-            currentScheduleName: schedule.name
+            currentScheduleName: schedule.name,
+            isViewMode: true
         };
         saveStateToSession(stateToLoad);
         navigate('/planear');

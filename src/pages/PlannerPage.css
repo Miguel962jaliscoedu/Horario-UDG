@@ -1,64 +1,51 @@
 /* src/pages/PlannerPage.css */
 
 /* =========================================================
-   LAYOUT DEL PLANIFICADOR (Aislado de App.css)
+   LAYOUT DEL PLANIFICADOR
    ========================================================= */
 
 .planner-layout {
     display: grid;
-    /* MÓVIL (Por defecto): Una sola columna vertical */
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
     gap: 1.5rem;
-    
     width: 100%;
-    max-width: 1600px; /* Permitimos más ancho para monitores grandes */
+    max-width: 1600px;
     margin: 0 auto;
     padding: 1rem;
     box-sizing: border-box;
     align-items: start;
 }
 
-/* ESCRITORIO (Pantallas > 1024px) */
 @media (min-width: 1024px) {
     .planner-layout {
-        /* SOLUCIÓN DE COLUMNAS:
-           - 320px: Ancho fijo para el Sidebar.
-           - minmax(0, 1fr): El resto para el contenido. 
-             El '0' es vital para evitar desbordamientos si la tabla es muy ancha.
-        */
         grid-template-columns: 320px minmax(0, 1fr);
         padding: 2rem;
         gap: 2rem;
     }
 
-    /* Sidebar pegajoso */
     .sticky-card {
         position: sticky;
-        top: 90px; /* Ajuste para navbar */
+        top: 90px;
         max-height: calc(100vh - 100px);
         overflow-y: auto;
         z-index: 10;
     }
 }
 
-/* Ajustes para asegurar que los hijos ocupen su celda correctamente */
-.layout-sidebar {
+.layout-sidebar, .layout-content {
     width: 100%;
-}
-
-.layout-content {
-    width: 100%;
-    min-width: 0; /* Permite encogerse dentro del grid */
+    min-width: 0;
 }
 
 /* =========================================================
-   ESTILOS GENERALES Y PANELES
+   ESTILOS GENERALES
    ========================================================= */
 
 .panel-title {
     margin: 0 0 1rem 0;
     font-size: 1.25rem;
     color: var(--text-color);
+    font-weight: 700;
 }
 
 .panel-header {
@@ -78,13 +65,6 @@
     font-size: 0.8rem;
     font-weight: 600;
     border: 1px solid var(--border-color);
-}
-
-.content-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: 100%;
 }
 
 /* =========================================================
@@ -109,18 +89,11 @@
     border: 2px dashed var(--border-color);
     border-radius: 16px;
     background-color: var(--bg-secondary-color);
-    /* Centrado total */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 300px;
-}
-
-.empty-state-icon {
-    opacity: 0.3;
-    margin-bottom: 1rem;
-    color: var(--text-color);
 }
 
 .empty-title {
@@ -130,15 +103,10 @@
     color: var(--text-color);
 }
 
-.empty-subtitle {
-    font-size: 1rem;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
 /* =========================================================
-   BOTÓN NUEVA CONSULTA (Sidebar)
+   BOTONES Y ACCIONES
    ========================================================= */
+
 .btn-new-query {
     margin-top: 1.5rem;
     width: 100%;
@@ -158,24 +126,15 @@
 }
 
 .btn-new-query:hover {
-    background-color: rgba(220, 38, 38, 0.05); /* Rojo muy suave */
-    color: #dc2626; /* Rojo */
+    background-color: rgba(220, 38, 38, 0.05);
+    color: #dc2626;
     border-color: #fca5a5;
 }
 
-/* =========================================================
-   HEADER DEL HORARIO
-   ========================================================= */
 .schedule-header {
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1rem;
     margin-bottom: 1rem;
-}
-
-.schedule-title-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
 }
 
 .schedule-name-tag {
@@ -188,24 +147,10 @@
     font-weight: 600;
 }
 
-.schedule-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-small {
-    padding: 6px 12px;
-    font-size: 0.85rem;
-    height: auto;
-    width: auto;
-}
-
-/* Badge de "Cambios sin guardar" */
 .unsaved-badge {
     color: #ef4444;
     font-size: 0.8rem;
     animation: pulse 2s infinite;
-    cursor: help;
 }
 
 @keyframes pulse {
@@ -215,67 +160,201 @@
 }
 
 /* =========================================================
-   MODAL ESPECÍFICO (Reinicio / Bloqueo)
+   ESTILOS BASE DEL MODAL (RESTAURADOS)
    ========================================================= */
-.modal-reset {
-    max-width: 450px;
-    text-align: center;
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary-color);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    padding: 24px;
+    width: 100%;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 
 .modal-title {
-    margin-top: 0;
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+    font-size: 1.15rem; /* Ajustado: un poco más pequeño */
+    font-weight: 800;
+}
+
+/* =========================================================
+   RESOLUCIÓN DE CONFLICTOS (OPTIMIZADO)
+   ========================================================= */
+
+.modal-conflict-resolution {
+    width: 90%; /* Adaptación dinámica */
+    max-width: 1150px; /* Balanceado para PC */
+}
+
+.conflicts-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 1rem 0;
+    padding-right: 10px;
+}
+
+/* Tarjeta de conflicto revisada */
+.conflict-item {
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 18px; /* Reducido para evitar que se sienta "grande" */
+    margin-bottom: 20px;
+}
+
+.conflict-nrc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--bg-tertiary-color);
+    padding-bottom: 10px;
+}
+
+.conflict-nrc-header strong {
+    font-size: 1rem; /* Más compacto */
     color: var(--text-color);
 }
 
-.modal-warning-text {
-    color: #dc2626; /* Rojo */
-    margin-bottom: 1rem;
-    background: rgba(254, 226, 226, 0.5); /* Rojo claro transparente */
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #fecaca;
+/* El grid de comparación */
+.conflict-comparison {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px; /* Reducido */
 }
 
-.modal-actions {
+.comparison-side {
+    min-width: 0;
+}
+
+.side-label {
+    font-size: 0.65rem; /* Más pequeño y fino */
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--text-secondary-color);
+    margin-bottom: 4px;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+.side-info {
+    background: var(--bg-tertiary-color);
+    border-radius: 12px;
+    padding: 16px; /* Ajustado */
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     gap: 10px;
-    margin-top: 1.5rem;
+    border: 1px solid var(--border-color);
 }
 
+/* RESALTADO DE CAMBIOS (Restaurado y Refinado) */
+.highlight-delta {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    border-radius: 8px;
+    padding: 8px 12px !important;
+    position: relative;
+    margin: -2px -4px;
+}
+
+.highlight-delta::before {
+    content: 'CAMBIO';
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    background: #f59e0b;
+    color: white;
+    font-size: 0.55rem;
+    font-weight: 900;
+    padding: 1px 4px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem; /* Reducido sustancialmente */
+    font-weight: 600;
+}
+
+/* Sesiones detalladas */
+.info-sessions-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.session-detail-card {
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.sd-time { font-size: 0.8rem; font-weight: 800; }
+.sd-location { font-size: 0.7rem; color: var(--text-secondary-color); font-weight: 600; }
+
+.comparison-arrow {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    opacity: 0.4;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .conflict-comparison {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .comparison-arrow {
+        transform: rotate(90deg);
+        justify-self: center;
+    }
+}
+
+/* Delta Tags (Esquina superior derecha) */
+.delta-tags { display: flex; gap: 6px; margin-left: auto; }
+.delta-tag { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
+.tag-profesor { background: #e0f2fe; color: #0369a1; }
+.tag-cupos { background: #fef3c7; color: #92400e; }
+.tag-horario { background: #dcfce7; color: #166534; }
+
+/* Animaciones */
+@keyframes scaleUp {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-up { animation: scaleUp 0.25s ease-out forwards; }
+
+/* Botones de acción modal */
 .modal-actions.vertical {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: 10px;
-}
-
-.modal-actions.vertical button {
-    width: 100%;
-}
-
-/* Botones específicos del modal */
-.btn-danger-solid {
-    background-color: #dc2626;
-    border-color: #dc2626;
-    color: white;
-}
-.btn-danger-solid:hover {
-    background-color: #b91c1c;
-}
-
-.secondary-button {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary-color);
-    border-radius: 8px;
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.secondary-button:hover {
-    background-color: var(--bg-tertiary-color);
-    color: var(--text-color);
+    margin-top: 20px;
 }

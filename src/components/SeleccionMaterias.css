@@ -61,27 +61,32 @@
   background: var(--sm-bg-input);
   border: 1px solid var(--sm-border);
   border-radius: 12px;
-  padding: 0 16px;
+  /* padding: 0 16px; */ /* Eliminado para usar posicionamiento absoluto del icono */
   box-shadow: 0 2px 4px var(--sm-shadow);
   transition: all 0.2s ease;
 }
 
 .search-bar-wrapper:focus-within {
   border-color: #3b82f6; /* Blue 500 */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--sm-text-secondary);
-  margin-right: 12px;
   font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 5;
 }
 
 .search-input-compact {
   border: none;
   outline: none;
   width: 100%;
-  padding: 14px 0;
+  padding: 14px 14px 14px 44px; /* Espacio para el icono a la izquierda */
   font-size: 1rem;
   background: transparent;
   color: var(--sm-text-primary);

@@ -1,0 +1,39 @@
+/* src/pages/TermsPage.css */
+/* Extiende PrivacyPage.css */
+
+.important-box,
+.disclaimer-box {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 1rem 0;
+}
+
+.important-box {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.disclaimer-box {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.25);
+}
+
+.important-box p,
+.disclaimer-box p {
+    margin-bottom: 0.75rem;
+}
+
+.important-box p:last-child,
+.disclaimer-box p:last-child {
+    margin-bottom: 0;
+}
+
+.important-box p strong {
+    color: #3b82f6;
+}
+
+.disclaimer-box p strong {
+    color: #ef4444;
+}

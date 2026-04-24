@@ -1,0 +1,225 @@
+.my-ratings-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.my-ratings-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.my-ratings-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.my-ratings-header p {
+    color: var(--text-secondary-color);
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem;
+    gap: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--bg-secondary-color);
+    border-radius: 20px;
+    border: 1px dashed var(--border-color);
+}
+
+.empty-state .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: var(--text-secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+.primary-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
+
+.ratings-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-tertiary-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.summary-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.summary-label {
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+}
+
+.ratings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.rating-card {
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.25rem;
+}
+
+.rating-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.professor-info h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.25rem 0;
+}
+
+.rating-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+}
+
+.edit-rating-btn {
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.edit-rating-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.rating-details {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.rating-stars {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stars-text {
+    color: #fbbf24;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.stars-number {
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    font-weight: 600;
+}
+
+.rating-difficulty {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.difficulty-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+}
+
+.difficulty-value {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.rating-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.rating-tags .tag-badge {
+    padding: 0.25rem 0.6rem;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.rating-comment {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.rating-comment p {
+    font-style: italic;
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .my-ratings-page {
+        padding: 1rem;
+    }
+    
+    .rating-card-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .rating-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .edit-rating-btn {
+        width: 100%;
+    }
+}

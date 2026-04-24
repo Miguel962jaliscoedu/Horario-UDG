@@ -13,6 +13,8 @@ import { PlannerPage } from './pages/PlannerPage.jsx';
 import { DashboardPage } from './pages/DashboardPage.jsx';
 import { MySchedulesPage } from './pages/MySchedulesPage.jsx';
 import { BenefitsPage } from './pages/BenefitsPage.jsx';
+import { TeachersPage } from './pages/TeachersPage.jsx';
+import { MyRatingsPage } from './pages/MyRatingsPage.jsx';
 
 import './index.css';
 
@@ -43,6 +45,14 @@ const router = createBrowserRouter([
       {
         path: "beneficios",
         element: <BenefitsPage />,
+      },
+      {
+        path: "profesores",
+        element: <TeachersPage />,
+      },
+      {
+        path: "mis-evaluaciones",
+        element: <MyRatingsPage />,
       },
       {
         path: "*",

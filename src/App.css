@@ -26,6 +26,17 @@ body.light-theme {
   
   --primary-color: #3b82f6;     /* Azul vibrante */
   --primary-color-hover: #2563eb;
+  --primary-color-rgb: 59, 130, 246; /* RGB del primary-color */
+  --secondary-color: #60a5fa;   /* Azul más claro para gradientes */
+  
+  /* Colores de estado */
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  
+  /* Colores de estrellas */
+  --star-inactive-color: #cbd5e1;
+  --star-active-color: #f59e0b;
   
   /* Sombras más sofisticadas */
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 
@@ -55,6 +66,17 @@ body.dark-theme {
   
   --primary-color: #60a5fa;      /* Azul más claro para contraste */
   --primary-color-hover: #3b82f6;
+  --primary-color-rgb: 96, 165, 250; /* RGB del primary-color */
+  --secondary-color: #3b82f6;   /* Azul más oscuro para gradientes */
+  
+  /* Colores de estado */
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  
+  /* Colores de estrellas */
+  --star-inactive-color: #94a3b8;
+  --star-active-color: #f59e0b;
   
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4);

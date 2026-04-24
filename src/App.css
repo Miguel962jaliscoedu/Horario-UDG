@@ -1,5 +1,23 @@
 /* src/App.css */
 
+/* App Root */
+.app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.app-main {
+    flex: 1;
+    padding-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+    .app-main {
+        padding-bottom: 70px;
+    }
+}
+
 /* ---------------------------------- */
 /* 1. DEFINICIÓN DE TEMAS Y VARIABLES */
 /* ---------------------------------- */

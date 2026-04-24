@@ -15,6 +15,8 @@ import { MySchedulesPage } from './pages/MySchedulesPage.jsx';
 import { BenefitsPage } from './pages/BenefitsPage.jsx';
 import { TeachersPage } from './pages/TeachersPage.jsx';
 import { MyRatingsPage } from './pages/MyRatingsPage.jsx';
+import { PrivacyPage } from './pages/PrivacyPage.jsx';
+import { TermsPage } from './pages/TermsPage.jsx';
 
 import './index.css';
 
@@ -53,6 +55,14 @@ const router = createBrowserRouter([
       {
         path: "mis-evaluaciones",
         element: <MyRatingsPage />,
+      },
+      {
+        path: "privacidad",
+        element: <PrivacyPage />,
+      },
+      {
+        path: "terminos",
+        element: <TermsPage />,
       },
       {
         path: "*",

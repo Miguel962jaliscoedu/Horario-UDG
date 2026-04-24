@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom'; // <--- Outlet reemplaza a Routes
-import { AuthProvider } from './context/AuthContext.jsx'; // <--- Lo movemos aquí adentro
+import { Outlet, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext.jsx';
 import { Footer } from './components/Footer.jsx';
 import Navbar from './components/Navbar.jsx';
 import './App.css';
@@ -10,6 +10,11 @@ function App() {
     const [theme, setTheme] = useState(() => {
         return localStorage.getItem('app-theme') || 'light';
     });
+    const location = useLocation();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [location.pathname]);
 
     useEffect(() => {
         document.body.classList.remove('light-theme', 'dark-theme');
@@ -29,10 +34,7 @@ function App() {
             <div className="app-root">
                 <Navbar theme={theme} toggleTheme={toggleTheme} />
                 
-                <main>
-                    {/* Outlet renderiza la página hija correspondiente (PlannerPage, HomePage, etc.).
-                       Usamos 'context' para pasar el tema a los hijos.
-                    */}
+                <main className="app-main">
                     <Outlet context={{ theme }} />
                 </main>
                 

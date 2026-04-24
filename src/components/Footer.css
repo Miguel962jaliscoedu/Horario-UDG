@@ -1,37 +1,34 @@
 /* src/components/Footer.css */
 
 .app-footer {
-  margin-top: auto; /* Empuja el footer al final si hay poco contenido */
+  margin-top: auto;
   background-color: var(--bg-secondary-color);
   border-top: 1px solid var(--border-color);
-  padding: 2rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   width: 100%;
 }
 
 .footer-container {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   text-align: center;
 }
 
-/* En pantallas grandes, ponemos el contenido lado a lado */
 @media (min-width: 768px) {
   .footer-container {
-    flex-direction: row;
-    justify-content: space-between;
+    grid-template-columns: 1.5fr 1fr 1fr;
     text-align: left;
-    align-items: flex-start;
+    gap: 3rem;
   }
 }
 
-/* Sección de la Izquierda (Info del proyecto) */
-.footer-info h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+/* Footer About Section */
+.footer-about h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-color);
   display: flex;
@@ -39,29 +36,108 @@
   gap: 0.5rem;
   justify-content: center;
 }
-@media (min-width: 768px) { .footer-info h3 { justify-content: flex-start; } }
 
-.footer-info p {
+@media (min-width: 768px) {
+  .footer-about h3 {
+    justify-content: flex-start;
+  }
+}
+
+.footer-about p {
   margin: 0;
   font-size: 0.85rem;
   color: var(--text-secondary-color);
-  line-height: 1.5;
-  max-width: 400px;
+  line-height: 1.6;
 }
 
-/* Sección de la Derecha (Créditos y Enlaces) */
+.footer-disclaimer {
+  margin-top: 0.75rem !important;
+  font-size: 0.75rem !important;
+  opacity: 0.8;
+}
+
+/* Sitemap Section */
+.footer-sitemap h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sitemap-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .sitemap-nav {
+    text-align: left;
+  }
+}
+
+.sitemap-nav a {
+  color: var(--text-secondary-color);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s;
+}
+
+.sitemap-nav a:hover {
+  color: var(--primary-color);
+}
+
+/* Footer Bottom Section */
+.footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .footer-legal {
+    justify-content: flex-start;
+  }
+}
+
+.footer-legal a {
+  color: var(--text-secondary-color);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+}
+
+.footer-legal a:hover {
+  color: var(--primary-color);
+}
+
+/* Credits */
 .footer-credits {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   align-items: center;
 }
-@media (min-width: 768px) { .footer-credits { align-items: flex-end; } }
+
+@media (min-width: 768px) {
+  .footer-credits {
+    align-items: flex-start;
+  }
+}
 
 .developer-tag {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--text-color);
-  font-weight: 500;
 }
 
 .developer-tag a {
@@ -69,38 +145,26 @@
   text-decoration: none;
   font-weight: 700;
   position: relative;
-  transition: color 0.2s;
 }
 
 .developer-tag a:hover {
   color: var(--primary-color-hover);
 }
 
-/* Efecto de subrayado animado en el link */
-.developer-tag a::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  bottom: -2px;
-  left: 0;
-  background-color: var(--primary-color);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.3s ease;
-}
-
-.developer-tag a:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
 .tech-stack {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-secondary-color);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .tech-stack {
+    justify-content: flex-start;
+  }
 }
 
 .heart-icon {

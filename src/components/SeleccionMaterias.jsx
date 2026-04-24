@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { detectarCruces, generarMensajeCruces } from '../services/scheduleUtils';
+import ProfessorRating from './ProfessorRating';
 import './SeleccionMaterias.css';
 
 const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange, onClose }) => {
@@ -48,7 +49,12 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
                                             {grupo.disponibles} lug.
                                         </span>
                                     </div>
-                                    <div className="nrc-profesor">{grupo.profesor || 'Sin profesor asignado'}</div>
+                                    <div className="nrc-profesor">
+                                        {grupo.profesor || 'Sin profesor asignado'}
+                                        {grupo.profesor && !grupo.profesor.includes("---") && (
+                                            <ProfessorRating professorName={grupo.profesor} />
+                                        )}
+                                    </div>
                                     <div className="nrc-sesiones-compact">
                                         {grupo.sesiones.map((sesion, idx) => (
                                             <div key={idx} className="sesion-row">

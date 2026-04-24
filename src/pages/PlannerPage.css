@@ -1,12 +1,65 @@
 /* src/pages/PlannerPage.css */
 
 /* =========================================================
+   HEADER BAR
+   ========================================================= */
+
+.planner-header-bar {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(var(--primary-color-rgb), 0.05) 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.planner-page-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.my-schedules-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.my-schedules-btn:hover {
+    background: var(--text-color);
+    transform: translateX(2px);
+}
+
+@media (max-width: 600px) {
+    .planner-header-bar {
+        flex-direction: column;
+        gap: 0.75rem;
+        padding: 1rem;
+        text-align: center;
+    }
+    
+    .my-schedules-btn {
+        width: 100%;
+    }
+}
+
+/* =========================================================
    LAYOUT DEL PLANIFICADOR
    ========================================================= */
 
 .planner-layout {
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
     gap: 1.5rem;
     width: 100%;
     max-width: 1600px;
@@ -26,8 +79,6 @@
     .sticky-card {
         position: sticky;
         top: 90px;
-        max-height: calc(100vh - 100px);
-        overflow-y: auto;
         z-index: 10;
     }
 }
@@ -100,6 +151,27 @@
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+}
+
+.login-prompt {
+    margin-top: 1rem;
+    color: var(--text-secondary-color);
+    font-size: 0.95rem;
+}
+
+.login-link-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.login-link-btn:hover {
     color: var(--text-color);
 }
 
@@ -368,6 +440,16 @@
     .comparison-arrow {
         transform: rotate(90deg);
         justify-self: center;
+    }
+    
+    .layout-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 600px) {
+    .layout-sidebar {
+        width: 100%;
     }
 }
 

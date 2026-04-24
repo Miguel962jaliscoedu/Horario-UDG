@@ -1,6 +1,7 @@
 // src/pages/PlannerPage.jsx
 import React from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 
 // Hooks
 import { usePlanner } from '../hooks/usePlanner';
@@ -13,6 +14,7 @@ import { GenerarHorario } from '../components/GenerarHorario.jsx';
 import './PlannerPage.css';
 
 export function PlannerPage() {
+    const navigate = useNavigate();
     const {
         user, theme, saving, isResetModalOpen, setIsResetModalOpen, loading, error, resultsRef,
         materias, selectedNRCs, setSelectedNRCs, consultaRealizada, formParams, calendarioLabel,
@@ -27,6 +29,18 @@ export function PlannerPage() {
     // --- RENDER ---
     return (
         <div className="planner-layout animate-fade-in">
+            {user && (
+                <div className="planner-header-bar">
+                    <h2 className="planner-page-title">Planificador de Horarios</h2>
+                    <button 
+                        className="my-schedules-btn"
+                        onClick={() => navigate('/mis-horarios')}
+                    >
+                        📂 Mis Horarios
+                    </button>
+                </div>
+            )}
+            
             {/* Sidebar */}
             <aside className="layout-sidebar">
                 <div className="card sticky-card">
@@ -69,6 +83,19 @@ export function PlannerPage() {
                         </svg>
                         <p className="empty-title">Planificador Académico</p>
                         <p className="empty-subtitle">Configura los filtros para armar tu horario.</p>
+                        
+                        {!user ? (
+                            <p className="login-prompt">
+                                <button className="login-link-btn" onClick={() => window.dispatchEvent(new CustomEvent('open-auth-modal'))}>
+                                    Inicia sesión
+                                </button>{' '}
+                                para guardar tus horarios.
+                            </p>
+                        ) : (
+                            <button className="secondary-button mt-4" onClick={() => navigate('/mis-horarios')}>
+                                📂 Ver Mis Horarios
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="content-stack">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { clearSession } from '../utils/session';
@@ -7,6 +7,13 @@ import './DashboardPage.css';
 export function DashboardPage() {
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/');
+            return;
+        }
+    }, [user, navigate]);
 
     const handleNewSchedule = () => {
         clearSession();
@@ -64,31 +71,21 @@ export function DashboardPage() {
                     </button>
                 </div>
 
-                {/* === WIDGET 3: Evaluación de Profesores (PRÓXIMAMENTE) === */}
-                {/* Mantenemos el estilo "dashed" y opacidad para indicar que no está activo aún */}
-                <div className="card dashboard-card" style={{ opacity: 0.75, border: '2px dashed var(--border-color)', background: 'transparent' }}>
+                {/* === WIDGET 3: Mis Evaluaciones === */}
+                <Link to="/mis-evaluaciones" className="card hover:shadow-lg transition-all dashboard-card no-underline-card">
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                            <h3 className="font-bold text-lg text-[var(--text-secondary-color)]">⭐ Evaluar Profesores</h3>
-                            <span style={{ fontSize: '1.5rem', filter: 'grayscale(1)' }}>🔜</span>
+                            <h3 className="font-bold text-lg text-[var(--text-color)]">⭐ Mis Evaluaciones</h3>
+                            <span style={{ fontSize: '1.5rem' }}>📝</span>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary-color)]">
-                            Pronto podrás calificar a tus docentes y consultar opiniones de la comunidad antes de agendar.
+                        <p className="text-sm text-[var(--text-secondary-color)] mb-4">
+                            Consulta y gestiona las calificaciones que has realizado a tus docentes.
                         </p>
                     </div>
-                    {/* Botón simulado desactivado */}
-                    <div className="secondary-button" style={{ 
-                        display: 'block', 
-                        textAlign: 'center', 
-                        marginTop: 'auto', 
-                        opacity: 0.5, 
-                        cursor: 'not-allowed',
-                        background: 'transparent',
-                        border: '1px solid var(--border-color)'
-                    }}>
-                        En construcción...
+                    <div className="secondary-button" style={{ display: 'block', textAlign: 'center', marginTop: 'auto', pointerEvents: 'none' }}>
+                        Ver mis evaluaciones →
                     </div>
-                </div>
+                </Link>
 
             </div>
         </div>

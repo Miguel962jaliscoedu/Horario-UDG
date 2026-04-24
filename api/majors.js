@@ -20,14 +20,23 @@ export default async function handler(req, res) {
 
     const MAJORS_URL = `https://siiauescolar.siiau.udg.mx/wal/sspseca.lista_carreras?cup=${cup}`;
 
+    let response;
     try {
-        const response = await axios.get(MAJORS_URL, { 
+        response = await axios.get(MAJORS_URL, { 
             headers, 
             timeout: 10000,
-            responseType: 'arraybuffer' // 1. Pedir la respuesta como buffer
+            responseType: 'arraybuffer'
         });
+    } catch (err) {
+        console.error('majors.js error:', err.message);
+        return res.status(503).json({ error: 'SIIAU no disponible. Intenta más tarde.' });
+    }
 
-        // 2. Decodificar el buffer usando la codificación correcta
+    if (!response || response.status !== 200) {
+        return res.status(503).json({ error: 'No se pudo conectar al SIIAU' });
+    }
+
+    try {
         const html = iconv.decode(response.data, 'iso-8859-1');
         const $ = load(html);
 
@@ -55,7 +64,6 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(majors);
-
     } catch (error) {
         console.error(`Error en /api/majors para cup=${cup}:`, error.message);
         return res.status(500).json({ error: `Ocurrió un error al procesar las carreras: ${error.message}` });

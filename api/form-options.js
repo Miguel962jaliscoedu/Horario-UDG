@@ -14,14 +14,23 @@ export default async function handler(req, res) {
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
+    let response;
     try {
-        const response = await axios.get(FORM_URL, { 
+        response = await axios.get(FORM_URL, { 
             headers, 
             timeout: 10000,
-            responseType: 'arraybuffer' // 1. Pedir la respuesta como buffer
+            responseType: 'arraybuffer'
         });
+    } catch (err) {
+        console.error('form-options.js error:', err.message);
+        return res.status(503).json({ error: 'SIIAU no disponible. Intenta más tarde.' });
+    }
 
-        // 2. Decodificar el buffer usando la codificación correcta
+    if (!response || response.status !== 200) {
+        return res.status(503).json({ error: 'No se pudo conectar al SIIAU' });
+    }
+
+    try {
         const html = iconv.decode(response.data, 'iso-8859-1');
         const $ = load(html);
 
@@ -50,7 +59,6 @@ export default async function handler(req, res) {
         }
 
         return res.status(200).json(optionsData);
-
     } catch (error) {
         console.error("Error en /api/form-options:", error.message);
         return res.status(500).json({ error: `Falló la obtención de opciones del formulario: ${error.message}` });

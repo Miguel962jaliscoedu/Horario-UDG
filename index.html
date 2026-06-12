@@ -6,14 +6,24 @@
   <link rel="icon" type="image/svg+xml" href="/udgleonline.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+
   <meta name="google-site-verification" content="5OD2kdOaAp2T5Afk2knNH-z4zrN3jUL7z3UMaoVNq1c" />
 
+  <!-- Resource Hints: Preconnect a orígenes críticos (mejora LCP y FCP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://apis.google.com" />
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" />
+  <link rel="preconnect" href="https://firestore.googleapis.com" />
+  <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
+  
+  <!-- Carga temprana de Google Fonts (evita FOUT sin falsos positivos de preload) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
+  
   <!-- SEO Meta Tags -->
   <title>Horario UDG - Planificador de Horarios Universitarios</title>
-  <meta name="description"
-    content="Planifica tu horario académico de la Universidad de Guadalajara. Consulta la oferta de cursos del SIIAU, guarda tus horarios y evalúa profesores." />
-  <meta name="keywords"
-    content="UDG, horario, universiad, Guadalajara, SIIAU, planner, calendario, cursos, NRC, carrera, centro universitario" />
+  <meta name="description" content="Planifica tu horario académico de la Universidad de Guadalajara. Consulta la oferta de cursos del SIIAU, guarda tus horarios y evalúa profesores." />
+  <meta name="keywords" content="UDG, horario, universidad, Guadalajara, SIIAU, planner, calendario, cursos, NRC, carrera, centro universitario" />
   <meta name="author" content="Miguel Cervantes" />
   <meta name="robots" content="index, follow" />
 
@@ -21,8 +31,9 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://horarioudg.vercel.app/" />
   <meta property="og:title" content="Horario UDG - Planificador de Horarios Universitarios" />
-  <meta property="og:description"
-    content="Planifica tu horario académico de la Universidad de Guadalajara. Consulta la oferta de cursos, guarda horarios y evalúa profesores." />
+  <meta property="og:description" content="Planifica tu horario académico de la Universidad de Guadalajara. Consulta la oferta de cursos, guarda horarios y evalúa profesores." />
+  <meta property="og:image" content="https://horarioudg.vercel.app/og-image.png" />
+  <meta property="og:locale" content="es_MX" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />

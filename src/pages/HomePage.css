@@ -22,11 +22,19 @@
 /* Features Grid */
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
-    justify-content: center;
     max-width: 1000px;
     margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .features-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .eval-feature-card {
+        grid-column: 1 / -1;
+    }
 }
 
 .feature-card {

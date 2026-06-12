@@ -1,10 +1,10 @@
 // src/components/Footer.jsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import './Footer.css';
 
-export function Footer() {
-    const currentYear = new Date().getFullYear();
+export const Footer = React.memo(function Footer() {
+    const currentYear = useMemo(() => new Date().getFullYear(), []);
 
     return (
         <footer className="app-footer">
@@ -65,4 +65,4 @@ export function Footer() {
             </div>
         </footer>
     );
-}
+});

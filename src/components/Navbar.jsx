@@ -7,7 +7,7 @@ import { GoogleAuthBtn } from './GoogleAuthBtn';
 import udgLogo from '/udgleonline.svg';
 import './Navbar.css';
 
-const Navbar = ({ theme, toggleTheme, showNewQuery, onNewQuery }) => {
+const Navbar = React.memo(({ theme, toggleTheme, showNewQuery, onNewQuery }) => {
   const { user } = useAuth();
   const location = useLocation();
   
@@ -175,6 +175,6 @@ const Navbar = ({ theme, toggleTheme, showNewQuery, onNewQuery }) => {
       </div>
     </nav>
   );
-};
+});
 
 export default Navbar;

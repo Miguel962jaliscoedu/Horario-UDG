@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 .env*.local
+.agents/*
+
+# Duplicated nested project folder
+/Horario-UDG/
+/test_mp_ajax.js

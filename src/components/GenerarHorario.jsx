@@ -1,8 +1,5 @@
 // src/components/GenerarHorario.jsx
-import React, { useRef, useState, useEffect, useMemo } from 'react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import html2canvas from 'html2canvas';
+import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { detectarCruces } from '../services/scheduleUtils';
 import './GenerarHorario.css';
@@ -195,8 +192,16 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme, on
         return nrcs;
     }, [clasesSeleccionadas]);
 
-    // ... (El bloque handleDownloadPdf se queda igual) ...
-    const handleDownloadPdf = () => {
+    // Descarga PDF con lazy loading de jsPDF + autotable
+    const handleDownloadPdf = useCallback(async () => {
+        // Import dinámico: estas librerías solo se cargan cuando el usuario hace clic
+        const [jsPDFModule, autoTableModule] = await Promise.all([
+            import('jspdf'),
+            import('jspdf-autotable')
+        ]);
+        const jsPDF = jsPDFModule.default;
+        const autoTable = autoTableModule.default || autoTableModule;
+
         let minHour = 22, maxHour = 7;
         if (clasesSeleccionadas.length > 0) { 
             clasesSeleccionadas.forEach(c => { 
@@ -249,22 +254,34 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme, on
         
         doc.setFontSize(8).text(`Generado el ${new Date().toLocaleDateString('es-MX')} en horarioudg.vercel.app`, doc.internal.pageSize.getWidth() / 2, doc.lastAutoTable.finalY + 10, { align: 'center' });
         doc.save('horario.pdf');
-    };
+    }, [clasesSeleccionadas, calendarioLabel]);
 
-    const handleGenerateImage = () => { setIsModalOpen(false); setIsRendering(true); const isVertical = aspectRatio === '9/16'; setRenderSize({ width: isVertical ? 1080 : 1920, height: isVertical ? 1920 : 1080 }); };
+    const handleGenerateImage = useCallback(() => { 
+        setIsModalOpen(false); 
+        setIsRendering(true); 
+        const isVertical = aspectRatio === '9/16'; 
+        setRenderSize({ width: isVertical ? 1080 : 1920, height: isVertical ? 1920 : 1080 }); 
+    }, [aspectRatio]);
 
     useEffect(() => {
         if (isRendering) {
+            let cancelled = false;
             const generate = async () => {
+                // Import dinámico: html2canvas solo se carga al generar imagen
+                const html2canvasModule = await import('html2canvas');
+                const html2canvas = html2canvasModule.default;
+                
                 const elementToRender = imageRenderRef.current;
-                if (elementToRender) {
+                if (elementToRender && !cancelled) {
                     await new Promise(resolve => setTimeout(resolve, 100));
+                    if (cancelled) return;
                     const canvas = await html2canvas(elementToRender, { width: renderSize.width, height: renderSize.height, scale: 1, useCORS: true, logging: false });
                     const link = document.createElement('a'); link.href = canvas.toDataURL('image/jpeg', 0.95); link.download = `horario-${aspectRatio === '9/16' ? 'telefono' : 'escritorio'}-${imageTheme}.jpeg`; link.click();
                 }
-                setIsRendering(false);
+                if (!cancelled) setIsRendering(false);
             };
             generate();
+            return () => { cancelled = true; };
         }
     }, [isRendering, renderSize, aspectRatio, imageTheme]);
 

@@ -2,7 +2,7 @@
 import React from 'react';
 import './HeroSection.css'; // Importa los estilos nuevos
 
-export function HeroSection() {
+export const HeroSection = React.memo(function HeroSection() {
     return (
         <div className="hero-banner">
             <div className="hero-content">
@@ -15,4 +15,4 @@ export function HeroSection() {
             </div>
         </div>
     );
-}
+});

@@ -1,7 +1,7 @@
 // src/hooks/usePlanner.js
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useNavigate, useBlocker, useOutletContext } from 'react-router-dom';
+import { useBlocker, useOutletContext } from 'react-router-dom';
 
 // Servicios
 import { createSchedule, updateSchedule } from '../services/storageService.js';
@@ -48,6 +48,54 @@ const groupSessionsByNRC = (classes) => {
     return result;
 };
 
+// Lazy initializer para evitar llamar loadStateFromSession en cada render
+function getInitialPlannerState() {
+    const saved = loadStateFromSession();
+    if (saved) {
+        return {
+            materias: saved.materias || [],
+            selectedNRCs: saved.selectedNRCs || [],
+            consultaRealizada: saved.consultaRealizada || false,
+            formParams: saved.formParams || { centro: '', carrera: '', calendario: '' },
+            calendarioLabel: saved.calendarioLabel || '',
+            currentScheduleId: saved.currentScheduleId || null,
+            currentScheduleName: saved.currentScheduleName || '',
+            isViewMode: saved.isViewMode || false
+        };
+    }
+    return {
+        materias: [],
+        selectedNRCs: [],
+        consultaRealizada: false,
+        formParams: { centro: '', carrera: '', calendario: '' },
+        calendarioLabel: '',
+        currentScheduleId: null,
+        currentScheduleName: '',
+        isViewMode: false
+    };
+}
+
+// Debounce helper para sessionStorage
+function useDebouncedSessionSave(state, delay = 1000) {
+    const timeoutRef = useRef(null);
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        // Skip en primer render porque ya cargamos desde session
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+            saveStateToSession(state);
+        }, delay);
+
+        return () => clearTimeout(timeoutRef.current);
+    }, [state, delay]);
+}
+
 export function usePlanner() {
     const { user } = useAuth();
     const { theme } = useOutletContext();
@@ -62,32 +110,21 @@ export function usePlanner() {
     const pendingDataRef = useRef(null); // Para guardar los datos nuevos mientras se resuelve el conflicto
     const resultsRef = useRef(null);
 
-    // --- 1. ESTADO INICIAL ---
-    const initialState = loadStateFromSession() || {
-        materias: [],
-        selectedNRCs: [],
-        consultaRealizada: false,
-        formParams: { centro: '', carrera: '', calendario: '' },
-        calendarioLabel: '',
-        currentScheduleId: null,
-        currentScheduleName: '',
-        isViewMode: false
-    };
-
-    const [materias, setMaterias] = useState(initialState.materias);
-    const [selectedNRCs, setSelectedNRCs] = useState(initialState.selectedNRCs);
-    const [consultaRealizada, setConsultaRealizada] = useState(initialState.consultaRealizada);
-    const [formParams, setFormParams] = useState(initialState.formParams);
-    const [calendarioLabel, setCalendarioLabel] = useState(initialState.calendarioLabel);
-    const [isViewMode, setIsViewMode] = useState(initialState.isViewMode);
-    
-    const [currentScheduleId, setCurrentScheduleId] = useState(initialState.currentScheduleId);
-    const [currentScheduleName, setCurrentScheduleName] = useState(initialState.currentScheduleName);
+    // --- 1. ESTADO INICIAL (Lazy Initialization) ---
+    const [materias, setMaterias] = useState(() => getInitialPlannerState().materias);
+    const [selectedNRCs, setSelectedNRCs] = useState(() => getInitialPlannerState().selectedNRCs);
+    const [consultaRealizada, setConsultaRealizada] = useState(() => getInitialPlannerState().consultaRealizada);
+    const [formParams, setFormParams] = useState(() => getInitialPlannerState().formParams);
+    const [calendarioLabel, setCalendarioLabel] = useState(() => getInitialPlannerState().calendarioLabel);
+    const [isViewMode, setIsViewMode] = useState(() => getInitialPlannerState().isViewMode);
+    const [currentScheduleId, setCurrentScheduleId] = useState(() => getInitialPlannerState().currentScheduleId);
+    const [currentScheduleName, setCurrentScheduleName] = useState(() => getInitialPlannerState().currentScheduleName);
 
     // --- 2. DETECCIÓN DE CAMBIOS (DIRTY STATE) ---
+    const initialSessionState = useRef(getInitialPlannerState());
     const lastSavedSnapshot = useRef(JSON.stringify({
-        selectedNRCs: initialState.selectedNRCs,
-        id: initialState.currentScheduleId
+        selectedNRCs: initialSessionState.current.selectedNRCs,
+        id: initialSessionState.current.currentScheduleId
     }));
 
     const isDirty = useMemo(() => {
@@ -103,14 +140,13 @@ export function usePlanner() {
     const isDirtyRef = useRef(isDirty);
     useEffect(() => { isDirtyRef.current = isDirty; }, [isDirty]);
 
-    // --- 3. EFECTOS ---
-    useEffect(() => {
-        const stateToSave = { 
-            materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel, theme,
-            currentScheduleId, currentScheduleName, isViewMode 
-        };
-        saveStateToSession(stateToSave);
-    }, [materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel, theme, currentScheduleId, currentScheduleName, isViewMode]);
+    // --- 3. EFECTOS (Session save con DEBOUNCE) ---
+    const sessionState = useMemo(() => ({ 
+        materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel, theme,
+        currentScheduleId, currentScheduleName, isViewMode 
+    }), [materias, selectedNRCs, consultaRealizada, formParams, calendarioLabel, theme, currentScheduleId, currentScheduleName, isViewMode]);
+    
+    useDebouncedSessionSave(sessionState, 800);
 
     useEffect(() => {
         return () => {

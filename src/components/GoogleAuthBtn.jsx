@@ -1,10 +1,10 @@
 // src/components/GoogleAuthBtn.jsx
-import React from 'react';
+import React, { memo } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../firebase/config';
 
-export const GoogleAuthBtn = ({ onSuccess, onError }) => {
+export const GoogleAuthBtn = memo(({ onSuccess, onError }) => {
 
   const handleSuccess = async (credentialResponse) => {
     try {
@@ -33,9 +33,9 @@ export const GoogleAuthBtn = ({ onSuccess, onError }) => {
         auto_select={false}
         hosted_domain={hostedDomain}
         theme="outline"
-        size="large"
+        size="medium"
         shape="pill"
       />
     </div>
   );
-};
+});

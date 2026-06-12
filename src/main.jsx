@@ -1,28 +1,42 @@
 // src/main.jsx
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// Importamos el Layout Principal
+// Importamos el Layout Principal (eager, necesario siempre)
 import App from './App.jsx';
 
-// Importamos las Páginas
-import { HomePage } from './pages/HomePage.jsx';
-import { PlannerPage } from './pages/PlannerPage.jsx';
-import { DashboardPage } from './pages/DashboardPage.jsx';
-import { MySchedulesPage } from './pages/MySchedulesPage.jsx';
-import { BenefitsPage } from './pages/BenefitsPage.jsx';
-import { TeachersPage } from './pages/TeachersPage.jsx';
-import { MyRatingsPage } from './pages/MyRatingsPage.jsx';
-import { PrivacyPage } from './pages/PrivacyPage.jsx';
-import { TermsPage } from './pages/TermsPage.jsx';
+// Lazy loading de páginas - se cargan bajo demanda (splitting automático de Vite)
+// NOTA: Las páginas usan named exports, por eso re-mapeamos a .default
+const HomePage = lazy(() => import('./pages/HomePage.jsx').then(m => ({ default: m.HomePage })));
+const PlannerPage = lazy(() => import('./pages/PlannerPage.jsx').then(m => ({ default: m.PlannerPage })));
+const DashboardPage = lazy(() => import('./pages/DashboardPage.jsx').then(m => ({ default: m.DashboardPage })));
+const MySchedulesPage = lazy(() => import('./pages/MySchedulesPage.jsx').then(m => ({ default: m.MySchedulesPage })));
+const BenefitsPage = lazy(() => import('./pages/BenefitsPage.jsx').then(m => ({ default: m.BenefitsPage })));
+const TeachersPage = lazy(() => import('./pages/TeachersPage.jsx').then(m => ({ default: m.TeachersPage })));
+const MyRatingsPage = lazy(() => import('./pages/MyRatingsPage.jsx').then(m => ({ default: m.MyRatingsPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage.jsx').then(m => ({ default: m.PrivacyPage })));
+const TermsPage = lazy(() => import('./pages/TermsPage.jsx').then(m => ({ default: m.TermsPage })));
 
 import './index.css';
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
-// DEFINICIÓN DEL ROUTER (Data Router)
+// Componente de carga mientras se descarga el chunk de la página
+function PageLoader() {
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'center', alignItems: 'center',
+      minHeight: '50vh', color: 'var(--text-secondary-color)',
+      fontSize: '1.1rem'
+    }}>
+      <span>Cargando...</span>
+    </div>
+  );
+}
+
+// DEFINICIÓN DEL ROUTER (Data Router) con Lazy Loading
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,43 +44,43 @@ const router = createBrowserRouter([
     children: [
       {
         index: true, // Ruta raíz "/"
-        element: <HomePage />,
+        element: <Suspense fallback={<PageLoader />}><HomePage /></Suspense>,
       },
       {
         path: "planear",
-        element: <PlannerPage />, 
+        element: <Suspense fallback={<PageLoader />}><PlannerPage /></Suspense>,
       },
       {
         path: "dashboard",
-        element: <DashboardPage />,
+        element: <Suspense fallback={<PageLoader />}><DashboardPage /></Suspense>,
       },
       {
         path: "mis-horarios",
-        element: <MySchedulesPage />,
+        element: <Suspense fallback={<PageLoader />}><MySchedulesPage /></Suspense>,
       },
       {
         path: "beneficios",
-        element: <BenefitsPage />,
+        element: <Suspense fallback={<PageLoader />}><BenefitsPage /></Suspense>,
       },
       {
         path: "profesores",
-        element: <TeachersPage />,
+        element: <Suspense fallback={<PageLoader />}><TeachersPage /></Suspense>,
       },
       {
         path: "mis-evaluaciones",
-        element: <MyRatingsPage />,
+        element: <Suspense fallback={<PageLoader />}><MyRatingsPage /></Suspense>,
       },
       {
         path: "privacidad",
-        element: <PrivacyPage />,
+        element: <Suspense fallback={<PageLoader />}><PrivacyPage /></Suspense>,
       },
       {
         path: "terminos",
-        element: <TermsPage />,
+        element: <Suspense fallback={<PageLoader />}><TermsPage /></Suspense>,
       },
       {
         path: "*",
-        element: <HomePage />, // Fallback para rutas no encontradas
+        element: <Suspense fallback={<PageLoader />}><HomePage /></Suspense>,
       }
     ],
   },

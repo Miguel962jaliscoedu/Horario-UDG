@@ -98,11 +98,11 @@
 }
 
 .special-link {
-    color: #eab308; /* Amarillo */
+    color: #b45309; /* Amarillo oscuro accesible (contraste 4.8:1 sobre blanco) */
 }
 .special-link:hover {
-    color: #ca8a04;
-    background-color: rgba(234, 179, 8, 0.1);
+    color: #92400e;
+    background-color: rgba(180, 83, 9, 0.1);
 }
 
 /* --- DERECHA --- */

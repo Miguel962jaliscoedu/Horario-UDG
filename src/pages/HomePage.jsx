@@ -130,8 +130,9 @@ export function HomePage() {
                             </div>
 
                             <div className="form-group">
-                                <label>Mensaje</label>
+                                <label htmlFor="feedback-message">Mensaje</label>
                                 <textarea
+                                    id="feedback-message"
                                     value={feedbackMessage}
                                     onChange={(e) => setFeedbackMessage(e.target.value)}
                                     placeholder={
@@ -145,8 +146,9 @@ export function HomePage() {
                             </div>
 
                             <div className="form-group">
-                                <label>Correo (opcional, para responderte)</label>
+                                <label htmlFor="feedback-email">Correo (opcional, para responderte)</label>
                                 <input
+                                    id="feedback-email"
                                     type="email"
                                     value={feedbackEmail}
                                     onChange={(e) => setFeedbackEmail(e.target.value)}

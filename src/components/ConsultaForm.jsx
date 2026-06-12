@@ -296,7 +296,7 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
             </div>
 
             <div className="form-group" ref={wrapperRef} style={{ position: 'relative' }}>
-                <label htmlFor="carrera">Carrera</label>
+                <label htmlFor="carrera-search">Carrera</label>
                 <input
                     type="text"
                     id="carrera-search"
@@ -313,11 +313,20 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                 />
                 
                 {mostrarSugerencias && carrerasFiltradas.length > 0 && (
-                    <ul className="suggestions-list animate-fade-in">
-                        {carrerasFiltradas.map(carrera => (
+                    <ul className="suggestions-list animate-fade-in" role="listbox" aria-label="Carreras sugeridas">
+                        {carrerasFiltradas.map((carrera, index) => (
                             <li 
                                 key={carrera.id} 
+                                role="option"
+                                tabIndex={0}
+                                aria-selected={params.carrera === carrera.id}
                                 onClick={() => seleccionarCarrera(carrera)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        seleccionarCarrera(carrera);
+                                    }
+                                }}
                             >
                                 <span className="suggestion-id">{carrera.id}</span>
                                 <span className="suggestion-name">{carrera.name}</span>

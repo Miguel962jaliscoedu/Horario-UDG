@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { addRating } from '../services/professorService';
 import { updateMyRating, hasUserRatedProfessor } from '../services/myRatingsService';
@@ -34,6 +34,7 @@ const AVAILABLE_TAGS = [
 const RatingForm = ({ professorId, professorName, onClose, onRatingEscaped, editingRating }) => {
     const { user: currentUser } = useAuth();
     const isEditing = !!editingRating;
+    const contentRef = useRef(null);
     
     // Cargar datos existentes si está editando
     const [stars, setStars] = useState(editingRating?.stars || 8);
@@ -140,11 +141,53 @@ const RatingForm = ({ professorId, professorName, onClose, onRatingEscaped, edit
         };
     }, []);
 
+    // Focus trap: mantener foco dentro del modal
+    useEffect(() => {
+        const content = contentRef.current;
+        if (!content) return;
+
+        // Enfocar el primer elemento interactivo (botón cerrar)
+        const closeBtn = content.querySelector('.rating-form-close-alt');
+        if (closeBtn) closeBtn.focus();
+
+        const handleTabKey = (e) => {
+            const focusableEls = content.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstEl = focusableEls[0];
+            const lastEl = focusableEls[focusableEls.length - 1];
+
+            if (e.key === 'Tab') {
+                if (e.shiftKey) {
+                    if (document.activeElement === firstEl) {
+                        e.preventDefault();
+                        lastEl.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastEl) {
+                        e.preventDefault();
+                        firstEl.focus();
+                    }
+                }
+            }
+        };
+
+        content.addEventListener('keydown', handleTabKey);
+        return () => content.removeEventListener('keydown', handleTabKey);
+    }, []);
+
     const isAuthenticated = !!currentUser;
 
     return createPortal(
         <div className="rating-form-overlay" onClick={handleCloseForm}>
-            <div className="rating-form-content animate-pop-in" onClick={e => e.stopPropagation()}>
+            <div 
+                className="rating-form-content animate-pop-in" 
+                onClick={e => e.stopPropagation()}
+                ref={contentRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label={isEditing ? `Editar evaluación de ${professorName}` : `Evaluar a ${professorName}`}
+            >
                 <button 
                     type="button" 
                     className="rating-form-close-alt"
@@ -192,12 +235,22 @@ const RatingForm = ({ professorId, professorName, onClose, onRatingEscaped, edit
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label>Tu calificación general (1-10)</label>
-                            <div className="star-rating-input star-rating-10">
+                            <div className="star-rating-input star-rating-10" role="radiogroup" aria-label="Calificación del 1 al 10">
                                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                                     <span 
                                         key={num} 
+                                        role="radio"
+                                        tabIndex={num === stars ? 0 : -1}
+                                        aria-checked={num <= stars}
+                                        aria-label={`${num} de 10`}
                                         className={`star-input-item ${num <= stars ? 'active' : ''}`}
                                         onClick={() => setStars(num)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter' || e.key === ' ') {
+                                                e.preventDefault();
+                                                setStars(num);
+                                            }
+                                        }}
                                     >
                                         {num}
                                     </span>

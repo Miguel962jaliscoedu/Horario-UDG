@@ -5,6 +5,21 @@ import { visualizer } from 'rollup-plugin-visualizer'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    // Fix para Vercel dev: el proxy reescribe requests a /index.html,
+    // y Vite 7 intenta parsearlo como JS en vite:import-analysis.
+    // Este middleware reescribe /index.html a / antes de que Vite lo procese.
+    {
+      name: 'fix-vercel-dev-proxy',
+      apply: 'serve',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url && (req.url === '/index.html' || req.url.startsWith('/index.html?'))) {
+            req.url = '/' + req.url.slice('/index.html'.length);
+          }
+          next();
+        });
+      },
+    },
     react(),
     // Bundle analyzer: npm run build -- --mode analyze o ANALYZE=true npm run build
     process.env.ANALYZE && visualizer({

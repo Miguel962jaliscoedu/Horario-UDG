@@ -32,9 +32,12 @@ function App() {
         // Esto permite que AuthContext pueda usar hooks de navegación si lo necesita.
         <AuthProvider>
             <div className="app-root">
+                <a href="#main-content" className="skip-link">
+                    Saltar al contenido principal
+                </a>
                 <Navbar theme={theme} toggleTheme={toggleTheme} />
                 
-                <main className="app-main">
+                <main className="app-main" id="main-content">
                     <Outlet context={{ theme }} />
                 </main>
                 

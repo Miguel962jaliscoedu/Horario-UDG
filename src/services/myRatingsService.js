@@ -1,7 +1,15 @@
-import { db } from '../firebase/config';
-import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { getDb } from '../firebase/config';
 
 const COLL_RATINGS = 'ratings';
+
+let _firestore = null;
+async function getFS() {
+  if (!_firestore) {
+    const db = await getDb();
+    _firestore = { db, ...(await import('firebase/firestore')) };
+  }
+  return _firestore;
+}
 
 /**
  * Obtiene todas las evaluaciones del usuario actual
@@ -10,6 +18,7 @@ export const getMyRatings = async (userId) => {
     if (!userId) return [];
     
     try {
+        const { db, collection, query, where, getDocs } = await getFS();
         const q = query(
             collection(db, COLL_RATINGS),
             where('userId', '==', userId)
@@ -44,7 +53,7 @@ export const getMyRatings = async (userId) => {
  */
 export const getMyRatingById = async (ratingId) => {
     try {
-        const { doc: docRef, getDoc } = await import('firebase/firestore');
+        const { db, doc: docRef, getDoc } = await getFS();
         const docSnap = await getDoc(docRef(db, COLL_RATINGS, ratingId));
         
         if (docSnap.exists()) {
@@ -64,7 +73,7 @@ export const updateMyRating = async (ratingId, userId, updatedData) => {
     if (!ratingId || !userId) return false;
     
     try {
-        const { doc: docFn, getDoc, updateDoc } = await import('firebase/firestore');
+        const { db, doc: docFn, getDoc, updateDoc, serverTimestamp } = await getFS();
         const docRef = docFn(db, COLL_RATINGS, ratingId);
         const docSnap = await getDoc(docRef);
         

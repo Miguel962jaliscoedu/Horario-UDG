@@ -9,12 +9,13 @@
 
   <meta name="google-site-verification" content="5OD2kdOaAp2T5Afk2knNH-z4zrN3jUL7z3UMaoVNq1c" />
 
-  <!-- Resource Hints: Preconnect a orígenes críticos (mejora LCP y FCP) -->
+  <!-- Resource Hints: Preconnect a orígenes críticos (máx 4, mejora LCP y FCP) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://apis.google.com" />
-  <link rel="preconnect" href="https://identitytoolkit.googleapis.com" />
-  <link rel="preconnect" href="https://firestore.googleapis.com" />
+  <link rel="preconnect" href="https://agenda-udg.firebaseapp.com" />
+  <!-- dns-prefetch como fallback para orígenes secundarios -->
+  <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
   <link rel="dns-prefetch" href="https://firestore.googleapis.com" />
   
   <!-- Carga temprana de Google Fonts (evita FOUT sin falsos positivos de preload) -->

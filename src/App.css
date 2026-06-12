@@ -152,7 +152,8 @@ body {
   min-height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Solo background-color es compositable por GPU; color causa recálculo de layout */
+  transition: background-color 0.3s ease;
 }
 
 /* ---------------------------------- */

@@ -1,30 +1,29 @@
-import { db } from "../firebase/config";
-import { 
-  collection, 
-  addDoc, 
-  getDocs, 
-  doc, 
-  deleteDoc, 
-  updateDoc,
-  query,
-  orderBy
-} from "firebase/firestore";
+import { getDb } from "../firebase/config";
 
-// Referencia a la colección de horarios de un usuario específico
-const getSchedulesRef = (userId) => collection(db, "users", userId, "schedules");
+let _firestore = null;
+async function getFirestoreModules() {
+  if (!_firestore) {
+    const db = await getDb();
+    const mod = await import('firebase/firestore');
+    _firestore = { db, ...mod };
+  }
+  return _firestore;
+}
 
 /**
  * Crea un NUEVO horario en la subcolección.
  */
 export const createSchedule = async (userId, scheduleData, name) => {
   try {
-    const docRef = await addDoc(getSchedulesRef(userId), {
+    const { db, collection, addDoc } = await getFirestoreModules();
+    const schedulesRef = collection(db, "users", userId, "schedules");
+    const docRef = await addDoc(schedulesRef, {
       ...scheduleData,
       name: name || "Horario Sin Título",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
-    return docRef.id; // Retornamos el ID generado
+    return docRef.id;
   } catch (error) {
     console.error("Error creando horario:", error);
     throw error;
@@ -36,6 +35,7 @@ export const createSchedule = async (userId, scheduleData, name) => {
  */
 export const updateSchedule = async (userId, scheduleId, scheduleData) => {
   try {
+    const { db, doc, updateDoc } = await getFirestoreModules();
     const docRef = doc(db, "users", userId, "schedules", scheduleId);
     await updateDoc(docRef, {
       ...scheduleData,
@@ -53,8 +53,9 @@ export const updateSchedule = async (userId, scheduleId, scheduleData) => {
  */
 export const getUserSchedules = async (userId) => {
   try {
-    // Ordenados por fecha de actualización (más reciente primero)
-    const q = query(getSchedulesRef(userId), orderBy("updatedAt", "desc"));
+    const { db, collection, query, orderBy, getDocs } = await getFirestoreModules();
+    const schedulesRef = collection(db, "users", userId, "schedules");
+    const q = query(schedulesRef, orderBy("updatedAt", "desc"));
     const snapshot = await getDocs(q);
     
     return snapshot.docs.map(doc => ({
@@ -72,6 +73,7 @@ export const getUserSchedules = async (userId) => {
  */
 export const deleteSchedule = async (userId, scheduleId) => {
   try {
+    const { db, doc, deleteDoc } = await getFirestoreModules();
     await deleteDoc(doc(db, "users", userId, "schedules", scheduleId));
     return true;
   } catch (error) {

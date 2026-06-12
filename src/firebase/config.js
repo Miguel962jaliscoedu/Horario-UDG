@@ -1,7 +1,6 @@
 // src/firebase/config.js
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -18,4 +17,12 @@ const app = initializeApp(firebaseConfig);
 // Exportar servicios
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+
+// Lazy getter para Firestore — se carga bajo demanda (ahorra ~119 KiB en carga inicial)
+let _dbPromise = null;
+export function getDb() {
+  if (!_dbPromise) {
+    _dbPromise = import('firebase/firestore').then(({ getFirestore }) => getFirestore(app));
+  }
+  return _dbPromise;
+}

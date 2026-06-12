@@ -30,12 +30,16 @@ export default defineConfig({
     }),
   ].filter(Boolean),
   build: {
+    target: 'es2020', // Entregar ES2020 para mejor tree-shaking y bundles más pequeños
     rollupOptions: {
       output: {
-        // Names manuales para chunks más legibles
+        // Nombres manuales para chunks más legibles (solo para imports estáticos)
         manualChunks(id) {
           if (id.includes('node_modules/react-dom')) return 'vendor-react';
           if (id.includes('node_modules/react')) return 'vendor-react';
+          // firebase/firestore va en chunk separado (lazy, solo cuando se usa)
+          if (id.includes('node_modules/firebase/firestore')) return 'vendor-firestore';
+          // firebase/app y firebase/auth van en vendor-firebase (eager, se necesita auth en todas las páginas)
           if (id.includes('node_modules/firebase')) return 'vendor-firebase';
           if (id.includes('node_modules/@react-oauth')) return 'vendor-auth';
           if (id.includes('node_modules/jspdf') || id.includes('node_modules/html2canvas')) return 'vendor-export';
@@ -43,12 +47,30 @@ export default defineConfig({
         },
       },
     },
-    // CSS code splitting para evitar cargar CSS no usado
+    // CSS code splitting: carga solo el CSS necesario por página
     cssCodeSplit: true,
     sourcemap: false,
     chunkSizeWarningLimit: 500,
+    // Minificación CSS con esbuild (incluye eliminación de CSS no usado)
+    minify: 'esbuild',
+    cssMinify: 'esbuild',
+    // Reporte de assets para debugging
+    reportCompressedSize: false,
+    // No generar modulepreload para chunks dinámicos pesados
+    // (ej: jspdf+html2canvas 595kB no deben precargarse en inicio)
+    modulePreload: false,
   },
   server: {
+    port: 5173,
+    // Proxy para API serverless de Vercel en desarrollo
+    // Ejecuta 'npx vercel dev' en otra terminal (puerto 3000)
+    // para que las funciones api/* funcionen con datos reales de SIIAU
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
       "Cross-Origin-Embedder-Policy": "unsafe-none",

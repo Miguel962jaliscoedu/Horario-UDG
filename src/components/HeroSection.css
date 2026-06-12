@@ -18,7 +18,7 @@
   /* Imagen de fondo con overlay */
   background-image: 
     linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%),
-    url('https://res.cloudinary.com/dpiy22qku/image/upload/v1758592450/udg_0_wpbtlh.jpg');
+    url('https://res.cloudinary.com/dpiy22qku/image/upload/f_auto,q_auto/v1758592450/udg_0_wpbtlh.jpg');
   background-size: cover;
   background-position: center 40%; /* Ajuste para centrar mejor la imagen */
   color: #ffffff;

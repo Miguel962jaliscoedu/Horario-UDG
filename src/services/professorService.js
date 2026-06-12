@@ -1,18 +1,15 @@
 // src/services/professorService.js
-import { db } from "../firebase/config";
-import { 
-    collection, 
-    doc, 
-    getDoc, 
-    setDoc, 
-    updateDoc, 
-    increment, 
-    query, 
-    where, 
-    getDocs,
-    addDoc,
-    serverTimestamp 
-} from "firebase/firestore";
+import { getDb } from "../firebase/config";
+
+let _firestore = null;
+async function getFirestoreModules() {
+  if (!_firestore) {
+    const db = await getDb();
+    const mod = await import('firebase/firestore');
+    _firestore = { db, ...mod };
+  }
+  return _firestore;
+}
 
 const COLL_PROFESSORS = "professors";
 const COLL_RATINGS = "ratings";
@@ -56,6 +53,7 @@ export const normalizeName = (name) => {
  */
 export const getProfessorsByNames = async (names) => {
     try {
+        const { db, collection, query, where, getDocs } = await getFirestoreModules();
         // Usar IDs con underscores para coincidir con cómo se guardan en Firestore
         const ids = names.map(n => normalizeName(n).replace(/\s+/g, "_"));
         const results = {};
@@ -80,6 +78,7 @@ export const getProfessorsByNames = async (names) => {
  * Obtiene la información de un profesor (Caché local + Scraping)
  */
 export const getProfessorData = async (professorName) => {
+    const { db, doc, getDoc, setDoc, serverTimestamp } = await getFirestoreModules();
     const rawName = professorName;
     const cleanName = normalizeName(rawName);
     const docId = cleanName.replace(/\s+/g, "_");
@@ -158,6 +157,7 @@ export const getProfessorData = async (professorName) => {
  */
 export const addRating = async (professorId, ratingInfo) => {
     try {
+        const { db, collection, addDoc, doc, updateDoc, increment, serverTimestamp } = await getFirestoreModules();
         const ratingRef = collection(db, COLL_RATINGS);
         
         // Guardar la evaluación individual
@@ -170,9 +170,6 @@ export const addRating = async (professorId, ratingInfo) => {
         // Actualizar los promedios en el documento del profesor
         const profRef = doc(db, COLL_PROFESSORS, professorId);
         
-        // Usamos una lógica simple de "running average" o solo incrementamos contadores
-        // Para mayor precisión, se recomienda usar una Cloud Function, 
-        // pero aquí haremos un incremento sutil.
         await updateDoc(profRef, {
             nativeRatingCount: increment(1),
             nativeRatingSum: increment(ratingInfo.stars),
@@ -191,6 +188,7 @@ export const addRating = async (professorId, ratingInfo) => {
  */
 export const searchProfessors = async (searchTerm = "", limitCount = 20) => {
     try {
+        const { db, collection, query, where, getDocs } = await getFirestoreModules();
         const normalizedSearch = normalizeName(searchTerm);
         const q = query(
             collection(db, COLL_PROFESSORS),

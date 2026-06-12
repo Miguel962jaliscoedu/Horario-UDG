@@ -37,7 +37,7 @@ const Navbar = React.memo(({ theme, toggleTheme, showNewQuery, onNewQuery }) => 
             <Link to="/" className="navbar-logo" onClick={closeMenu}>
                 <img src={udgLogo} alt="Logo UDG" className="logo-img" />
                 <div className="logo-text">
-                    <h1>Planeador <span className="text-highlight">UDG</span></h1>
+                    <span className="logo-heading">Planeador <span className="text-highlight">UDG</span></span>
                 </div>
             </Link>
         </div>

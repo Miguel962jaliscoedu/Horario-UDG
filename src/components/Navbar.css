@@ -54,7 +54,8 @@
     width: auto;
 }
 
-.logo-text h1 {
+.logo-text h1,
+.logo-heading {
     font-size: 1.1rem;
     font-weight: 700;
     margin: 0;

@@ -10,9 +10,9 @@ export function PrivacyPage() {
                 <header className="legal-header">
                     <h1>Aviso de <span className="text-highlight">Privacidad</span></h1>
                     <p className="legal-subtitle">
-                        En Horario UDG respecting your privacy and protecting your personal data.
+                        En Horario UDG respetamos tu privacidad y protegemos tus datos personales.
                     </p>
-                    <p className="legal-date">Última actualización: 23 de abril de 2026</p>
+                    <p className="legal-date">Última actualización: 13 de junio de 2026</p>
                 </header>
 
                 <section className="legal-section">
@@ -39,11 +39,20 @@ export function PrivacyPage() {
                         </li>
                         <li>
                             <strong>Horarios guardados:</strong> Materias, NRC, profesor, días y 
-                            horarios quedecides guardar en tu cuenta.
+                            horarios que decides guardar en tu cuenta.
                         </li>
                         <li>
                             <strong>Evaluaciones de profesores:</strong> Calificaciones, comentarios 
                             y etiquetas que proporcionas sobre profesores.
+                        </li>
+                        <li>
+                            <strong>Monitoreo de cupos:</strong> NRC y materias que eliges monitorear 
+                            para recibir notificaciones sobre disponibilidad de cupos y cambios de horario.
+                        </li>
+                        <li>
+                            <strong>Datos de notificaciones push:</strong> Tokens de dispositivo y 
+                            preferencias de notificación para enviarte alertas de cupos, cambios de 
+                            horario y cambios de profesor.
                         </li>
                         <li>
                             <strong>Datos de navegación:</strong> Información técnica anónima 
@@ -60,6 +69,7 @@ export function PrivacyPage() {
                         <li>Guardar y gestionar tus horarios personales</li>
                         <li>Permitirte evaluar y calificar profesores</li>
                         <li>Mostrarte tus horarios guardados en diferentes dispositivos</li>
+                        <li>Enviarte notificaciones push sobre cupos disponibles, cambios de horario y cambios de profesor</li>
                         <li>Mejorar la experiencia de usuario</li>
                     </ul>
                 </section>
@@ -85,13 +95,18 @@ export function PrivacyPage() {
                     </ul>
                     <p>
                         Utilizamos <strong>Firebase</strong> (Google) como proveedor de 
-                        infraestructura para almacenar tus datos de manera segura.
+                        infraestructura para almacenar tus datos de manera segura, incluyendo:
                     </p>
+                    <ul>
+                        <li><strong>Firebase Authentication</strong> para inicio de sesión seguro con Google</li>
+                        <li><strong>Firebase Firestore</strong> para almacenar horarios, evaluaciones, monitoreos y notificaciones</li>
+                        <li><strong>Firebase Cloud Messaging (FCM)</strong> para enviar notificaciones push a tu dispositivo</li>
+                    </ul>
                 </section>
 
                 <section className="legal-section">
                     <h2>6. Seguridad de los Datos</h2>
-                    <p>Implementamos medidas de seguridad técnicas y organizativas:</p>
+                    <p>Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos:</p>
                     <ul>
                         <li>Cifrado en tránsito mediante HTTPS/TLS</li>
                         <li>Autenticación segura mediante OAuth 2.0</li>
@@ -124,16 +139,34 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>9. Cookies y Tecnologías Similares</h2>
+                    <h2>9. Notificaciones Push</h2>
                     <p>
-                        Utilizamos cookies técnicas necesarias para el funcionamiento 
-                        de la aplicación. No utilizamos cookies de seguimiento o 
-                        publicidad de terceros.
+                        Con tu consentimiento, podemos enviarte notificaciones push a tu dispositivo 
+                        cuando ocurra alguno de los siguientes eventos en las materias que monitoreas:
+                    </p>
+                    <ul>
+                        <li><strong>Cupo disponible:</strong> Se libera un lugar en una materia con demanda</li>
+                        <li><strong>Cambio de horario:</strong> El horario o aula de una materia es modificado</li>
+                        <li><strong>Cambio de profesor:</strong> El profesor asignado a una materia cambia</li>
+                    </ul>
+                    <p>
+                        Puedes activar o desactivar las notificaciones en cualquier momento desde 
+                        la configuración de la aplicación o desde los ajustes de tu navegador/dispositivo.
                     </p>
                 </section>
 
                 <section className="legal-section">
-                    <h2>10. Menores de Edad</h2>
+                    <h2>10. Cookies y Tecnologías Similares</h2>
+                    <p>
+                        Utilizamos cookies técnicas necesarias para el funcionamiento 
+                        de la aplicación y almacenamiento local (sessionStorage) para 
+                        mantener tu sesión y preferencias. No utilizamos cookies de 
+                        seguimiento o publicidad de terceros.
+                    </p>
+                </section>
+
+                <section className="legal-section">
+                    <h2>11. Menores de Edad</h2>
                     <p>
                         Nuestra aplicación está diseñada para estudiantes universitarios. 
                         Si eres menor de edad, asegúrate de tener permiso de tus padres 
@@ -142,7 +175,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>11. Cambios al Aviso de Privacidad</h2>
+                    <h2>12. Cambios al Aviso de Privacidad</h2>
                     <p>
                         Este aviso de privacidad puede ser actualizado periódicamente. 
                         Te notificaremos cualquier cambio significativo a través de 
@@ -151,7 +184,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>12. Contacto</h2>
+                    <h2>13. Contacto</h2>
                     <p>
                         Si tienes preguntas sobre este aviso de privacidad o deseas 
                         ejercer tus derechos, puedes contactarnos a través de los 

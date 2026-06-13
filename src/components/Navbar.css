@@ -151,20 +151,32 @@
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     transition: all 0.2s;
+    padding: 0;
+    line-height: 1;
 }
 
 .btn-theme-toggle:hover {
-    background-color: var(--bg-tertiary-color);
-    transform: rotate(15deg);
+    background: var(--primary-color-light);
+    border-color: var(--primary-color);
+}
+
+body.dark-theme .btn-theme-toggle {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+body.dark-theme .btn-theme-toggle:hover {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: var(--primary-color);
 }
 
 .divider {
@@ -244,12 +256,7 @@
     background-color: var(--error-color-bg);
 }
 
-/* --- ELEMENTOS MÓVILES (Ocultos en Desktop) --- */
-.hamburger-btn, 
-.mobile-menu-header,
-.nav-overlay {
-    display: none;
-}
+/* No hay menú hamburguesa — se usa la barra inferior en móvil */
 
 /* =================================================================
    RESPONSIVE DESIGN (TABLET Y MÓVIL)
@@ -260,111 +267,7 @@
         justify-content: space-between;
     }
 
-    /* 1. MOSTRAR BOTÓN HAMBURGUESA */
-    .hamburger-btn {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 28px;
-        height: 24px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        z-index: 1100;
-        margin-right: 12px; /* Espacio con el logo */
-    }
-
-    .hamburger-btn .bar {
-        width: 100%;
-        height: 3px;
-        background-color: var(--text-color);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    /* Animación hamburguesa a X */
-    .hamburger-btn.open .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-    .hamburger-btn.open .bar:nth-child(2) { opacity: 0; }
-    .hamburger-btn.open .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-    /* 2. OCULTAR ENLACES NORMALES Y CREAR MENÚ LATERAL */
-    .navbar-links {
-        position: fixed;
-        top: 0;
-        left: -100%; /* Oculto a la izquierda */
-        width: 75%;
-        max-width: 300px;
-        height: 100vh;
-        background-color: var(--bg-secondary-color);
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 2rem 1.5rem;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 1001; /* Por encima de todo */
-        border-right: 1px solid var(--border-color);
-    }
-
-    .navbar-links.active {
-        left: 0; /* Aparece */
-    }
-
-    .nav-link {
-        width: 100%;
-        padding: 12px;
-        font-size: 1.05rem;
-        border-radius: 10px;
-        margin-bottom: 5px;
-    }
-
-    /* Header dentro del menú móvil */
-    .mobile-menu-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 2rem;
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .mobile-menu-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--text-color);
-    }
-
-    .close-menu-btn {
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: var(--text-secondary-color);
-        cursor: pointer;
-    }
-
-    /* Overlay oscuro */
-    .nav-overlay {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s;
-        backdrop-filter: blur(2px);
-    }
-
-    .nav-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    /* 3. AJUSTAR ACCIONES DERECHAS */
+    /* 1. AJUSTAR ACCIONES DERECHAS */
     .navbar-actions {
         gap: 4px;
         flex-shrink: 1;

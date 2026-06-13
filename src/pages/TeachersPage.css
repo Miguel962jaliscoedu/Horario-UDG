@@ -55,7 +55,7 @@
 }
 
 .my-ratings-btn:hover {
-    background: var(--text-color);
+    background: var(--primary-color-hover);
     transform: translateY(-50%) translateX(2px);
 }
 

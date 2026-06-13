@@ -12,7 +12,7 @@ export function TermsPage() {
                     <p className="legal-subtitle">
                         Al utilizar Horario UDG, aceptas los siguientes términos y condiciones.
                     </p>
-                    <p className="legal-date">Última actualización: 23 de abril de 2026</p>
+                    <p className="legal-date">Última actualización: 13 de junio de 2026</p>
                 </header>
 
                 <section className="legal-section">
@@ -35,6 +35,8 @@ export function TermsPage() {
                         <li>Consultar la oferta de cursos del SIIAU</li>
                         <li>Guardar múltiples horarios</li>
                         <li>Evaluar y calificar a profesores</li>
+                        <li>Monitorear cupos disponibles en materias con demanda</li>
+                        <li>Recibir notificaciones push sobre cupos, cambios de horario y cambios de profesor</li>
                         <li>Consultar calificaciones y opiniones de otros estudiantes</li>
                     </ul>
                 </section>
@@ -95,7 +97,28 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>7. Evaluaciones y Comentarios de Profesores</h2>
+                    <h2>7. Notificaciones y Monitoreo</h2>
+                    <p>
+                        La función de monitoreo de cupos te permite recibir notificaciones cuando 
+                        se libere un lugar en una materia o cuando haya cambios en el horario o 
+                        profesor asignado. Al activar el monitoreo de una materia:
+                    </p>
+                    <ul>
+                        <li>Autorizas a Horario UDG a consultar periódicamente el estado de esa materia en el SIIAU</li>
+                        <li>Aceptas recibir notificaciones push relacionadas únicamente con esa materia</li>
+                        <li>Puedes desactivar el monitoreo en cualquier momento desde la aplicación</li>
+                        <li>El monitoreo se realiza únicamente entre las 7:00 y 23:00 horas, hora del centro de México</li>
+                    </ul>
+                    <p>
+                        Las notificaciones se entregan mediante <strong>Firebase Cloud Messaging (FCM)</strong> 
+                        y pueden estar sujetas a retrasos dependiendo de tu conexión a internet y 
+                        la configuración de tu dispositivo. No garantizamos la entrega inmediata 
+                        de las notificaciones.
+                    </p>
+                </section>
+
+                <section className="legal-section">
+                    <h2>8. Evaluaciones y Comentarios de Profesores</h2>
                     <p>
                         Las evaluaciones y comentarios publicados por usuarios son 
                         opiniones personales y no representan la opinión de Horario UDG 
@@ -113,7 +136,7 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>8. Limitación de Responsabilidad</h2>
+                    <h2>9. Limitación de Responsabilidad</h2>
                     <div className="disclaimer-box">
                         <p>
                             <strong>DESCARGO DE RESPONSABILIDAD:</strong> Horario UDG 
@@ -134,7 +157,7 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>9. Propiedad Intelectual</h2>
+                    <h2>10. Propiedad Intelectual</h2>
                     <p>
                         El código fuente, diseño, logos y contenido de Horario UDG 
                         son propiedad intelectual de sus desarrolladores. Puedes 
@@ -150,16 +173,16 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>10. Modificaciones al Servicio</h2>
+                    <h2>11. Modificaciones al Servicio</h2>
                     <p>
                         Nos reservamos el derecho de modificar, suspender o discontinuar 
                         cualquier aspecto del servicio en cualquier momento. También 
-                        podemos actualizar estos términos periodically.
+                        podemos actualizar estos términos periódicamente.
                     </p>
                 </section>
 
                 <section className="legal-section">
-                    <h2>11. Terminación</h2>
+                    <h2>12. Terminación</h2>
                     <p>
                         Podemos suspender o terminar tu cuenta si incumples estos 
                         términos o si detectamos uso fraudulento o abuso del servicio.
@@ -171,7 +194,7 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>12. Ley Aplicable</h2>
+                    <h2>13. Ley Aplicable</h2>
                     <p>
                         Estos términos se rigen por las leyes de México. Cualquier 
                         disputa será resuelta en los tribunales de Guadalajara, Jalisco.
@@ -179,7 +202,7 @@ export function TermsPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>13. Contacto</h2>
+                    <h2>14. Contacto</h2>
                     <p>
                         Si tienes preguntas sobre estos términos, contactanos a 
                         través de los canales disponibles en la aplicación.

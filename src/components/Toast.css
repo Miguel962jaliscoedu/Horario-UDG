@@ -1,0 +1,102 @@
+/* src/components/Toast.css */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    pointer-events: none;
+    max-width: 420px;
+    width: calc(100% - 2rem);
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    min-height: 48px;
+}
+
+.toast:hover {
+    transform: translateX(-4px);
+}
+
+.toast-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #fff;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0 0 0 0.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+.toast-close:hover {
+    color: #fff;
+}
+
+/* Tipos de toast */
+.toast-info {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+.toast-success {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+}
+.toast-warning {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}
+.toast-error {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Animación de entrada */
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-toast-in {
+    animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .toast-container {
+        right: 0.5rem;
+        bottom: 1rem;
+        left: 0.5rem;
+        max-width: none;
+        width: auto;
+    }
+}

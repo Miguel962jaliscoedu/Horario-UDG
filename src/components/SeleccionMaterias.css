@@ -161,6 +161,12 @@
   letter-spacing: 0.5px;
 }
 
+.mini-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .mini-remove-btn {
   background: none;
   border: none;

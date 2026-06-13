@@ -1,0 +1,304 @@
+/* src/components/NotificationBell.css */
+
+.notification-bell-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.notification-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.bell-icon-emoji {
+    font-size: 1.3rem;
+    line-height: 1;
+    display: block;
+}
+
+.notification-bell:hover {
+    background: var(--primary-color-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.notification-bell.has-unread {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    background: var(--primary-color-light);
+}
+
+.notification-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 10px;
+    background: #ea4335;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(234, 67, 53, 0.3);
+    animation: badgePop 0.3s ease-out;
+}
+
+@keyframes badgePop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Dropdown */
+.notification-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: -10px;
+    width: 360px;
+    max-height: 480px;
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    z-index: 1000;
+    animation: dropdownIn 0.2s ease-out;
+}
+
+@keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.notification-dropdown-header h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.notification-count {
+    font-size: 0.78rem;
+    color: var(--text-secondary-color);
+}
+
+.notification-list {
+    overflow-y: auto;
+    max-height: 360px;
+}
+
+.notification-empty {
+    padding: 32px 16px;
+    text-align: center;
+    color: var(--text-secondary-color);
+}
+
+.notification-empty-icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.notification-empty p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+}
+
+.notification-empty-sub {
+    font-size: 0.8rem !important;
+    color: var(--text-secondary-color);
+}
+
+.notification-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.notification-item:hover {
+    background: var(--bg-tertiary-color);
+}
+
+.notification-item.unread {
+    background: var(--primary-color-light);
+}
+
+.notification-item.unread:hover {
+    background: var(--bg-tertiary-color);
+}
+
+.notification-item-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notification-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-item-title {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.notification-item-body {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notification-item-time {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--text-secondary-color);
+    margin-top: 4px;
+}
+
+.notification-unread-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+.notification-permission-cta {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-color);
+    background: var(--primary-color-light);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.notification-permission-cta p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary-color);
+}
+
+.btn-enable-notif {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-enable-notif:hover {
+    background: var(--primary-color-hover);
+}
+
+.notification-dropdown-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.notification-view-all {
+    display: inline-block;
+    padding: 6px 14px;
+    border: none;
+    border-radius: 8px;
+    background: var(--bg-tertiary-color);
+    color: var(--primary-color);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+}
+
+.notification-view-all:hover {
+    background: var(--primary-color-light);
+}
+
+/* Tema oscuro */
+body.dark-theme .notification-dropdown {
+    background: var(--bg-secondary-color);
+    border-color: var(--border-color);
+}
+
+body.dark-theme .notification-item.unread {
+    background: #0d2b4a;
+}
+
+body.dark-theme .notification-item.unread:hover {
+    background: #163a5a;
+}
+
+body.dark-theme .notification-permission-cta {
+    background: var(--bg-tertiary-color);
+}
+
+body.dark-theme .notification-bell {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+body.dark-theme .notification-bell:hover {
+    background: rgba(74, 144, 226, 0.2);
+    border-color: var(--primary-color);
+}
+body.dark-theme .notification-bell.has-unread {
+    background: rgba(74, 144, 226, 0.15);
+    border-color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .notification-dropdown {
+        position: fixed;
+        top: 60px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        max-height: 70vh;
+    }
+}

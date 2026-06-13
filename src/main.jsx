@@ -18,6 +18,8 @@ const TeachersPage = lazy(() => import('./pages/TeachersPage.jsx').then(m => ({ 
 const MyRatingsPage = lazy(() => import('./pages/MyRatingsPage.jsx').then(m => ({ default: m.MyRatingsPage })));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage.jsx').then(m => ({ default: m.PrivacyPage })));
 const TermsPage = lazy(() => import('./pages/TermsPage.jsx').then(m => ({ default: m.TermsPage })));
+const NotificationTestPage = lazy(() => import('./pages/NotificationTestPage.jsx').then(m => ({ default: m.NotificationTestPage })));
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage.jsx').then(m => ({ default: m.NotificationsPage })));
 
 import './index.css';
 
@@ -78,6 +80,15 @@ const router = createBrowserRouter([
         path: "terminos",
         element: <Suspense fallback={<PageLoader />}><TermsPage /></Suspense>,
       },
+      {
+        path: "mis-notificaciones",
+        element: <Suspense fallback={<PageLoader />}><NotificationsPage /></Suspense>,
+      },
+      // Ruta de pruebas interna — solo disponible en desarrollo
+      ...(import.meta.env.DEV ? [{
+        path: "test-notificaciones",
+        element: <Suspense fallback={<PageLoader />}><NotificationTestPage /></Suspense>,
+      }] : []),
       {
         path: "*",
         element: <Suspense fallback={<PageLoader />}><HomePage /></Suspense>,

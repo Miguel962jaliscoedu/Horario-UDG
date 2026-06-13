@@ -1,0 +1,315 @@
+/* src/components/MonitorToggle.css */
+
+/* Botón de campana */
+.monitor-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border: 1px solid var(--border-color, #e0e0e0);
+    border-radius: 8px;
+    background: var(--bg-secondary-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    position: relative;
+    min-width: 40px;
+}
+
+.monitor-toggle:hover {
+    background: var(--bg-tertiary-color);
+    border-color: var(--primary-color);
+}
+
+.monitor-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.monitor-toggle.active-seats {
+    background: #e8f5e9;
+    border-color: #4caf50;
+    color: #2e7d32;
+}
+
+.monitor-toggle.active-registered {
+    background: #e3f2fd;
+    border-color: #1e88e5;
+    color: #1565c0;
+}
+
+.monitor-toggle.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.monitor-icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.monitor-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4caf50;
+    border: 2px solid var(--bg-secondary-color);
+}
+
+/* Modal de monitoreo */
+.monitor-modal {
+    background: var(--bg-secondary-color);
+    border-radius: 16px;
+    padding: 0;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.monitor-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color, #eee);
+}
+
+.monitor-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.monitor-modal-body {
+    padding: 16px 20px;
+}
+
+.monitor-modal-subtitle {
+    margin: 0 0 16px;
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
+    font-weight: 500;
+}
+
+.monitor-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 12px;
+}
+
+.monitor-option:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-tertiary-color);
+}
+
+.monitor-option input[type="checkbox"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.monitor-option-content {
+    flex: 1;
+}
+
+.monitor-option-content strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    margin-bottom: 2px;
+}
+
+.monitor-option-content p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--text-secondary-color);
+}
+
+.monitor-info-box {
+    background: var(--primary-color-light);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+}
+
+.monitor-info-box p {
+    margin: 0 0 6px;
+}
+
+.monitor-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.monitor-info-note {
+    font-size: 0.78rem;
+    color: var(--text-secondary-color);
+    font-style: italic;
+}
+
+.monitor-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.monitor-modal-footer .btn-cancel {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.monitor-modal-footer .btn-cancel:hover {
+    background: var(--bg-tertiary-color);
+}
+
+.monitor-modal-footer .btn-primary {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.monitor-modal-footer .btn-primary:hover {
+    background: var(--primary-color-hover);
+}
+
+/* Tema oscuro */
+body.dark-theme .monitor-toggle.active-seats {
+    background: #1b3d1b;
+    border-color: #4caf50;
+    color: #81c784;
+}
+
+body.dark-theme .monitor-toggle.active-registered {
+    background: #0d2b4a;
+    border-color: #42a5f5;
+    color: #90caf9;
+}
+
+body.dark-theme .monitor-modal {
+    background: var(--bg-secondary-color);
+}
+
+body.dark-theme .monitor-info-box {
+    background: var(--bg-tertiary-color);
+    border-color: var(--border-color);
+}
+
+body.dark-theme .monitor-option {
+    border-color: #333;
+}
+
+body.dark-theme .monitor-option:hover {
+    border-color: #42a5f5;
+    background: #1a2634;
+}
+
+/* --- Schedule picker dentro del modal de monitoreo --- */
+.monitor-schedule-picker {
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--bg-primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.monitor-picker-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin: 0 0 2px;
+    color: var(--text-color);
+}
+
+.monitor-picker-hint {
+    font-size: 0.78rem;
+    color: var(--text-secondary-color);
+    margin: 0 0 10px;
+}
+
+.monitor-schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.monitor-schedule-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 0.85rem;
+}
+
+.monitor-schedule-option:hover {
+    background: var(--bg-tertiary-color);
+}
+
+.monitor-schedule-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.monitor-schedule-name {
+    flex: 1;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.monitor-schedule-match {
+    font-size: 0.75rem;
+    color: var(--success-color, #4caf50);
+    flex-shrink: 0;
+}
+
+/* Tema oscuro */
+body.dark-theme .monitor-schedule-picker {
+    background: var(--bg-secondary-color);
+    border-color: #333;
+}
+
+body.dark-theme .monitor-schedule-option:hover {
+    background: #1a2634;
+}

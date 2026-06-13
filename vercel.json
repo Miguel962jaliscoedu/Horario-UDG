@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/monitorear-cupos",
+      "schedule": "*/15 7-23 * * 1-6"
+    }
+  ],
   "rewrites": [
     { "source": "/((?!@|api|assets|.*\\..*).*)", "destination": "/index.html" }
   ],

@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { detectarCruces, generarMensajeCruces } from '../services/scheduleUtils';
 import ProfessorRating from './ProfessorRating';
+import MonitorToggle from './MonitorToggle';
 import './SeleccionMaterias.css';
 
 const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange, onClose }) => {
@@ -75,7 +76,7 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
     );
 };
 
-export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange }) {
+export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, availableSchedules, currentScheduleId }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [materiaEnModal, setMateriaEnModal] = useState(null);
@@ -206,10 +207,26 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange })
                         >
                             <div className="mini-card-header">
                                 <span className="mini-card-clave">{subject.clave}</span>
-                                <button 
-                                    className="mini-remove-btn" 
-                                    onClick={(e) => { e.stopPropagation(); handleRemoveSubject(subject); }}
-                                >&times;</button>
+                                <div className="mini-card-actions">
+                                    {subject.selectedNrc && (
+                                        <MonitorToggle
+                                            nrc={subject.selectedNrc.nrc}
+                                            materia={subject.nombre}
+                                            clave={subject.clave}
+                                            profesor={subject.selectedNrc.profesor}
+                                            cup={subject.selectedNrc.cup || ''}
+                                            majrp={subject.selectedNrc.majrp || ''}
+                                            horarioLabel={subject.selectedNrc.horarioLabel || ''}
+                                            scheduleId={subject.selectedNrc.scheduleId}
+                                            availableSchedules={availableSchedules}
+                                            currentScheduleId={currentScheduleId}
+                                        />
+                                    )}
+                                    <button 
+                                        className="mini-remove-btn" 
+                                        onClick={(e) => { e.stopPropagation(); handleRemoveSubject(subject); }}
+                                    >&times;</button>
+                                </div>
                             </div>
                             
                             <div className="mini-card-body">

@@ -4,6 +4,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { Footer } from './components/Footer.jsx';
 import Navbar from './components/Navbar.jsx';
+import { ToastContainer } from './components/Toast.jsx';
+import { initFCM } from './services/notificationService.js';
 import './App.css';
 
 function App() {
@@ -15,6 +17,14 @@ function App() {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [location.pathname]);
+
+    // Inicializar FCM al cargar la app (solo una vez)
+    useEffect(() => {
+        const hasMessagingSender = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
+        if (hasMessagingSender && 'serviceWorker' in navigator) {
+            initFCM().catch(() => {});
+        }
+    }, []);
 
     useEffect(() => {
         document.body.classList.remove('light-theme', 'dark-theme');
@@ -43,6 +53,7 @@ function App() {
                 
                 <Footer />
             </div>
+            <ToastContainer />
         </AuthProvider>
     );
 }

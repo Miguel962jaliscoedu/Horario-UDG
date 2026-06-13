@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/monitorear-cupos",
-      "schedule": "*/15 7-23 * * 1-6"
+      "schedule": "0 8 * * 1-6"
     }
   ],
   "rewrites": [

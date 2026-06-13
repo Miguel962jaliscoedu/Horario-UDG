@@ -1,41 +1,9 @@
-/* =========================================
-   VARIABLES DE TEMA (Paleta de Colores)
-   ========================================= */
-:root {
-  /* TEMA CLARO (Default) */
-  --sm-bg-card: #ffffff;
-  --sm-bg-input: #ffffff;
-  --sm-bg-hover: #f9fafb;
-  --sm-bg-modal: #ffffff;
-  --sm-text-primary: #1f2937; /* Gray 800 */
-  --sm-text-secondary: #6b7280; /* Gray 500 */
-  --sm-border: #e5e7eb; /* Gray 200 */
-  --sm-shadow: rgba(0, 0, 0, 0.05);
-  
-  /* Colores de estado (Claro) */
-  --sm-tag-blue-bg: #e0f2fe; --sm-tag-blue-text: #0284c7;
-  --sm-tag-yellow-bg: #fef3c7; --sm-tag-yellow-text: #d97706;
-  --sm-tag-red-bg: #fee2e2; --sm-tag-red-text: #dc2626;
-  --sm-tag-green-bg: #dcfce7; --sm-tag-green-text: #166534;
-}
-
-/* TEMA OSCURO (Se activa con clase .dark o data-theme) */
-[data-theme='dark'], .dark {
-  --sm-bg-card: #1f2937; /* Gray 800 */
-  --sm-bg-input: #374151; /* Gray 700 */
-  --sm-bg-hover: #374151;
-  --sm-bg-modal: #1f2937;
-  --sm-text-primary: #f3f4f6; /* Gray 100 */
-  --sm-text-secondary: #9ca3af; /* Gray 400 */
-  --sm-border: #4b5563; /* Gray 600 */
-  --sm-shadow: rgba(0, 0, 0, 0.3);
-
-  /* Colores de estado (Oscuro - más saturados para contraste) */
-  --sm-tag-blue-bg: #0c4a6e; --sm-tag-blue-text: #7dd3fc;
-  --sm-tag-yellow-bg: #78350f; --sm-tag-yellow-text: #fcd34d;
-  --sm-tag-red-bg: #7f1d1d; --sm-tag-red-text: #fca5a5;
-  --sm-tag-green-bg: #14532d; --sm-tag-green-text: #86efac;
-}
+/*
+  NOTA: Este componente usa las variables CSS globales del tema
+  definidas en App.css (--bg-*, --text-*, --tag-*, etc.)
+  No necesita variables locales --sm-* porque el theme global
+  se aplica via body.light-theme / body.dark-theme.
+*/
 
 /* =========================================
    ESTILOS DEL COMPONENTE
@@ -58,17 +26,16 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: var(--sm-bg-input);
-  border: 1px solid var(--sm-border);
+  background: var(--bg-secondary-color);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  /* padding: 0 16px; */ /* Eliminado para usar posicionamiento absoluto del icono */
-  box-shadow: 0 2px 4px var(--sm-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
 }
 
 .search-bar-wrapper:focus-within {
-  border-color: #3b82f6; /* Blue 500 */
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
 }
 
 .search-icon {
@@ -76,7 +43,7 @@
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   font-size: 1.1rem;
   pointer-events: none;
   z-index: 5;
@@ -89,11 +56,11 @@
   padding: 14px 14px 14px 44px; /* Espacio para el icono a la izquierda */
   font-size: 1rem;
   background: transparent;
-  color: var(--sm-text-primary);
+  color: var(--text-color);
 }
 
 .search-input-compact::placeholder {
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   opacity: 0.7;
 }
 
@@ -103,10 +70,10 @@
   top: 115%;
   left: 0;
   right: 0;
-  background: var(--sm-bg-card);
-  border: 1px solid var(--sm-border);
+  background: var(--bg-secondary-color);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 10px 25px var(--sm-shadow);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   max-height: 300px;
   overflow-y: auto;
@@ -122,9 +89,9 @@
   background: transparent;
   text-align: left;
   cursor: pointer;
-  border-bottom: 1px solid var(--sm-border);
+  border-bottom: 1px solid var(--border-color);
   transition: background 0.2s;
-  color: var(--sm-text-primary);
+  color: var(--text-color);
 }
 
 .search-result-row:last-child {
@@ -132,17 +99,17 @@
 }
 
 .search-result-row:hover {
-  background: var(--sm-bg-hover);
+  background: var(--bg-tertiary-color);
 }
 
 .result-name { font-weight: 600; font-size: 0.95rem; }
 .result-clave { 
   font-size: 0.75rem; 
-  color: var(--sm-text-secondary); 
-  background: var(--sm-bg-hover); 
+  color: var(--text-secondary-color); 
+  background: var(--bg-tertiary-color); 
   padding: 2px 6px; 
   border-radius: 4px; 
-  border: 1px solid var(--sm-border);
+  border: 1px solid var(--border-color);
 }
 
 /* --- Grid Compacto --- */
@@ -154,8 +121,8 @@
 
 /* --- Mini Card --- */
 .mini-card {
-  background: var(--sm-bg-card);
-  border: 1px solid var(--sm-border);
+  background: var(--bg-secondary-color);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 16px;
   cursor: pointer;
@@ -166,20 +133,18 @@
   flex-direction: column;
   justify-content: space-between;
   min-height: 120px;
-  box-shadow: 0 1px 3px var(--sm-shadow);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .mini-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 16px var(--sm-shadow);
-  border-color: #cbd5e1;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--border-color);
 }
-.dark .mini-card:hover { border-color: #64748b; }
 
 /* Estados de la tarjeta */
-.mini-card.card-warning { border-left: 4px solid #f59e0b; }
-.mini-card.card-conflict { border: 1px solid #fca5a5; box-shadow: 0 0 0 1px #fca5a5; }
-.dark .mini-card.card-conflict { border-color: #7f1d1d; box-shadow: 0 0 0 1px #7f1d1d; }
+.mini-card.card-warning { border-left: 4px solid var(--warning-color); }
+.mini-card.card-conflict { border: 1px solid var(--tag-red-text); box-shadow: 0 0 0 1px var(--tag-red-text); }
 
 .mini-card-header {
   display: flex;
@@ -192,7 +157,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   letter-spacing: 0.5px;
 }
 
@@ -201,19 +166,19 @@
   border: none;
   font-size: 1.4rem;
   line-height: 0.5;
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   cursor: pointer;
   padding: 0;
   transition: color 0.2s;
 }
-.mini-remove-btn:hover { color: #ef4444; }
+.mini-remove-btn:hover { color: var(--error-color); }
 
 .mini-card-title {
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 12px 0;
   line-height: 1.4;
-  color: var(--sm-text-primary);
+  color: var(--text-color);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -235,23 +200,23 @@
   border-radius: 6px;
   font-weight: 600;
 }
-.bg-blue { background: var(--sm-tag-blue-bg); color: var(--sm-tag-blue-text); }
-.bg-yellow { background: var(--sm-tag-yellow-bg); color: var(--sm-tag-yellow-text); }
-.bg-red { background: var(--sm-tag-red-bg); color: var(--sm-tag-red-text); }
+.bg-blue { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
+.bg-yellow { background: var(--tag-yellow-bg); color: var(--tag-yellow-text); }
+.bg-red { background: var(--tag-red-bg); color: var(--tag-red-text); }
 
 .sections-count {
   font-size: 0.75rem;
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   font-weight: 500;
 }
 
 .conflict-strip {
-  background: #dc2626;
+  background: var(--error-color);
   color: white;
   font-size: 0.7rem;
   text-align: center;
   padding: 4px;
-  margin: 12px -16px -16px -16px; /* Pegado al fondo */
+  margin: 12px -16px -16px -16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -259,9 +224,9 @@
 
 /* --- Alerta de Conflicto --- */
 .conflict-alert-banner {
-  background-color: var(--sm-tag-red-bg);
-  border: 1px solid var(--sm-tag-red-text);
-  color: var(--sm-tag-red-text);
+  background-color: var(--tag-red-bg);
+  border: 1px solid var(--tag-red-text);
+  color: var(--tag-red-text);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 0.9rem;
@@ -274,10 +239,10 @@
 .empty-state-compact {
   text-align: center;
   padding: 40px;
-  color: var(--sm-text-secondary);
-  border: 2px dashed var(--sm-border);
+  color: var(--text-secondary-color);
+  border: 2px dashed var(--border-color);
   border-radius: 12px;
-  background: var(--sm-bg-hover);
+  background: var(--bg-tertiary-color);
 }
 
 /* --- MODAL --- */
@@ -288,43 +253,40 @@
 
 .nrc-radio-label {
   display: flex;
-  border: 1px solid var(--sm-border);
-  background: var(--sm-bg-card);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary-color);
   margin-bottom: 10px;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
   padding: 12px;
-  color: var(--sm-text-primary);
+  color: var(--text-color);
 }
 
 .nrc-radio-label:hover {
-  background-color: var(--sm-bg-hover);
-  border-color: #93c5fd;
+  background-color: var(--bg-tertiary-color);
+  border-color: var(--primary-color);
 }
 
 .nrc-radio-label.selected {
-  border-color: #3b82f6;
-  background-color: var(--sm-tag-blue-bg);
-}
-.dark .nrc-radio-label.selected {
-  background-color: rgba(12, 74, 110, 0.5); /* Ajuste para modo oscuro */
+  border-color: var(--primary-color);
+  background-color: var(--tag-blue-bg);
 }
 
-.nrc-radio-label input { margin-right: 12px; margin-top: 6px; accent-color: #3b82f6; }
+.nrc-radio-label input { margin-right: 12px; margin-top: 6px; accent-color: var(--primary-color); }
 
 .nrc-radio-content { flex: 1; }
 
 .nrc-header-info { display: flex; justify-content: space-between; margin-bottom: 6px; }
-.nrc-badge { font-weight: 700; font-size: 0.9rem; color: var(--sm-text-primary); }
+.nrc-badge { font-weight: 700; font-size: 0.9rem; color: var(--text-color); }
 
 .cupos-badge { font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
-.cupos-badge.available { background: var(--sm-tag-green-bg); color: var(--sm-tag-green-text); }
-.cupos-badge.full { background: var(--sm-tag-red-bg); color: var(--sm-tag-red-text); }
+.cupos-badge.available { background: var(--tag-green-bg); color: var(--tag-green-text); }
+.cupos-badge.full { background: var(--tag-red-bg); color: var(--tag-red-text); }
 
 .nrc-profesor {
   font-size: 0.85rem;
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   margin-bottom: 8px;
   font-style: italic;
 }
@@ -333,20 +295,20 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  background: var(--sm-bg-hover);
+  background: var(--bg-tertiary-color);
   padding: 8px;
   border-radius: 6px;
 }
 
 .sesion-row {
   font-size: 0.8rem;
-  color: var(--sm-text-primary);
+  color: var(--text-color);
   display: flex;
   gap: 6px;
   align-items: center;
 }
-.sesion-row strong { color: #3b82f6; font-weight: 600; min-width: 30px; }
-.sesion-row small { color: var(--sm-text-secondary); margin-left: auto; }
+.sesion-row strong { color: var(--primary-color); font-weight: 600; min-width: 30px; }
+.sesion-row small { color: var(--text-secondary-color); margin-left: auto; }
 
 /* Animación */
 @keyframes fadeIn {
@@ -376,9 +338,9 @@
 
 /* El contenedor principal del modal */
 .modal-content {
-  background-color: var(--sm-bg-modal);
-  color: var(--sm-text-primary);
-  border: 1px solid var(--sm-border);
+  background-color: var(--bg-secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   width: 100%;
   max-width: 600px; /* Ancho máximo cómodo */
   max-height: 85vh; /* Evita que sea más alto que la pantalla */
@@ -395,7 +357,7 @@
   border: none;
   font-size: 2rem;
   line-height: 1;
-  color: var(--sm-text-secondary);
+  color: var(--text-secondary-color);
   cursor: pointer;
   padding: 0;
   margin-left: auto;
@@ -406,13 +368,12 @@
 }
 
 .modal-close-btn:hover {
-  color: var(--sm-text-primary); 
-  /* Opcional: si quieres que sea rojo al hover: color: #ef4444; */
+  color: var(--text-color);
 }
 
 /* Header interno del modal */
 .modal-content h2 {
-  color: var(--sm-text-primary);
+  color: var(--text-color);
   font-weight: 700;
 }
 
@@ -440,9 +401,9 @@
   background: transparent;
 }
 .modal-content::-webkit-scrollbar-thumb {
-  background-color: var(--sm-border);
+  background-color: var(--border-color);
   border-radius: 4px;
 }
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background-color: var(--sm-text-secondary);
+  background-color: var(--text-secondary-color);
 }

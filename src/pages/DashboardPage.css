@@ -45,7 +45,7 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     
     /* Aseguramos que el fondo y borde sean consistentes */
-    background-color: var(--bg-card); 
+    background-color: var(--bg-secondary-color); 
     border: 1px solid var(--border-color);
 }
 

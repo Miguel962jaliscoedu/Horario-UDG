@@ -82,15 +82,36 @@ body.light-theme {
   --primary-color-hover: #2563eb;
   --primary-color-rgb: 59, 130, 246; /* RGB del primary-color */
   --secondary-color: #60a5fa;   /* Azul más claro para gradientes */
+  --primary-color-light: rgba(59, 130, 246, 0.15); /* Para backgrounds */
   
   /* Colores de estado */
   --success-color: #10b981;
+  --success-color-bg: rgba(16, 185, 129, 0.1);
+  --success-color-border: rgba(16, 185, 129, 0.3);
   --warning-color: #f59e0b;
+  --warning-color-bg: rgba(245, 158, 11, 0.1);
+  --warning-color-border: rgba(245, 158, 11, 0.3);
   --error-color: #ef4444;
+  --error-color-bg: rgba(239, 68, 68, 0.1);
+  --error-color-border: rgba(239, 68, 68, 0.3);
+  
+  /* Colores de etiquetas/badges */
+  --tag-blue-bg: #dbeafe;
+  --tag-blue-text: #1e40af;
+  --tag-yellow-bg: #fef3c7;
+  --tag-yellow-text: #92400e;
+  --tag-red-bg: #fee2e2;
+  --tag-red-text: #dc2626;
+  --tag-green-bg: #dcfce7;
+  --tag-green-text: #166534;
   
   /* Colores de estrellas */
   --star-inactive-color: #cbd5e1;
   --star-active-color: #f59e0b;
+  
+  /* Acento UDG / Dorado */
+  --gold-color: #f59e0b;
+  --gold-color-bright: #FFD700;
   
   /* Sombras más sofisticadas */
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 
@@ -104,6 +125,9 @@ body.light-theme {
   --clase-bg: #eff6ff;
   --clase-border: #3b82f6;
   --clase-text: #1e3a8a;
+  
+  /* Colores de overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.4);
   
   color-scheme: light;
 }
@@ -122,15 +146,36 @@ body.dark-theme {
   --primary-color-hover: #3b82f6;
   --primary-color-rgb: 96, 165, 250; /* RGB del primary-color */
   --secondary-color: #3b82f6;   /* Azul más oscuro para gradientes */
+  --primary-color-light: rgba(96, 165, 250, 0.15);
   
   /* Colores de estado */
   --success-color: #10b981;
+  --success-color-bg: rgba(16, 185, 129, 0.15);
+  --success-color-border: rgba(16, 185, 129, 0.3);
   --warning-color: #f59e0b;
+  --warning-color-bg: rgba(245, 158, 11, 0.15);
+  --warning-color-border: rgba(245, 158, 11, 0.3);
   --error-color: #ef4444;
+  --error-color-bg: rgba(239, 68, 68, 0.15);
+  --error-color-border: rgba(239, 68, 68, 0.3);
+  
+  /* Colores de etiquetas/badges */
+  --tag-blue-bg: #1e3a8a;
+  --tag-blue-text: #93c5fd;
+  --tag-yellow-bg: #78350f;
+  --tag-yellow-text: #fcd34d;
+  --tag-red-bg: #7f1d1d;
+  --tag-red-text: #fca5a5;
+  --tag-green-bg: #14532d;
+  --tag-green-text: #86efac;
   
   /* Colores de estrellas */
   --star-inactive-color: #94a3b8;
   --star-active-color: #f59e0b;
+  
+  /* Acento UDG / Dorado */
+  --gold-color: #fcd34d;
+  --gold-color-bright: #FFD700;
   
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
@@ -140,6 +185,9 @@ body.dark-theme {
   --clase-bg: #1e3a8a;
   --clase-border: #60a5fa;
   --clase-text: #e0f2fe;
+  
+  /* Colores de overlay */
+  --overlay-bg: rgba(0, 0, 0, 0.6);
   
   color-scheme: dark;
 }
@@ -412,8 +460,8 @@ body {
 }
 
 /* Cruces */
-body.dark-theme .clase-card-inner.cruce-horario { background-color: #7f1d1d; border-color: #ef4444; color: #fecaca; }
-body.light-theme .clase-card-inner.cruce-horario { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; }
+body.dark-theme .clase-card-inner.cruce-horario { background-color: var(--tag-red-bg); border-color: var(--tag-red-text); color: var(--tag-red-text); }
+body.light-theme .clase-card-inner.cruce-horario { background-color: var(--tag-red-bg); border-color: var(--tag-red-text); color: var(--tag-red-text); }
 
 /* ---------------------------------- */
 /* 6. UTILIDADES & ANIMACIONES        */
@@ -426,8 +474,7 @@ body.light-theme .clase-card-inner.cruce-horario { background-color: #fef2f2; bo
 .animate-slide-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
 .alert { padding: 1rem 1.5rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; border-width: 1px; border-style: solid; }
-.alert-error { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #b91c1c; }
-body.dark-theme .alert-error { color: #fca5a5; }
+.alert-error { background-color: var(--error-color-bg); border-color: var(--error-color-border); color: var(--tag-red-text); }
 
 /* === ANIMACIÓN HERO SECTION === */
 

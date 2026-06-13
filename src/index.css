@@ -9,10 +9,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  /* El color-scheme lo controla el theme toggle via body.dark-theme / body.light-theme */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -73,18 +70,9 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+/* NOTA: No usamos @media (prefers-color-scheme) porque el tema
+   se controla manualmente via toggle (body.light-theme / body.dark-theme).
+   Las variables CSS en App.css manejan todos los colores del tema. */
 
 /* ---------------------------------- */
 /* CLASE VISUALLY-HIDDEN (accesibilidad) */

@@ -98,11 +98,11 @@
 }
 
 .special-link {
-    color: #b45309; /* Amarillo oscuro accesible (contraste 4.8:1 sobre blanco) */
+    color: var(--gold-color);
 }
 .special-link:hover {
-    color: #92400e;
-    background-color: rgba(180, 83, 9, 0.1);
+    color: var(--gold-color-bright);
+    background-color: var(--warning-color-bg);
 }
 
 /* --- DERECHA --- */
@@ -240,8 +240,8 @@
 }
 
 .btn-logout:hover {
-    color: #ef4444; /* Rojo */
-    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+    background-color: var(--error-color-bg);
 }
 
 /* --- ELEMENTOS MÓVILES (Ocultos en Desktop) --- */

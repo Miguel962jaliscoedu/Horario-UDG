@@ -69,7 +69,7 @@
 /* Barra superior decorativa */
 .card-top-bar {
     height: 6px;
-    background: linear-gradient(90deg, var(--primary-color), #60a5fa);
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     width: 100%;
 }
 
@@ -115,7 +115,7 @@
 
 .btn-delete:hover {
     opacity: 1;
-    background-color: #fee2e2; /* Rojo suave */
+    background-color: var(--tag-red-bg);
 }
 
 /* Meta info (Badges) */
@@ -141,12 +141,8 @@
 }
 
 .subjects-badge {
-    background-color: #dbeafe; /* Azul suave */
-    color: #1e40af; /* Azul fuerte */
-}
-[data-theme='dark'] .subjects-badge {
-    background-color: #1e3a8a;
-    color: #93c5fd;
+    background-color: var(--tag-blue-bg);
+    color: var(--tag-blue-text);
 }
 
 /* Carrera */

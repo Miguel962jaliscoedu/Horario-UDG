@@ -35,7 +35,7 @@
     display: block;
     width: 60px;
     height: 4px;
-    background: #FFD700; /* Dorado UDG */
+    background: var(--gold-color);
     margin: 0.5rem auto 0;
     border-radius: 2px;
 }
@@ -71,9 +71,6 @@
 
 /* Badge Superior */
 .hero-badge {
-    /* Color sólido y legible en modo claro */
-    background-color: #fef9c3; /* Amarillo pastel muy suave */
-    color: #854d0e; /* Dorado oscuro/marrón para contraste */
     padding: 6px 16px;
     border-radius: 50px;
     font-weight: 700;
@@ -81,13 +78,9 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 1.5rem;
-    border: 1px solid rgba(234, 179, 8, 0.2);
-}
-
-[data-theme='dark'] .hero-badge {
-    background-color: rgba(255, 215, 0, 0.1);
-    color: #FFD700; /* Dorado brillante en oscuro */
-    border-color: rgba(255, 215, 0, 0.3);
+    background-color: var(--tag-yellow-bg);
+    color: var(--tag-yellow-text);
+    border: 1px solid var(--warning-color-border);
 }
 
 .benefits-hero h1 {
@@ -100,13 +93,12 @@
 
 /* Highlight "UDG" */
 .text-highlight {
-    color: #f59e0b; /* Dorado ámbar (más oscuro) para fondo blanco */
-    text-shadow: none; /* Sin sombra borrosa en modo claro */
+    color: var(--gold-color);
 }
 
-[data-theme='dark'] .text-highlight {
-    color: #FFD700; /* Dorado brillante original para fondo oscuro */
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3); /* Glow sutil */
+body.dark-theme .text-highlight {
+    color: var(--gold-color-bright);
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .hero-subtitle {
@@ -212,7 +204,7 @@
     content: '✓';
     position: absolute;
     left: 0;
-    color: #22c55e;
+    color: var(--success-color);
     font-weight: 800;
     font-size: 1.1rem;
 }
@@ -261,7 +253,7 @@
     pointer-events: none;
 }
 
-[data-theme='dark'] .highlight-section {
+body.dark-theme .highlight-section {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0,0,0,0));
     border-color: rgba(255, 215, 0, 0.3);
 }
@@ -289,7 +281,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    background: #ef4444;
+    background: var(--error-color);
     color: white;
     padding: 8px 18px;
     border-radius: 0 0 0 16px;
@@ -311,7 +303,7 @@
     border-radius: 10px;
 }
 
-[data-theme='dark'] .price-box {
+body.dark-theme .price-box {
     background: rgba(255,255,255,0.05);
 }
 

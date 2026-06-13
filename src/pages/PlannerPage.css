@@ -6,50 +6,18 @@
 
 .planner-header-bar {
     grid-column: 1 / -1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1.5rem;
     background: linear-gradient(135deg, rgba(var(--primary-color-rgb), 0.1) 0%, rgba(var(--primary-color-rgb), 0.05) 100%);
     border-radius: 16px;
     border: 1px solid var(--border-color);
+    text-align: center;
 }
 
 .planner-page-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 700;
     margin: 0;
     color: var(--text-color);
-}
-
-.my-schedules-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-
-.my-schedules-btn:hover {
-    background: var(--text-color);
-    transform: translateX(2px);
-}
-
-@media (max-width: 600px) {
-    .planner-header-bar {
-        flex-direction: column;
-        gap: 0.75rem;
-        padding: 1rem;
-        text-align: center;
-    }
-    
-    .my-schedules-btn {
-        width: 100%;
-    }
 }
 
 /* =========================================================
@@ -198,9 +166,9 @@
 }
 
 .btn-new-query:hover {
-    background-color: rgba(220, 38, 38, 0.05);
-    color: #dc2626;
-    border-color: #fca5a5;
+    background-color: var(--error-color-bg);
+    color: var(--error-color);
+    border-color: var(--error-color-border);
 }
 
 .schedule-header {
@@ -282,6 +250,31 @@
     justify-content: center;
     z-index: 9999;
     padding: 16px;
+}
+
+/* =========================================
+   MODAL INPUT (personalizado)
+   ========================================= */
+.modal-input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-primary-color);
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    margin: 0.5rem 0 1rem;
+}
+.modal-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
+}
+.modal-input::placeholder {
+    color: var(--text-secondary-color);
+    opacity: 0.6;
 }
 
 .modal-content {

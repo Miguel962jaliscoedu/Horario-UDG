@@ -1,12 +1,13 @@
 // src/hooks/usePlanner.js
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useBlocker, useOutletContext } from 'react-router-dom';
+import { useBlocker, useOutletContext, useSearchParams } from 'react-router-dom';
 
 // Servicios
 import { createSchedule, updateSchedule } from '../services/storageService.js';
 import { fetchOfertaAcademica } from '../services/siiauApi.js';
-import { saveStateToSession, loadStateFromSession } from '../utils/session.js';
+import { saveStateToSession, loadStateFromSession, clearSession } from '../utils/session.js';
+import { showToast } from '../utils/toast.js';
 
 // Helper local para agrupar por NRC con NORMALIZACIÓN para evitar falsos positivos
 const groupSessionsByNRC = (classes) => {
@@ -110,6 +111,21 @@ export function usePlanner() {
     const pendingDataRef = useRef(null); // Para guardar los datos nuevos mientras se resuelve el conflicto
     const resultsRef = useRef(null);
 
+    // --- Estado para modal de nombre (reemplaza prompt nativo) ---
+    const [showNameModal, setShowNameModal] = useState(false);
+    const [pendingName, setPendingName] = useState('');
+
+    // --- Estado para modal de horario no encontrado ---
+    const [showNotFoundModal, setShowNotFoundModal] = useState(false);
+
+    // --- Key para forzar remontaje del formulario al resetear ---
+    const [formResetKey, setFormResetKey] = useState(0);
+
+    // --- NRC desde URL (deep linking desde notificaciones) ---
+    const [searchParams] = useSearchParams();
+    const nrcFromUrl = searchParams.get('nrc');
+    const [nrcTarget, setNrcTarget] = useState(nrcFromUrl || '');
+
     // --- 1. ESTADO INICIAL (Lazy Initialization) ---
     const [materias, setMaterias] = useState(() => getInitialPlannerState().materias);
     const [selectedNRCs, setSelectedNRCs] = useState(() => getInitialPlannerState().selectedNRCs);
@@ -151,7 +167,7 @@ export function usePlanner() {
     useEffect(() => {
         return () => {
             if (!isDirtyRef.current) {
-                sessionStorage.removeItem('plannerState');
+                clearSession();
             }
         };
     }, []);
@@ -172,9 +188,30 @@ export function usePlanner() {
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [isDirty]);
 
+    // --- Efecto para NRC desde URL (deep linking) ---
+    useEffect(() => {
+        if (!nrcFromUrl) return;
+        
+        setNrcTarget(nrcFromUrl);
+
+        // Si ya se realizó consulta y tenemos materias cargadas, buscar y seleccionar el NRC
+        if (consultaRealizada && materias.length > 0) {
+            const exists = materias.some(m => m.nrc === nrcFromUrl);
+            if (exists) {
+                setSelectedNRCs(prev => {
+                    if (prev.includes(nrcFromUrl)) return prev;
+                    return [...prev, nrcFromUrl];
+                });
+                showToast(`Materia NRC ${nrcFromUrl} preseleccionada desde notificación.`, 'info');
+                // Limpiar el target después de seleccionar
+                setTimeout(() => setNrcTarget(''), 2000);
+            }
+        }
+    }, [nrcFromUrl]); // Solo se ejecuta al montar/cuando cambia el param
+
     // --- 4. HANDLERS ---
     const handleSaveCloud = async () => {
-        if (!user) return alert("Debes iniciar sesión para guardar.");
+        if (!user) return showToast("Debes iniciar sesión para guardar.", 'warning');
         
         const selectedClasses = materias.filter(m => selectedNRCs.includes(m.nrc));
         
@@ -190,34 +227,23 @@ export function usePlanner() {
             if (currentScheduleId) {
                 try {
                     await updateSchedule(user.uid, currentScheduleId, scheduleData);
-                    alert(`¡"${currentScheduleName}" actualizado correctamente!`);
+                    showToast(`¡"${currentScheduleName}" actualizado correctamente!`, 'success');
                 } catch (updateErr) {
                     // Verificamos si es un error de "not-found" (documento borrado en SIIAU o Firestore)
                     if (updateErr.code === 'not-found' || updateErr.message?.includes('not found')) {
-                        const createNew = window.confirm("Este horario ya no existe en la nube (posiblemente fue eliminado). ¿Deseas guardarlo como un horario nuevo?");
-                        if (createNew) {
-                            setCurrentScheduleId(null);
-                            setCurrentScheduleName('');
-                            setSaving(false);
-                            // Llamada recursiva para guardar como nuevo
-                            return handleSaveCloud();
-                        } else {
-                            // Limpiar rastro de ID huérfano
-                            setCurrentScheduleId(null);
-                            setCurrentScheduleName('');
-                            sessionStorage.removeItem('plannerState');
-                        }
+                        setSaving(false);
+                        setShowNotFoundModal(true);
+                        return;
                     } else {
                         throw updateErr;
                     }
                 }
             } else {
-                const name = prompt("Nombre para tu nuevo horario:", "Mi Horario");
-                if (!name) { setSaving(false); return; }
-                const newId = await createSchedule(user.uid, scheduleData, name);
-                setCurrentScheduleId(newId);
-                setCurrentScheduleName(name);
-                alert("¡Horario creado exitosamente!");
+                // Mostrar modal personalizado en lugar de prompt()
+                setPendingName('Mi Horario');
+                setSaving(false);
+                setShowNameModal(true);
+                return;
             }
             setTimeout(() => {
                  lastSavedSnapshot.current = JSON.stringify({ selectedNRCs, id: currentScheduleId }); 
@@ -225,15 +251,63 @@ export function usePlanner() {
             if (blocker.state === "blocked") blocker.proceed();
         } catch (error) {
             console.error(error);
-            alert("Error al guardar: " + (error.message || "Error desconocido"));
+            showToast("Error al guardar: " + (error.message || "Error desconocido"), 'error');
         } finally {
             setSaving(false);
         }
     };
 
+    const handleNameModalConfirm = async () => {
+        const name = pendingName?.trim();
+        if (!name) return;
+        setShowNameModal(false);
+        setSaving(true);
+        try {
+            const selectedClasses = materias.filter(m => selectedNRCs.includes(m.nrc));
+            const scheduleData = { 
+                materias: selectedClasses, 
+                selectedNRCs, 
+                formParams, 
+                calendarioLabel 
+            };
+            const newId = await createSchedule(user.uid, scheduleData, name);
+            setCurrentScheduleId(newId);
+            setCurrentScheduleName(name);
+            showToast("¡Horario creado exitosamente!", 'success');
+            setTimeout(() => {
+                lastSavedSnapshot.current = JSON.stringify({ selectedNRCs, id: newId }); 
+            }, 0);
+            if (blocker.state === "blocked") blocker.proceed();
+        } catch (error) {
+            console.error(error);
+            showToast("Error al guardar: " + (error.message || "Error desconocido"), 'error');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleNameModalCancel = () => {
+        setShowNameModal(false);
+    };
+
+    const handleNotFoundSaveAsNew = async () => {
+        setShowNotFoundModal(false);
+        setCurrentScheduleId(null);
+        setCurrentScheduleName('');
+        // Volver a intentar guardar como nuevo
+        return handleSaveCloud();
+    };
+
+    const handleNotFoundDiscard = () => {
+        setShowNotFoundModal(false);
+        setCurrentScheduleId(null);
+        setCurrentScheduleName('');
+        clearSession();
+    };
+
     const handleDiscardNavigation = () => {
         if (blocker.state === "blocked") {
-            sessionStorage.removeItem('plannerState'); 
+            clearSession();
             blocker.proceed();
         }
     };
@@ -254,13 +328,15 @@ export function usePlanner() {
         setMaterias([]);
         setSelectedNRCs([]);
         setConsultaRealizada(false);
+        setFormParams({ centro: '', carrera: '', calendario: '' });
         setCalendarioLabel('');
         setError(null);
         setCurrentScheduleId(null);
         setCurrentScheduleName('');
         setIsViewMode(false);
         setIsResetModalOpen(false);
-        sessionStorage.removeItem('plannerState');
+        clearSession();
+        setFormResetKey(k => k + 1);
         lastSavedSnapshot.current = JSON.stringify({ selectedNRCs: [], id: null });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -366,7 +442,7 @@ export function usePlanner() {
             }
 
             setMaterias([...newData, ...syncFilteredSelected]);
-            alert("Información sincronizada con el SIIAU.");
+            showToast("Información sincronizada con el SIIAU.", 'info');
         } else {
             // Acción: Mantener (Usar datos viejos que teníamos guardados)
             const keptOldEntries = selectedFlat.filter(m => conflictedNRCs.includes(String(m.nrc)));
@@ -381,7 +457,7 @@ export function usePlanner() {
             );
 
             setMaterias([...freshNonConflicted, ...keptOldEntries, ...otherSelected]);
-            alert("Se han mantenido los datos previos.");
+            showToast("Se han mantenido los datos previos.", 'info');
         }
 
         setConsultaRealizada(true);
@@ -404,7 +480,11 @@ export function usePlanner() {
         isViewMode, setIsViewMode,
         conflicts, isConflictModalOpen, setIsConflictModalOpen, resolveConflicts,
         isDirty, blocker,
+        showNameModal, pendingName, setPendingName, handleNameModalConfirm, handleNameModalCancel,
+        showNotFoundModal, handleNotFoundSaveAsNew, handleNotFoundDiscard,
+        formResetKey,
         handleSaveCloud, handleDiscardNavigation, handleCancelNavigation, handleTriggerReset, handleConfirmReset,
-        handleConsulta, handleRemoveNrc, clasesSeleccionadas
+        handleConsulta, handleRemoveNrc, clasesSeleccionadas,
+        nrcTarget
     };
 }

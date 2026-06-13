@@ -339,6 +339,31 @@
     padding: 1rem;
 }
 
+/* =========================================
+   MODAL INPUT (personalizado)
+   ========================================= */
+.modal-input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-primary-color);
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    margin: 0.5rem 0 1rem;
+}
+.modal-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
+}
+.modal-input::placeholder {
+    color: var(--text-secondary-color);
+    opacity: 0.6;
+}
+
 .modal-content {
     background-color: var(--bg-secondary-color);
     color: var(--text-color);
@@ -385,8 +410,8 @@
 
 /* Botón rojo sólido para acciones destructivas */
 .btn-danger-solid {
-    background-color: #dc2626;
-    border-color: #dc2626;
+    background-color: var(--error-color);
+    border-color: var(--error-color);
     color: white;
 }
 
@@ -423,4 +448,222 @@
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* =========================================
+   EDITOR INLINE — Mis Horarios
+   ========================================= */
+
+/* Card en modo edición */
+.schedule-card.editing {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-color-light), var(--card-shadow);
+    transform: translateY(-2px);
+}
+.schedule-card.editing .card-top-bar {
+    background: linear-gradient(90deg, var(--gold-color), var(--primary-color));
+}
+
+.editing-badge {
+    background-color: var(--primary-color-light) !important;
+    color: var(--primary-color) !important;
+    border: 1px solid rgba(var(--primary-color-rgb), 0.3) !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+/* Sección del editor */
+.schedule-editor-section {
+    margin-top: 2rem;
+    border-top: 2px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.editor-topbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-secondary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.editor-title-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.editor-actions-top {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.btn-back {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-save-editor {
+    white-space: nowrap;
+}
+
+.btn-delete-editor {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    opacity: 0.6;
+    transition: opacity 0.2s, background 0.2s;
+    line-height: 1;
+}
+.btn-delete-editor:hover {
+    opacity: 1;
+    background-color: var(--tag-red-bg);
+}
+.btn-delete-editor:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Editor: layout del planificador dentro de MySchedulesPage */
+.editor-planner-layout {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 !important;
+}
+
+/* Responsive: editor */
+@media (max-width: 768px) {
+    .editor-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    .editor-title-group {
+        text-align: center;
+    }
+    .editor-actions-top {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .schedule-editor-section {
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+    }
+}
+
+/* =========================================
+   TOGGLE AREA — touch mejorado
+   ========================================= */
+
+/* El área clickeable completa desde el divider hacia abajo */
+.card-toggle-area {
+    cursor: pointer;
+    margin-top: auto;
+    transition: background 0.2s;
+    border-radius: 0 0 12px 12px;
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    padding: 0 1.25rem;
+}
+.card-toggle-area:hover {
+    background-color: var(--bg-tertiary-color);
+}
+.card-toggle-area:active {
+    background-color: var(--bg-tertiary-color);
+    opacity: 0.8;
+}
+
+/* El content area arriba del toggle también es clickeable pero para seleccionar edición */
+.card-content {
+    cursor: pointer;
+}
+
+/* El header y los metadatos no muestran el cursor pointer de toggle */
+.card-header-row,
+.schedule-meta,
+.career-text {
+    cursor: default;
+}
+
+.btn-toggle-details {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    display: inline-block;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* =========================================
+   INLINE NAME EDITOR
+   ========================================= */
+
+.editor-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: opacity 0.2s;
+}
+.editor-title:hover {
+    opacity: 0.75;
+}
+
+.editor-rename-hint {
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: var(--text-secondary-color);
+}
+.editor-title:hover .editor-rename-hint {
+    opacity: 1;
+}
+
+.editor-name-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.editor-name-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    background: var(--bg-primary-color);
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.editor-name-input:focus {
+    border-color: var(--primary-color-hover);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.15);
+}
+
+.editor-name-hint {
+    font-size: 0.7rem;
+    color: var(--text-secondary-color);
 }

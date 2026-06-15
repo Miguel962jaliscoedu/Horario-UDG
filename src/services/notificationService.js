@@ -209,6 +209,41 @@ export async function markNotificationRead(userId, notifId) {
     }
 }
 
+/**
+ * Guarda una preferencia de notificaciones (incluyendo queryConsent).
+ * @param {string} userId - UID del usuario
+ * @param {object} prefs - Preferencias parciales a guardar (ej. { queryConsent: true })
+ */
+export async function saveNotificationPref(userId, prefs) {
+    try {
+        const db = await getDb();
+        const { doc, setDoc } = await import("firebase/firestore");
+        const ref = doc(db, "users", userId, "notificationPrefs", "preferences");
+        await setDoc(ref, prefs, { merge: true });
+        return true;
+    } catch (err) {
+        console.error("[notificationService] Error guardando preferencia:", err);
+        return false;
+    }
+}
+
+/**
+ * Obtiene las preferencias de notificaciones del usuario.
+ * @param {string} userId
+ * @returns {Promise<object>}
+ */
+export async function getNotificationPrefs(userId) {
+    try {
+        const db = await getDb();
+        const { doc, getDoc } = await import("firebase/firestore");
+        const ref = doc(db, "users", userId, "notificationPrefs", "preferences");
+        const snap = await getDoc(ref);
+        return snap.exists() ? snap.data() : {};
+    } catch {
+        return {};
+    }
+}
+
 export default {
     initFCM,
     requestFCMPermission,

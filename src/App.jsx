@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { Footer } from './components/Footer.jsx';
 import Navbar from './components/Navbar.jsx';
 import { ToastContainer } from './components/Toast.jsx';
+import QueryConsentBanner from './components/QueryConsentBanner.jsx';
 import { initFCM } from './services/notificationService.js';
 import './App.css';
 
@@ -50,6 +51,8 @@ function App() {
                 <main className="app-main" id="main-content">
                     <Outlet context={{ theme }} />
                 </main>
+
+                <QueryConsentBanner />
                 
                 <Footer />
             </div>

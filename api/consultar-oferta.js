@@ -2,8 +2,61 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import iconv from 'iconv-lite';
+import admin from 'firebase-admin';
+import { verificarNrcsMonitoreados } from './_helpers/monitoreo.js';
 
 const POST_URL = "https://siiauescolar.siiau.udg.mx/wal/sspseca.consulta_oferta";
+
+// Inicialización lazy de Firebase Admin (solo cuando hay monitoreo que verificar)
+function getAdmin() {
+    if (admin.apps.length === 0) {
+        const raw = process.env.FIREBASE_ADMIN_CREDENTIALS;
+        if (!raw) return null;
+        try {
+            let credentials;
+            try { credentials = JSON.parse(raw); }
+            catch { credentials = JSON.parse(Buffer.from(raw, 'base64').toString('utf-8')); }
+            admin.initializeApp({
+                credential: admin.credential.cert(credentials),
+                projectId: process.env.FIREBASE_PROJECT_ID || credentials.project_id,
+            });
+        } catch { return null; }
+    }
+    return admin;
+}
+
+/**
+ * Agrupa las filas expandidas del SIIAU por NRC, reconstruyendo el arreglo de sesiones.
+ */
+function agruparPorNRC(rows) {
+    const map = new Map();
+    rows.forEach(r => {
+        const nrc = String(r.nrc).trim();
+        if (!map.has(nrc)) {
+            map.set(nrc, {
+                nrc,
+                clave: r.clave || '',
+                materia: r.materia || '',
+                seccion: r.seccion || '',
+                creditos: r.creditos || '',
+                cupos: r.cupos || '',
+                disponibles: r.disponibles || '',
+                profesor: r.profesor || '',
+                sesiones: [],
+            });
+        }
+        if (r.dia || r.hora_inicio) {
+            map.get(nrc).sesiones.push({
+                dia: r.dia,
+                hora_inicio: r.hora_inicio,
+                hora_fin: r.hora_fin,
+                edificio: r.edificio,
+                aula: r.aula,
+            });
+        }
+    });
+    return Array.from(map.values());
+}
 
 const headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -134,6 +187,26 @@ export default async function handler(req, res) {
             return res.status(404).json({ 
                 error: "No se encontraron clases para los filtros seleccionados." 
             });
+        }
+
+        // --- MONITOREO OPORTUNISTA ---
+        // Aprovechamos la consulta del usuario para verificar cambios en NRCs monitoreados.
+        // Esto nos da múltiples verificaciones sin depender solo del CRON (limitado a 1/día en Hobby).
+        // Se ejecuta fire-and-forget para no retrasar la respuesta al usuario.
+        const fbAdmin = getAdmin();
+        if (fbAdmin && process.env.FIREBASE_ADMIN_CREDENTIALS) {
+            const agrupados = agruparPorNRC(allRowsExpanded);
+            verificarNrcsMonitoreados(agrupados, { ciclop, cup, majrp }, fbAdmin, fbAdmin.firestore())
+                .then(({ checked, notifications }) => {
+                    if (checked > 0 || notifications > 0) {
+                        console.log(
+                            `[consulta+monitoreo] ${checked} NRCs verificados, ${notifications} notificaciones enviadas`
+                        );
+                    }
+                })
+                .catch(err => {
+                    console.error('[consulta+monitoreo] Error:', err.message);
+                });
         }
 
         return res.status(200).json(allRowsExpanded);

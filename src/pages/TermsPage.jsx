@@ -12,7 +12,7 @@ export function TermsPage() {
                     <p className="legal-subtitle">
                         Al utilizar Horario UDG, aceptas los siguientes términos y condiciones.
                     </p>
-                    <p className="legal-date">Última actualización: 13 de junio de 2026</p>
+                    <p className="legal-date">Última actualización: 14 de junio de 2026</p>
                 </header>
 
                 <section className="legal-section">
@@ -114,6 +114,36 @@ export function TermsPage() {
                         y pueden estar sujetas a retrasos dependiendo de tu conexión a internet y 
                         la configuración de tu dispositivo. No garantizamos la entrega inmediata 
                         de las notificaciones.
+                    </p>
+                </section>
+
+                <section className="legal-section">
+                    <h2>7.1. Monitoreo Colaborativo (Ayuda a la Comunidad)</h2>
+                    <p>
+                        Para mejorar la detección de cambios en las materias sin depender únicamente 
+                        de ejecuciones programadas limitadas, Horario UDG implementa un sistema de 
+                        <strong> monitoreo colaborativo</strong>.
+                    </p>
+                    <p>
+                        Cuando realizas una consulta de la oferta académica en el SIIAU a través de 
+                        la aplicación, de forma automática y en segundo plano también se revisa el 
+                        estado de otras materias que están siendo monitoreadas por otros usuarios. 
+                        Esto permite que entre todos mantengamos el sistema de notificaciones más 
+                        actualizado.
+                    </p>
+                    <p>
+                        Es importante aclarar que:
+                    </p>
+                    <ul>
+                        <li><strong>No se comparte</strong> tu información personal ni tus horarios guardados</li>
+                        <li>Solo se verifica la disponibilidad de NRCs que <strong>ya están en monitoreo</strong> por otros usuarios</li>
+                        <li>No se almacena ni registra qué consultaste ni cuándo</li>
+                        <li>Tu consulta no se ralentiza — la verificación ocurre en segundo plano</li>
+                        <li>Este comportamiento se puede <strong>desactivar</strong> en cualquier momento desde la configuración de notificaciones</li>
+                    </ul>
+                    <p>
+                        Al usar la aplicación, aceptas participar en este monitoreo colaborativo. 
+                        Puedes desactivarlo en cualquier momento desde la sección de Notificaciones.
                     </p>
                 </section>
 

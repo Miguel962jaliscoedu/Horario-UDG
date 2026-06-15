@@ -12,7 +12,7 @@ export function PrivacyPage() {
                     <p className="legal-subtitle">
                         En Horario UDG respetamos tu privacidad y protegemos tus datos personales.
                     </p>
-                    <p className="legal-date">Última actualización: 13 de junio de 2026</p>
+                    <p className="legal-date">Última actualización: 14 de junio de 2026</p>
                 </header>
 
                 <section className="legal-section">
@@ -70,6 +70,7 @@ export function PrivacyPage() {
                         <li>Permitirte evaluar y calificar profesores</li>
                         <li>Mostrarte tus horarios guardados en diferentes dispositivos</li>
                         <li>Enviarte notificaciones push sobre cupos disponibles, cambios de horario y cambios de profesor</li>
+                        <li><strong>Monitoreo colaborativo:</strong> cuando consultas la oferta del SIIAU, tu consulta ayuda a verificar el estado de materias que otros usuarios están monitoreando (sin compartir tus datos personales)</li>
                         <li>Mejorar la experiencia de usuario</li>
                     </ul>
                 </section>
@@ -139,7 +140,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>9. Notificaciones Push</h2>
+                    <h2>9. Notificaciones Push y Monitoreo Colaborativo</h2>
                     <p>
                         Con tu consentimiento, podemos enviarte notificaciones push a tu dispositivo 
                         cuando ocurra alguno de los siguientes eventos en las materias que monitoreas:
@@ -153,10 +154,23 @@ export function PrivacyPage() {
                         Puedes activar o desactivar las notificaciones en cualquier momento desde 
                         la configuración de la aplicación o desde los ajustes de tu navegador/dispositivo.
                     </p>
+                    <h3 style={{marginTop: '1.5rem', fontSize: '1.05rem'}}>Monitoreo Colaborativo</h3>
+                    <p>
+                        Con tu permiso, cuando realizas consultas de la oferta académica en el SIIAU, 
+                        la aplicación también verifica en segundo plano si hay cambios en materias que 
+                        otros usuarios están monitoreando. Esto nos permite ofrecer un sistema de 
+                        notificaciones más rápido sin depender solo de ejecuciones programadas.
+                    </p>
+                    <p>
+                        <strong>Importante:</strong> Esta verificación es completamente anónima. No se 
+                        registra qué consultaste, no se comparte tu información personal y no afecta 
+                        el rendimiento de tu consulta. Puedes desactivar esta función en cualquier 
+                        momento desde la sección de Notificaciones.
+                    </p>
                 </section>
 
                 <section className="legal-section">
-                    <h2>10. Cookies y Tecnologías Similares</h2>
+                    <h2>11. Cookies y Tecnologías Similares</h2>
                     <p>
                         Utilizamos cookies técnicas necesarias para el funcionamiento 
                         de la aplicación y almacenamiento local (sessionStorage) para 
@@ -166,7 +180,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>11. Menores de Edad</h2>
+                    <h2>12. Menores de Edad</h2>
                     <p>
                         Nuestra aplicación está diseñada para estudiantes universitarios. 
                         Si eres menor de edad, asegúrate de tener permiso de tus padres 
@@ -175,7 +189,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>12. Cambios al Aviso de Privacidad</h2>
+                    <h2>13. Cambios al Aviso de Privacidad</h2>
                     <p>
                         Este aviso de privacidad puede ser actualizado periódicamente. 
                         Te notificaremos cualquier cambio significativo a través de 
@@ -184,7 +198,7 @@ export function PrivacyPage() {
                 </section>
 
                 <section className="legal-section">
-                    <h2>13. Contacto</h2>
+                    <h2>14. Contacto</h2>
                     <p>
                         Si tienes preguntas sobre este aviso de privacidad o deseas 
                         ejercer tus derechos, puedes contactarnos a través de los 

@@ -12,6 +12,8 @@ import {
     getMonitoredCourses,
     markNotificationRead,
     stopMonitoring,
+    saveNotificationPref,
+    getNotificationPrefs,
 } from '../services/notificationService';
 import { showToast } from '../utils/toast';
 import './NotificationsPage.css';
@@ -73,18 +75,21 @@ export function NotificationsPage() {
     const [manageSelectedScheduleIds, setManageSelectedScheduleIds] = useState([]);
     const [manageLoading, setManageLoading] = useState(false);
     const [availableSchedules, setAvailableSchedules] = useState([]);
+    const [queryConsent, setQueryConsent] = useState(null); // null=cargando, true/false
 
     const loadNotifications = useCallback(async () => {
         if (!user) return;
         setLoading(true);
-        const [list, courses, schedules] = await Promise.all([
+        const [list, courses, schedules, prefs] = await Promise.all([
             getUserNotifications(user.uid, 50),
             getMonitoredCourses(user.uid).catch(() => []),
             getUserSchedules(user.uid).catch(() => []),
+            getNotificationPrefs(user.uid).catch(() => ({})),
         ]);
         setNotifications(list);
         setMonitoredCourses(courses);
         setAvailableSchedules(schedules);
+        setQueryConsent(prefs.queryConsent !== undefined ? prefs.queryConsent : null);
         setLoading(false);
     }, [user]);
 
@@ -320,6 +325,42 @@ export function NotificationsPage() {
                             ))}
                         </div>
                     )}
+                </div>
+
+                {/* === MONITOREO COLABORATIVO === */}
+                <div className="notif-settings-panel" style={{ marginTop: '0.5rem' }}>
+                    <div className="notif-settings-row">
+                        <div className="notif-settings-info">
+                            <strong>🤝 Ayuda a la comunidad</strong>
+                            <span>
+                                {queryConsent === false
+                                    ? 'Desactivado — tus consultas no verifican materias de otros usuarios.'
+                                    : queryConsent === true
+                                        ? 'Activado — tus consultas ayudan a detectar cupos para otros estudiantes.'
+                                        : '¿Permites que tus consultas al SIIAU también ayuden a verificar materias que otros esperan?'}
+                            </span>
+                        </div>
+                        {queryConsent !== null && (
+                            <button
+                                className={`notif-settings-btn ${queryConsent ? 'secondary' : ''}`}
+                                onClick={async () => {
+                                    const newVal = !queryConsent;
+                                    setQueryConsent(newVal);
+                                    localStorage.setItem('horario-udg-query-consent', newVal ? 'granted' : 'denied');
+                                    await saveNotificationPref(user.uid, { queryConsent: newVal });
+                                    showToast(
+                                        newVal
+                                            ? 'Gracias por apoyar a la comunidad 🙌'
+                                            : 'Monitoreo colaborativo desactivado',
+                                        newVal ? 'success' : 'info'
+                                    );
+                                }}
+                                type="button"
+                            >
+                                {queryConsent ? 'Desactivar' : 'Activar'}
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Filtros */}

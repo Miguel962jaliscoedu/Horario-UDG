@@ -47,7 +47,7 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
                                     <div className="nrc-header-info">
                                         <span className="nrc-badge">{grupo.nrc}</span>
                                         <span className={`cupos-badge ${grupo.disponibles > 0 ? 'available' : 'full'}`}>
-                                            {grupo.disponibles} lug.
+                                            {grupo.disponibles}/{grupo.cupos || '?'} <small>disp.</small>
                                         </span>
                                     </div>
                                     <div className="nrc-profesor">

@@ -34,8 +34,22 @@ const NOMBRES_CENTROS = {
     'Z': 'CUTONALA - Centro Universitario de Tonalá'
 };
 
+function loadFormPrefs() {
+    try {
+        const raw = localStorage.getItem('horario-udg-form-prefs');
+        if (raw) {
+            const p = JSON.parse(raw);
+            if (p && p.centro) return p;
+        }
+    } catch {}
+    return null;
+}
+
 export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
     
+    // Cargar preferencias guardadas al montar (para restaurar centro/carrera)
+    const prefsRef = useRef(null);
+
     // Inicializamos sin valores para esperar a la API y evitar defaults incorrectos
     const [params, setParams] = useState({
         centro: '',
@@ -132,20 +146,40 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                 // LÓGICA DE SELECCIÓN DE CICLO SEGURO
                 let cicloInicial = '';
 
-                // A) Si hay parametro inicial y existe en la lista, úsalo
+                // A) Si hay parámetro inicial y existe en la lista, úsalo
                 if (initialParams.calendario && listaCiclos.some(c => c.value === initialParams.calendario)) {
                     cicloInicial = initialParams.calendario;
                 } 
-                // B) Si no, usa el PRIMERO de la lista (el más actual que devuelve el SIIAU)
-                else if (listaCiclos.length > 0) {
-                    cicloInicial = listaCiclos[0].value;
+                // B) Buscar el ciclo estándar (A/B) más reciente de los últimos 2 años
+                else {
+                    const currentYear = new Date().getFullYear();
+                    const ciclosEstandar = listaCiclos
+                        .filter(c => {
+                            const val = String(c.value);
+                            const sub = val.substring(4);
+                            const year = parseInt(val.substring(0, 4), 10);
+                            return (sub === '10' || sub === '20') && year >= currentYear - 2;
+                        })
+                        .sort((a, b) => b.value.localeCompare(a.value)); // Más reciente primero
+
+                    if (ciclosEstandar.length > 0) {
+                        cicloInicial = ciclosEstandar[0].value;
+                    }
+                    // C) Si no hay ciclo estándar, usa el primero de la lista
+                    else if (listaCiclos.length > 0) {
+                        cicloInicial = listaCiclos[0].value;
+                    }
                 }
+
+                // Cargar preferencias guardadas del usuario
+                const prefs = loadFormPrefs();
+                prefsRef.current = prefs;
 
                 setParams(p => ({ 
                     ...p, 
                     calendario: cicloInicial,
-                    // El centro sí lo aceptamos directo si viene inicial
-                    centro: initialParams.centro || '' 
+                    centro: initialParams.centro || prefs?.centro || '',
+                    carrera: initialParams.carrera || prefs?.carrera || '',
                 }));
             })
             .catch(err => console.error("Error cargando opciones:", err))
@@ -183,9 +217,10 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
                     fetchedCarreras.sort((a, b) => `${a.id} - ${a.name}`.localeCompare(`${b.id} - ${b.name}`));
                     setCarreras(fetchedCarreras);
 
-                    // Restaurar carrera inicial si coincide con el centro cargado
-                    if (initialParams.carrera && initialParams.centro === params.centro) {
-                        const found = fetchedCarreras.find(c => c.id === initialParams.carrera);
+                    // Restaurar carrera desde initialParams o preferencias guardadas
+                    const targetCarrera = initialParams.carrera || prefsRef.current?.carrera;
+                    if (targetCarrera) {
+                        const found = fetchedCarreras.find(c => c.id === targetCarrera);
                         if (found) {
                             setParams(p => ({ ...p, carrera: found.id }));
                             setBusquedaCarrera(`${found.id} - ${found.name}`);
@@ -230,6 +265,14 @@ export function ConsultaForm({ onConsultar, loading, initialParams = {} }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // Guardar preferencias de centro y carrera
+        try {
+            localStorage.setItem('horario-udg-form-prefs', JSON.stringify({
+                centro: params.centro,
+                carrera: params.carrera,
+                savedAt: new Date().toISOString()
+            }));
+        } catch {}
         // Encontrar etiqueta bonita para mostrar en el historial
         const calendarioSeleccionado = allCalendarios.find(c => c.value === params.calendario);
         let labelBonito = params.calendario;

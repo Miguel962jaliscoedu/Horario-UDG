@@ -21,13 +21,19 @@
   grid-template-columns: 70px repeat(6, minmax(130px, 1fr));
   
   /* Filas: Header + 15 Horas */
-  grid-template-rows: 45px repeat(15, 60px);
+  grid-template-rows: 45px repeat(15, 72px);
   
   gap: 1px;
   background-color: var(--border-color);
   
   /* Ancho mínimo para escritorio para que no se deforme */
   min-width: 900px; 
+}
+
+/* MODO DÍA (2 columnas: Hora + día activo) */
+.horario-grid.day-grid {
+  grid-template-columns: 70px 1fr;
+  min-width: auto;
 }
 
 /* Encabezados (Días y Hora) */
@@ -67,8 +73,8 @@
   background-color: var(--bg-secondary-color);
   position: relative;
   background-image: linear-gradient(to bottom, transparent 49%, var(--border-color) 50%, transparent 51%);
-  background-size: 100% 60px;
-  background-position: 0 30px;
+  background-size: 100% 72px;
+  background-position: 0 36px;
   opacity: 0.5;
 }
 
@@ -123,33 +129,44 @@
   font-size: 0.7rem;
 }
 
-/* === EFECTO HOVER (EXPANSIÓN) === */
-.clase-card:hover {
-    z-index: 100 !important; 
-    transform: scale(1.02);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-}
+/* === EFECTO HOVER (EXPANSIÓN) - Solo en dispositivos con mouse === */
+@media (hover: hover) {
+    .clase-card:hover {
+        z-index: 100 !important; 
+        transform: scale(1.02);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
 
-.clase-card:hover .clase-card-inner {
-  position: absolute;
-  top: 0;
-  left: -10%;
-  width: 120%; /* Expansión lateral */
-  height: auto;
-  min-height: 100%;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-  border-radius: 6px;
-  padding-bottom: 8px;
-  opacity: 1;
-}
+    .clase-card:hover .clase-card-inner {
+      position: absolute;
+      top: 0;
+      left: -10%;
+      width: 120%;
+      height: auto;
+      min-height: 100%;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      padding-bottom: 8px;
+      opacity: 1;
+    }
 
-body.light-theme .clase-card:hover .clase-card-inner { background-color: var(--clase-bg); }
-body.dark-theme .clase-card:hover .clase-card-inner { background-color: var(--clase-bg); }
+    body.light-theme .clase-card:hover .clase-card-inner { background-color: var(--clase-bg); }
+    body.dark-theme .clase-card:hover .clase-card-inner { background-color: var(--clase-bg); }
 
-.clase-card:hover .clase-card-inner strong,
-.clase-card:hover .clase-card-inner span {
-  white-space: normal;
-  overflow: visible;
+    .clase-card:hover .clase-card-inner strong,
+    .clase-card:hover .clase-card-inner span {
+      white-space: normal;
+      overflow: visible;
+    }
+
+    .card-remove-btn {
+        opacity: 0;
+        transition: all 0.2s ease;
+    }
+
+    .clase-card:hover .card-remove-btn {
+        opacity: 1;
+    }
 }
 
 /* CRUCES */
@@ -183,20 +200,23 @@ body.dark-theme .clase-card-inner.cruce-horario {
     font-size: 16px;
     line-height: 1;
     z-index: 20;
-    opacity: 0;
     transition: all 0.2s ease;
     padding: 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.clase-card:hover .card-remove-btn {
-    opacity: 1;
-}
-
-.card-remove-btn:hover {
-    background: var(--error-color);
-    color: white;
-    transform: scale(1.1);
+@media (hover: hover) {
+    .card-remove-btn {
+        opacity: 0;
+    }
+    .clase-card:hover .card-remove-btn {
+        opacity: 1;
+    }
+    .card-remove-btn:hover {
+        background: var(--error-color);
+        color: white;
+        transform: scale(1.1);
+    }
 }
 
 /* --- UTILIDADES --- */
@@ -268,55 +288,218 @@ body.dark-theme .clase-card-inner.cruce-horario {
 }
 
 /* =========================================================
+   SELECTOR DE DÍAS (MÓVIL)
+   ========================================================= */
+.mobile-day-tabs {
+    display: none; /* Solo visible en móvil */
+    gap: 6px;
+    padding: 0 0 12px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+.mobile-day-tabs::-webkit-scrollbar { display: none; }
+
+.day-tab {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary-color);
+    color: var(--text-secondary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+.day-tab:hover {
+    background: var(--bg-tertiary-color);
+    border-color: var(--primary-color-light);
+}
+.day-tab.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
+}
+
+/* =========================================================
    AJUSTES RESPONSIVOS (MÓVIL)
    ========================================================= */
 @media (max-width: 768px) {
-    /* 1. Ajuste del Grid: Columnas más angostas */
+    /* Edge-to-edge: sin bordes redondeados en móvil */
+    .schedule-panel .schedule-container {
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        margin-top: 0;
+    }
+
+    /* Selector de días visible */
+    .mobile-day-tabs {
+        display: flex;
+        padding: 4px 4px 0;
+    }
+
+    /* Grid normal (semana completa) - sin scroll horizontal */
     .horario-grid {
-        /* Hora (45px) + 6 Días (90px mínimo) */
-        grid-template-columns: 45px repeat(6, minmax(90px, 1fr));
-        
-        /* Reducimos el ancho mínimo total para que sea más fácil scrollear */
-        min-width: 600px; 
+        grid-template-columns: 24px repeat(6, minmax(0, 1fr));
+        grid-template-rows: 34px repeat(15, 54px);
+        min-width: auto;
+        max-width: 100%;
     }
 
-    /* 2. Encabezados más pequeños */
+    /* --- MODO DÍA: grid de 2 columnas que ocupa el 100% --- */
+    .schedule-container.day-mode {
+        overflow-x: visible;
+    }
+    .horario-grid.day-grid {
+        grid-template-columns: 50px 1fr;
+        grid-template-rows: 36px repeat(15, 58px);
+        min-width: auto;
+        max-width: 100%;
+    }
+
+    /* Encabezados más compactos */
     .grid-header {
-        font-size: 0.7rem;
-        padding: 0 2px;
-        word-break: break-word; /* Romper palabras largas si es necesario */
+        font-size: 0.55rem;
+        padding: 2px 1px;
+        word-break: break-word;
         text-align: center;
+        letter-spacing: 0;
     }
 
-    /* 3. Columna de Horas más pequeña */
+    /* Encabezado más grande en modo día */
+    .day-grid .grid-header {
+        font-size: 0.75rem;
+    }
+
+    /* Columna de Horas */
     .time-slot {
+        font-size: 0.55rem;
+        padding-top: 4px;
+    }
+    .day-grid .time-slot {
         font-size: 0.65rem;
-        padding-top: 8px;
+        padding-top: 6px;
     }
 
-    /* 4. Tarjetas de clase compactas */
+    /* Celdas */
+    .grid-cell {
+        background-size: 100% 54px;
+        background-position: 0 27px;
+    }
+    .day-grid .grid-cell {
+        background-size: 100% 58px;
+        background-position: 0 29px;
+    }
+
+    /* ========== VISTA SEMANA: ultra compacta ========== */
     .clase-card-inner {
-        padding: 3px 4px;
-        border-left-width: 3px; /* Borde más fino */
+        padding: 2px 3px;
+        border-left-width: 2px;
+        border-radius: 3px;
     }
-
     .clase-card-inner strong {
-        font-size: 0.7rem; /* Texto más pequeño */
-        margin-bottom: 1px;
+        font-size: 0.55rem;
+        margin-bottom: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+    }
+    /* Ocultar detalles y botón eliminar en semana */
+    .clase-card-inner .clase-location,
+    .clase-card-inner .clase-prof {
+        display: none;
+    }
+    .schedule-container:not(.day-mode) .card-remove-btn {
+        display: none !important;
     }
 
-    .clase-card-inner span {
-        font-size: 0.6rem;
+    /* Mostrar detalles y botón al expandir (tap) en semana */
+    .clase-card.tapped .clase-card-inner .clase-location,
+    .clase-card.tapped .clase-card-inner .clase-prof {
+        display: block;
+    }
+    .clase-card.tapped .card-remove-btn {
+        display: flex !important;
+        opacity: 0.9;
+        width: 22px;
+        height: 22px;
+        font-size: 14px;
     }
 
-    /* 5. Ajuste del hover en móvil (menos expansión) */
-    .clase-card:hover .clase-card-inner {
-        width: 110%; /* Expande menos para no tapar tanto */
-        left: -5%;
-        font-size: 0.75rem; /* Aumenta un poco al tocar para leer mejor */
+    /* ========== MODO DÍA: información completa ========== */
+    .day-mode .clase-card-inner {
+        padding: 6px 10px;
+        border-left-width: 4px;
+        border-radius: 6px;
+        justify-content: center;
     }
-    
-    /* 6. Botón de descarga al 100% */
+    .day-mode .clase-card-inner strong {
+        font-size: 0.85rem;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        margin-bottom: 4px;
+    }
+    .day-mode .clase-card-inner .clase-location,
+    .day-mode .clase-card-inner .clase-prof {
+        display: block;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .day-mode .card-remove-btn {
+        display: flex !important;
+        opacity: 0.8;
+        width: 24px;
+        height: 24px;
+        font-size: 16px;
+    }
+
+    /* --- Tap state (semana): expandir horizontalmente --- */
+    .clase-card.tapped {
+        z-index: 100 !important;
+        /* Expandir para abarcar más espacio horizontal */
+        grid-column: 2 / -1 !important;
+        width: 100%;
+        margin-left: 0 !important;
+    }
+    .clase-card.tapped .clase-card-inner {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        height: auto;
+        min-height: 100%;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        border-radius: 8px;
+        padding: 8px 10px;
+        opacity: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .clase-card.tapped .clase-card-inner strong {
+        font-size: 0.75rem;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    .clase-card.tapped .clase-card-inner .clase-location,
+    .clase-card.tapped .clase-card-inner .clase-prof {
+        font-size: 0.65rem;
+    }
+
+    /* Botón descargas */
     .descargas {
         flex-direction: column;
     }

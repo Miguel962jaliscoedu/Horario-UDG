@@ -11,7 +11,7 @@ const timeToMinutes = (timeStr) => {
 };
 
 // 1. CLASE CARD CON BOTÓN DE ELIMINAR
-const ClaseCard = ({ clase, tieneCruce, onRemove }) => {
+const ClaseCard = ({ clase, tieneCruce, onRemove, isTapped, onTap, isDayMode }) => {
     const dayToColumn = {
         'Lunes': 2, 'Martes': 3, 'Miércoles': 4, 'Jueves': 5, 'Viernes': 6, 'Sábado': 7,
     };
@@ -21,24 +21,29 @@ const ClaseCard = ({ clase, tieneCruce, onRemove }) => {
     const startRow = Math.floor((startMinutes - 420) / 60) + 2; 
     const durationInRows = Math.ceil((endMinutes - startMinutes) / 60);
     const endRow = startRow + durationInRows;
+
+    // En modo día, todas las tarjetas van a la columna 2 (único día)
+    const col = isDayMode ? 2 : (dayToColumn[clase.dia] || 2);
     
-    const cardClassName = `clase-card-inner ${tieneCruce ? 'cruce-horario' : ''}`;
+    const cardClassName = `clase-card-inner ${tieneCruce ? 'cruce-horario' : ''} ${isTapped ? 'card-tapped' : ''}`;
 
     return (
-        <div className="clase-card" style={{ 
-            gridColumn: dayToColumn[clase.dia], 
+        <div className={`clase-card ${isTapped ? 'tapped' : ''}`} style={{ 
+            gridColumn: col, 
             gridRow: `${startRow} / ${endRow}`, 
             pointerEvents: 'auto',
             width: '96%',
             marginLeft: '2%',
-            zIndex: 10
-        }}>
+            zIndex: isTapped ? 100 : 10
+        }}
+        onClick={(e) => { onTap?.(clase.nrc, clase.dia); }}
+        >
             <div className={cardClassName}>
-                {/* Botón de eliminar (Añadido) */}
+                {/* Botón de eliminar */}
                 <button 
                     className="card-remove-btn" 
                     onClick={(e) => {
-                        e.stopPropagation(); // Evita clicks accidentales en la tarjeta
+                        e.stopPropagation();
                         onRemove(clase.nrc);
                     }}
                     title="Quitar materia"
@@ -47,8 +52,8 @@ const ClaseCard = ({ clase, tieneCruce, onRemove }) => {
                 </button>
 
                 <strong>{clase.materia}</strong>
-                <span>{clase.edificio} - {clase.aula}</span>
-                <span>{clase.profesor}</span>
+                <span className="clase-location">{clase.edificio} - {clase.aula}</span>
+                <span className="clase-prof">{clase.profesor}</span>
             </div>
         </div>
     );
@@ -182,6 +187,34 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme, on
     const horas = Array.from({ length: 15 }, (_, i) => `${(i + 7).toString().padStart(2, '0')}:00`);
     const [renderSize, setRenderSize] = useState({ width: 1080, height: 1920 });
 
+    // --- Mobile: día seleccionado (null = vista semanal completa) ---
+    const [activeDay, setActiveDay] = useState(null);
+    // --- Mobile: tarjetas expandidas al tocar ---
+    const [tappedNrcs, setTappedNrcs] = useState(new Set());
+
+    // Días que tienen clases (para el filtro móvil)
+    const activeDays = useMemo(() => {
+        const order = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const days = [...new Set(clasesSeleccionadas.filter(c => c.dia).map(c => c.dia))];
+        return days.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    }, [clasesSeleccionadas]);
+
+    // Clases filtradas por día seleccionado (móvil)
+    const filteredClases = useMemo(() => {
+        if (!activeDay) return clasesSeleccionadas;
+        return clasesSeleccionadas.filter(c => c.dia === activeDay);
+    }, [clasesSeleccionadas, activeDay]);
+
+    // Alternar expansión al tocar en móvil
+    const toggleTap = useCallback((nrc, dia) => {
+        const key = `${nrc}-${dia}`;
+        setTappedNrcs(prev => {
+            const next = new Set(prev);
+            if (next.has(key)) next.delete(key); else next.add(key);
+            return next;
+        });
+    }, []);
+
     const nrcsConCruce = useMemo(() => {
         const cruces = detectarCruces(clasesSeleccionadas);
         const nrcs = new Set();
@@ -285,22 +318,65 @@ export function GenerarHorario({ clasesSeleccionadas, calendarioLabel, theme, on
         }
     }, [isRendering, renderSize, aspectRatio, imageTheme]);
 
+    const isDayMode = activeDay !== null;
+    const displayClases = isDayMode ? filteredClases : clasesSeleccionadas;
+
     return (
         <div className="card">
-            <div ref={scheduleRef} className="schedule-container">
-                <div className="horario-grid">
-                    <div className="grid-header">Hora</div>
-                    {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map(day => <div key={day} className="grid-header">{day}</div>)}
-                    {horas.map(hora => (<React.Fragment key={hora}><div className="time-slot">{hora}</div>{[...Array(6)].map((_, i) => (<div key={`${hora}-${i}`} className="grid-cell"></div>))}</React.Fragment>))}
+            {/* Selector de días para móvil */}
+            {activeDays.length > 1 && (
+                <div className="mobile-day-tabs">
+                    <button
+                        className={`day-tab ${!activeDay ? 'active' : ''}`}
+                        onClick={() => { setActiveDay(null); setTappedNrcs(new Set()); }}
+                    >
+                        📅 Semana
+                    </button>
+                    {activeDays.map(day => (
+                        <button
+                            key={day}
+                            className={`day-tab ${activeDay === day ? 'active' : ''}`}
+                            onClick={() => { setActiveDay(day); setTappedNrcs(new Set()); }}
+                        >
+                            {day.substring(0, 3)}
+                        </button>
+                    ))}
                 </div>
+            )}
+
+            <div ref={scheduleRef} className={`schedule-container ${isDayMode ? 'day-mode' : ''}`}>
+                {isDayMode ? (
+                    /* --- MODO DÍA: grid de 2 columnas (Hora + Día activo) --- */
+                    <div className="horario-grid day-grid">
+                        <div className="grid-header">Hora</div>
+                        <div className="grid-header">{activeDay}</div>
+                        {horas.map(hora => (
+                            <React.Fragment key={hora}>
+                                <div className="time-slot">{hora}</div>
+                                <div className="grid-cell"></div>
+                            </React.Fragment>
+                        ))}
+                    </div>
+                ) : (
+                    /* --- MODO SEMANA: grid de 7 columnas (Hora + 6 días) --- */
+                    <div className="horario-grid">
+                        <div className="grid-header">Hora</div>
+                        {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map(day => <div key={day} className="grid-header">{day}</div>)}
+                        {horas.map(hora => (<React.Fragment key={hora}><div className="time-slot">{hora}</div>{[...Array(6)].map((_, i) => (<div key={`${hora}-${i}`} className="grid-cell"></div>))}</React.Fragment>))}
+                    </div>
+                )}
                 
-                <div className="horario-grid" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                    {clasesSeleccionadas.filter(c => c.dia && c.hora_inicio).map((clase, i) => (
+                {/* Capa de tarjetas superpuesta — siempre con el grid correspondiente */}
+                <div className={`horario-grid ${isDayMode ? 'day-grid' : ''}`} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+                    {displayClases.filter(c => c.dia && c.hora_inicio).map((clase, i) => (
                         <ClaseCard 
-                            key={`${clase.nrc}-${clase.dia}-${i}`} 
+                            key={`${clase.nrc}-${clase.dia}-${i}`}
                             clase={clase} 
                             tieneCruce={nrcsConCruce.has(clase.nrc)} 
-                            onRemove={onRemoveClase} // Pasamos la función hacia abajo
+                            onRemove={onRemoveClase}
+                            isTapped={tappedNrcs.has(`${clase.nrc}-${clase.dia}`)}
+                            onTap={toggleTap}
+                            isDayMode={isDayMode}
                         />
                     ))}
                 </div>

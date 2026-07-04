@@ -647,7 +647,7 @@ export function MySchedulesPage() {
                                         </div>
 
                                         {editSelectedNRCs.length > 0 && (
-                                            <div className="card panel animate-slide-up">
+                                            <div className="card panel schedule-panel animate-slide-up">
                                                 <div className="panel-header schedule-header">
                                                     <div className="schedule-title-group">
                                                         <h2 className="panel-title">Tu Horario</h2>

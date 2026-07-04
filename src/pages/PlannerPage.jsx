@@ -57,6 +57,37 @@ export function PlannerPage() {
                 </div>
             </aside>
 
+            {/* Barra de acciones - solo visible en móvil, entre sidebar y contenido */}
+            {selectedNRCs.length > 0 && (
+                <div className="schedule-actions-bar mobile-only animate-slide-up">
+                    <div className="schedule-title-group">
+                        <h2 className="panel-title schedule-mobile-title">Tu Horario</h2>
+                        {currentScheduleName && <span className="schedule-name-tag">{currentScheduleName}</span>}
+                        {isDirty && <span className="unsaved-badge" title="Cambios sin guardar">●</span>}
+                    </div>
+                    {user && (
+                        <div className="schedule-actions">
+                            {currentScheduleId && (
+                                <button
+                                    onClick={() => { setCurrentScheduleId(null); handleSaveCloud(); }}
+                                    className="secondary-button btn-small"
+                                    disabled={saving}
+                                >
+                                    Duplicar
+                                </button>
+                            )}
+                            <button
+                                onClick={handleSaveCloud}
+                                disabled={saving}
+                                className="primary-button btn-small"
+                            >
+                                {saving ? '...' : (currentScheduleId ? '💾 Actualizar' : '💾 Guardar')}
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Content */}
             <section className="layout-content" ref={resultsRef}>
                 {!consultaRealizada ? (
@@ -87,14 +118,14 @@ export function PlannerPage() {
                         </div>
 
                         {selectedNRCs.length > 0 && (
-                            <div className="card panel animate-slide-up">
-                                <div className="panel-header schedule-header">
+                            <div className="card panel schedule-panel animate-slide-up">
+                                {/* Cabecera con acciones - solo desktop */}
+                                <div className="panel-header schedule-header desktop-only">
                                     <div className="schedule-title-group">
                                         <h2 className="panel-title">Tu Horario</h2>
                                         {currentScheduleName && <span className="schedule-name-tag">{currentScheduleName}</span>}
                                         {isDirty && <span className="unsaved-badge" title="Cambios sin guardar">●</span>}
                                     </div>
-
                                     {user && (
                                         <div className="schedule-actions">
                                             {currentScheduleId && (

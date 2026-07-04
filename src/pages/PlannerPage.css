@@ -56,6 +56,19 @@
     min-width: 0;
 }
 
+@media (max-width: 768px) {
+    .planner-layout {
+        padding: 0;
+    }
+    .layout-content .card.panel {
+        padding: 0;
+    }
+    .layout-content .schedule-header {
+        padding-bottom: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+}
+
 /* =========================================================
    ESTILOS GENERALES
    ========================================================= */
@@ -196,6 +209,41 @@
     margin-left: auto;
 }
 
+/* --- Clase util: oculta en desktop, visible en móvil --- */
+.mobile-only {
+    display: none;
+}
+
+/* --- Acciones del horario: barra entre cards (móvil) --- */
+.schedule-actions-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 12px;
+    background: var(--bg-secondary-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.schedule-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.schedule-mobile-title {
+    margin-bottom: 0 !important;
+    font-size: 0.95rem !important;
+    white-space: nowrap;
+}
+
+/* Solo desktop */
+.desktop-only {
+    display: flex;
+}
+
 /* Botones pequeños para acciones de cabecera */
 .btn-small {
     width: auto !important;
@@ -212,13 +260,14 @@
 }
 
 .schedule-name-tag {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     background-color: var(--bg-tertiary-color);
-    padding: 3px 10px;
-    border-radius: 20px;
-    color: var(--text-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: var(--text-secondary-color);
     border: 1px solid var(--border-color);
-    font-weight: 700;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .unsaved-badge {
@@ -466,4 +515,66 @@
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
+}
+
+/* =========================================================
+   MÓVIL: Edge-to-edge + sin gaps entre secciones
+   ========================================================= */
+@media (max-width: 768px) {
+    .planner-layout {
+        padding: 0;
+        gap: 8px;
+    }
+
+    /* Sidebar: sin bordes redondeados */
+    .layout-sidebar .sticky-card {
+        border-radius: 0;
+        border: none;
+        padding: 12px 10px 8px;
+        margin: 0;
+    }
+
+    /* Clase util: visible en móvil */
+    .mobile-only {
+        display: flex;
+    }
+
+    /* Barra de acciones: visible solo en móvil */
+    .schedule-actions-bar {
+        display: flex;
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 8px 12px;
+    }
+
+    /* Cabecera desktop: oculta en móvil */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Oferta académica: sin bordes redondeados */
+    .content-stack > .card.panel:first-child {
+        margin: 0;
+        border-radius: 0;
+    }
+    .content-stack > .card.panel:first-child .panel-header {
+        padding: 10px 12px 8px;
+        margin-bottom: 0;
+    }
+    .content-stack > .card.panel:first-child .panel-header + *:not(.panel-header) {
+        padding: 0 10px 10px;
+    }
+
+    /* Horario: edge-to-edge */
+    .content-stack > .schedule-panel {
+        padding: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+    }
+    .content-stack > .schedule-panel .schedule-container {
+        border-radius: 0;
+        border: none;
+        margin-top: 0;
+    }
 }

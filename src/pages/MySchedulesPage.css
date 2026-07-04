@@ -551,6 +551,38 @@
     .editor-actions-top {
         justify-content: center;
     }
+
+    /* Full-bleed: la tabla del horario evada el contenedor padre */
+    .editor-planner-layout .content-stack > .schedule-panel {
+        padding: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
+    .editor-planner-layout .content-stack > .schedule-panel .schedule-container {
+        border-radius: 0;
+        border: none;
+        margin-top: 0;
+    }
+
+    /* Header del horario: ajuste visual en móvil */
+    .editor-planner-layout .schedule-header {
+        padding: 8px 12px;
+        margin-bottom: 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .editor-planner-layout .schedule-header .panel-title {
+        font-size: 0.95rem;
+        margin-bottom: 0;
+    }
+    .editor-planner-layout .schedule-header .schedule-title-group {
+        gap: 8px;
+    }
 }
 
 @media (max-width: 600px) {

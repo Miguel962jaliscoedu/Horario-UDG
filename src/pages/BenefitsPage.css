@@ -788,17 +788,166 @@ body.dark-theme .price-box {
 }
 
 /* Responsividad extra */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    /* Page */
+    .benefits-page {
+        padding: 0 1.25rem 3rem 1.25rem;
+    }
+
+    /* Hero */
+    .benefits-hero {
+        padding: 3rem 1.25rem;
+        margin-bottom: 2rem;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+    }
+    .benefits-hero h1 {
+        font-size: 1.8rem;
+    }
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    .hero-badge {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+    }
+
+    /* Section headers */
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    .section-header p {
+        font-size: 0.95rem;
+    }
+    .section-container {
+        margin-bottom: 3rem;
+    }
+
+    /* Cards grid */
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .benefit-card {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    /* Highlight / tiempo limitado */
+    .highlight-section {
+        padding: 2rem 1rem;
+        border-radius: 20px;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .limit-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .limit-banner h2 {
+        font-size: 1.5rem;
+    }
+    .timer-emoji {
+        font-size: 2.5rem;
+    }
+
+    /* Tabla de software — mantiene formato de tabla con scroll horizontal */
+    .section-header h2 {
+        font-size: 1.35rem;
+    }
+    .search-bar-container {
+        padding: 0 1rem;
+    }
+    .software-search-input {
+        padding: 14px 14px 14px 44px;
+        font-size: 0.9rem;
+    }
+    .table-responsive-wrapper {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+    .software-table th {
+        font-size: 0.78rem;
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+    }
+    .software-table td {
+        padding: 1rem;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+    .license-tag {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    /* Details expanded */
+    .details-content {
+        padding: 1.25rem;
+    }
+    .details-inner {
+        gap: 1.5rem;
+        flex-direction: column;
+    }
+    .detail-col {
+        min-width: 0;
+    }
+
+    /* Premium extras */
     .premium-extras-grid {
         grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .premium-benefit-card {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    .p-card-header h4 {
+        font-size: 1.1rem;
+    }
+
+    /* Compact benefits row */
+    .compact-benefits-row {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
     }
     .compact-benefit-item {
+        min-width: 0;
         width: 100%;
+        padding: 1rem 1.25rem;
     }
+
+    /* FAQ */
+    .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .faq-item {
+        padding: 1.5rem;
+    }
+
+    /* Credits */
     .credits-card {
         flex-direction: column;
         gap: 1.5rem;
         text-align: center;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .benefits-hero h1 {
+        font-size: 1.5rem;
+    }
+    .section-header h2 {
+        font-size: 1.2rem;
+    }
+    .limit-banner h2 {
+        font-size: 1.25rem;
     }
 }
 

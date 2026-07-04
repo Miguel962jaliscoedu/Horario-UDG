@@ -46,37 +46,36 @@ self.addEventListener('notificationclick', (event) => {
     const data = event.notification.data || {};
     const type = data.type || '';
     const nrc = data.nrc || '';
-    const materia = data.materia || '';
     const profesor = data.profesor || '';
     const scheduleId = data.scheduleId || '';
 
-    // Deep linking según tipo de notificación
+    // TODOS los tipos: si hay scheduleId vinculado, abrir directamente
+    // en la edición del horario en Mis Horarios con el NRC correspondiente.
     let urlToOpen = '/dashboard';
-    switch (type) {
-        case 'seat_available':
-            // Si hay scheduleId vinculado, abrir directamente en Mis Horarios
-            urlToOpen = scheduleId
-                ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}`
-                : nrc ? `/planear?nrc=${nrc}` : '/planear';
-            break;
-        case 'schedule_change':
-            urlToOpen = scheduleId
-                ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}`
-                : nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios';
-            break;
-        case 'professor_change':
-            urlToOpen = profesor ? `/profesores?q=${encodeURIComponent(profesor)}` : '/profesores';
-            break;
-        case 'test_notification':
-            urlToOpen = '/mis-notificaciones';
-            break;
-        case 'reminder':
-            urlToOpen = '/dashboard';
-            break;
-        default:
-            urlToOpen = scheduleId
-                ? `/mis-horarios?edit=${scheduleId}`
-                : nrc ? `/planear?nrc=${nrc}` : '/dashboard';
+
+    if (scheduleId) {
+        urlToOpen = `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}`;
+    } else {
+        // Fallback por tipo cuando no hay horario vinculado
+        switch (type) {
+            case 'seat_available':
+                urlToOpen = nrc ? `/planear?nrc=${nrc}` : '/planear';
+                break;
+            case 'schedule_change':
+                urlToOpen = nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios';
+                break;
+            case 'professor_change':
+                urlToOpen = profesor ? `/profesores?q=${encodeURIComponent(profesor)}` : '/profesores';
+                break;
+            case 'test_notification':
+                urlToOpen = '/mis-notificaciones';
+                break;
+            case 'reminder':
+                urlToOpen = '/dashboard';
+                break;
+            default:
+                urlToOpen = nrc ? `/planear?nrc=${nrc}` : '/dashboard';
+        }
     }
 
     const action = event.action;

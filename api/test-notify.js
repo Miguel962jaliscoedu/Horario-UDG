@@ -90,7 +90,7 @@ export default async function handler(req, res) {
                             fcmOptions: {
                                 link: scheduleId
                                     ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}`
-                                    : nrc ? `/planear?nrc=${nrc}` : '/',
+                                    : nrc ? `/mis-horarios?nrc=${nrc}` : '/',
                             },
                         },
                     });

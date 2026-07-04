@@ -12,6 +12,8 @@ import {
     getMonitoredCourses,
     getUserNotifications,
     markNotificationRead,
+    deleteNotification,
+    deleteAllNotifications,
 } from '../services/notificationService';
 
 /**
@@ -28,6 +30,8 @@ import {
  *   isMonitoring: (nrc: string) => boolean,
  *   fetchNotifications: () => Promise<void>,
  *   markAsRead: (notifId: string) => Promise<void>,
+ *   removeNotification: (notifId: string) => Promise<void>,
+ *   clearAllNotifications: () => Promise<void>,
  *   requestPermission: () => Promise<boolean>,
  * }}
  */
@@ -183,6 +187,22 @@ export function useNotifications() {
         }
     }, [user]);
 
+    // Eliminar una notificación
+    const removeNotification = useCallback(async (notifId) => {
+        if (user) {
+            await deleteNotification(user.uid, notifId);
+            setNotifications(prev => prev.filter(n => n.id !== notifId));
+        }
+    }, [user]);
+
+    // Eliminar TODAS las notificaciones
+    const clearAllNotifications = useCallback(async () => {
+        if (user) {
+            await deleteAllNotifications(user.uid);
+            setNotifications([]);
+        }
+    }, [user]);
+
     return {
         fcmInitialized,
         permission,
@@ -196,6 +216,8 @@ export function useNotifications() {
         getMonitorData,
         fetchNotifications,
         markAsRead,
+        removeNotification,
+        clearAllNotifications,
         requestPermission,
     };
 }

@@ -9,7 +9,7 @@ import './NotificationBell.css';
 
 const NotificationBell = React.memo(() => {
     const { user } = useAuth();
-    const { unreadCount, notifications, fetchNotifications, markAsRead, requestPermission, permission } = useNotifications();
+    const { unreadCount, notifications, fetchNotifications, markAsRead, removeNotification, clearAllNotifications, requestPermission, permission } = useNotifications();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const bellRef = useRef(null);
@@ -68,7 +68,7 @@ const NotificationBell = React.memo(() => {
 
         switch (notif.type) {
             case 'seat_available':
-                navigate(scheduleId ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}` : (nrc ? `/planear?nrc=${nrc}` : '/planear'));
+                navigate(scheduleId ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}` : (nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios'));
                 break;
             case 'schedule_change':
                 navigate(scheduleId ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}` : (nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios'));
@@ -86,12 +86,24 @@ const NotificationBell = React.memo(() => {
                 if (scheduleId) {
                     navigate(`/mis-horarios?edit=${scheduleId}`);
                 } else if (nrc) {
-                    navigate(`/planear?nrc=${nrc}`);
+                    navigate(`/mis-horarios?nrc=${nrc}`);
                 } else {
                     navigate('/dashboard');
                 }
         }
     }, [markAsRead, navigate, user]);
+
+    const handleMarkAllRead = useCallback(async () => {
+        const unread = notifications.filter(n => !n.read);
+        for (const n of unread) {
+            await markAsRead(n.id);
+        }
+    }, [notifications, markAsRead]);
+
+    const handleDeleteNotification = useCallback(async (e, notifId) => {
+        e.stopPropagation();
+        await removeNotification(notifId);
+    }, [removeNotification]);
 
     const handleEnableNotifications = useCallback(async () => {
         await requestPermission();
@@ -142,6 +154,18 @@ const NotificationBell = React.memo(() => {
                     <div className="notification-dropdown-header">
                         <h4>Notificaciones</h4>
                         <span className="notification-count">{notifications.length} total</span>
+                        <div className="notification-header-actions">
+                            {unreadCount > 0 && (
+                                <button
+                                    className="notif-bell-mark-read"
+                                    onClick={handleMarkAllRead}
+                                    title="Marcar todas leídas"
+                                    type="button"
+                                >
+                                    ✓
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <div className="notification-list">
@@ -172,7 +196,24 @@ const NotificationBell = React.memo(() => {
                                             {formatTime(notif.createdAt)}
                                         </span>
                                     </div>
-                                    {!notif.read && <span className="notification-unread-dot" />}
+                                    <div className="notification-item-actions">
+                                        {!notif.read && <span className="notification-unread-dot" />}
+                                        <span
+                                            className="notif-bell-item-delete"
+                                            onClick={(e) => handleDeleteNotification(e, notif.id)}
+                                            role="button"
+                                            tabIndex={0}
+                                            title="Eliminar notificación"
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                    e.stopPropagation();
+                                                    handleDeleteNotification(e, notif.id);
+                                                }
+                                            }}
+                                        >
+                                            ✕
+                                        </span>
+                                    </div>
                                 </button>
                             ))
                         )}
@@ -188,11 +229,21 @@ const NotificationBell = React.memo(() => {
                     )}
 
                     <div className="notification-dropdown-footer">
+                        {notifications.length > 0 && (
+                            <button
+                                className="notif-bell-clear-all"
+                                onClick={async () => { await clearAllNotifications(); }}
+                                type="button"
+                                title="Eliminar todas"
+                            >
+                                🗑 Limpiar todo
+                            </button>
+                        )}
                         <button
                             className="notification-view-all"
                             onClick={() => { setIsOpen(false); navigate('/mis-notificaciones'); }}
                         >
-                            Ver todas las notificaciones &rarr;
+                            Ver todas &rarr;
                         </button>
                     </div>
                 </div>

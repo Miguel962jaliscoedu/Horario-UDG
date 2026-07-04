@@ -1,5 +1,5 @@
 // src/components/SeleccionMaterias.jsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { detectarCruces, generarMensajeCruces } from '../services/scheduleUtils';
 import ProfessorRating from './ProfessorRating';
@@ -76,10 +76,11 @@ const NrcSelectionModal = ({ materia, nrcsDisponibles, selectedNrc, onNrcChange,
     );
 };
 
-export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, availableSchedules, currentScheduleId }) {
+export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, availableSchedules, currentScheduleId, deepLinkNrc, highlightNrc }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedSubjects, setSelectedSubjects] = useState([]);
     const [materiaEnModal, setMateriaEnModal] = useState(null);
+    const deepLinkConsumedRef = useRef(false);
 
     const { mensajesCruces, nrcsConConflicto } = useMemo(() => {
         const clasesSeleccionadas = materias.filter(m => selectedNRCs.includes(m.nrc));
@@ -118,6 +119,32 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, a
         ).slice(0, 6);
     }, [searchTerm, uniqueSubjects, selectedSubjects]);
 
+    // Auto-abrir modal de materia cuando se navega desde notificación (?nrc=XXXXX)
+    useEffect(() => {
+        if (!deepLinkNrc || deepLinkConsumedRef.current || materias.length === 0) return;
+
+        const nrcStr = String(deepLinkNrc).trim();
+        const matchingMateria = materias.find(m => String(m.nrc) === nrcStr);
+        if (!matchingMateria) return;
+
+        const subject = uniqueSubjects.find(s => s.clave === matchingMateria.clave);
+        if (!subject) return;
+
+        deepLinkConsumedRef.current = true;
+
+        // Si la materia no está en la lista de seleccionadas, agregarla con sus NRCs
+        if (!selectedSubjects.some(s => s.clave === subject.clave)) {
+            setSelectedSubjects(prev => [...prev, subject]);
+            const nrcsForSubject = materias
+                .filter(m => m.clave === subject.clave)
+                .map(m => m.nrc);
+            onSelectionChange(prev => [...new Set([...prev, ...nrcsForSubject])]);
+        }
+
+        // Abrir el modal de selección de NRC para esta materia
+        setMateriaEnModal(subject);
+    }, [deepLinkNrc, materias, uniqueSubjects, selectedSubjects, onSelectionChange]);
+
     const handleAddSubject = (subject) => {
         setSelectedSubjects(prev => [...prev, subject]);
         setSearchTerm('');
@@ -143,12 +170,14 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, a
             const uniqueSections = [...new Set(nrcsForSubject.map(nrc => nrc.seccion))];
             const currentSelectedNrcObj = nrcsForSubject.find(nrc => selectedNRCs.includes(nrc.nrc));
             const hasConflict = currentSelectedNrcObj && nrcsConConflicto.has(currentSelectedNrcObj.nrc);
+            const isHighlighted = highlightNrc && nrcsForSubject.some(n => String(n.nrc) === String(highlightNrc));
 
             return { 
                 ...subject, 
                 totalSections: uniqueSections.length, 
                 selectedNrc: currentSelectedNrcObj,
-                hasConflict
+                hasConflict,
+                isHighlighted,
             };
         });
     }, [selectedSubjects, materias, selectedNRCs, nrcsConConflicto]);
@@ -202,7 +231,7 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, a
                     {subjectCardsData.map(subject => (
                         <div 
                             key={subject.clave} 
-                            className={`mini-card ${subject.hasConflict ? 'card-conflict' : ''} ${!subject.selectedNrc ? 'card-warning' : ''}`}
+                            className={`mini-card ${subject.hasConflict ? 'card-conflict' : ''} ${!subject.selectedNrc ? 'card-warning' : ''} ${subject.isHighlighted ? 'card-highlighted' : ''}`}
                             onClick={() => setMateriaEnModal(subject)}
                         >
                             <div className="mini-card-header">
@@ -230,7 +259,10 @@ export function SeleccionMaterias({ materias, selectedNRCs, onSelectionChange, a
                             </div>
                             
                             <div className="mini-card-body">
-                                <h4 className="mini-card-title">{subject.nombre}</h4>
+                                <h4 className="mini-card-title">
+                                    {subject.nombre}
+                                    {subject.isHighlighted && <span className="highlight-badge" title="Notificación relacionada">🔔</span>}
+                                </h4>
                                 <div className="mini-card-meta">
                                     {subject.selectedNrc ? (
                                         <span className={`nrc-tag ${subject.hasConflict ? 'bg-red' : 'bg-blue'}`}>

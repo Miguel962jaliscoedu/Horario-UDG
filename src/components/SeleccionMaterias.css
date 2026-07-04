@@ -145,6 +145,26 @@
 /* Estados de la tarjeta */
 .mini-card.card-warning { border-left: 4px solid var(--warning-color); }
 .mini-card.card-conflict { border: 1px solid var(--tag-red-text); box-shadow: 0 0 0 1px var(--tag-red-text); }
+.mini-card.card-highlighted {
+  border-color: var(--primary-color, #2563eb);
+  box-shadow: 0 0 0 2px var(--primary-color, #2563eb), 0 0 12px rgba(37, 99, 235, 0.15);
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.03), transparent);
+}
+body.dark-theme .mini-card.card-highlighted {
+  box-shadow: 0 0 0 2px var(--primary-color, #60a5fa), 0 0 16px rgba(96, 165, 250, 0.2);
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.06), transparent);
+}
+
+.highlight-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.85rem;
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
 
 .mini-card-header {
   display: flex;

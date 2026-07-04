@@ -57,6 +57,24 @@
     color: var(--text-secondary-color, #666);
 }
 
+.notif-btn-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.notif-btn-danger:hover {
+    background: #fce4e4 !important;
+}
+
+body.dark-theme .notif-btn-danger {
+    color: #f87171;
+    border-color: #f87171;
+}
+
+body.dark-theme .notif-btn-danger:hover {
+    background: #3a1a1a !important;
+}
+
 /* Filtros */
 .notif-filters {
     display: flex;
@@ -293,6 +311,36 @@
     font-size: 0.72rem;
     color: var(--text-secondary-color, #999);
     margin-left: auto;
+}
+
+.notif-card-delete {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-secondary-color, #bbb);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+    margin-top: 4px;
+    padding: 0;
+    line-height: 1;
+}
+
+.notif-card:hover .notif-card-delete {
+    opacity: 0.6;
+}
+
+.notif-card-delete:hover {
+    opacity: 1 !important;
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
 }
 
 .notif-card-arrow {

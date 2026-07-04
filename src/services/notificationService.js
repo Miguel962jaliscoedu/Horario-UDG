@@ -244,6 +244,39 @@ export async function getNotificationPrefs(userId) {
     }
 }
 
+/**
+ * Elimina una notificación específica.
+ * @param {string} userId
+ * @param {string} notifId
+ */
+export async function deleteNotification(userId, notifId) {
+    try {
+        const db = await getDb();
+        const { doc, deleteDoc } = await import("firebase/firestore");
+        await deleteDoc(doc(db, "users", userId, "notifications", notifId));
+    } catch (err) {
+        console.error("[notificationService] Error eliminando notificación:", err);
+    }
+}
+
+/**
+ * Elimina TODAS las notificaciones del usuario.
+ * @param {string} userId
+ */
+export async function deleteAllNotifications(userId) {
+    try {
+        const db = await getDb();
+        const { collection, getDocs, writeBatch } = await import("firebase/firestore");
+        const snapshot = await getDocs(collection(db, "users", userId, "notifications"));
+        if (snapshot.empty) return;
+        const batch = writeBatch(db);
+        snapshot.docs.forEach(docSnap => batch.delete(docSnap.ref));
+        await batch.commit();
+    } catch (err) {
+        console.error("[notificationService] Error eliminando todas las notificaciones:", err);
+    }
+}
+
 export default {
     initFCM,
     requestFCMPermission,

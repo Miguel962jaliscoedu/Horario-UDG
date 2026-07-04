@@ -91,6 +91,7 @@ export function MySchedulesPage() {
 
     // --- NRC desde URL (deep linking desde notificaciones) ---
     const [deepLinkNrc, setDeepLinkNrc] = useState('');
+    const [highlightNrc, setHighlightNrc] = useState('');
     const [deepLinkInfo, setDeepLinkInfo] = useState('');
 
     // --- Leer ?edit=ID y ?nrc=NRC de la URL al montar ---
@@ -101,7 +102,11 @@ export function MySchedulesPage() {
             setEditingScheduleId(editParam);
         }
         if (nrcParam) {
-            setDeepLinkNrc(nrcParam);
+            setHighlightNrc(nrcParam);
+            // deepLinkNrc solo cuando también hay edit → activa auto-apertura del modal
+            if (editParam) {
+                setDeepLinkNrc(nrcParam);
+            }
         }
     }, [searchParams, user]);
 
@@ -115,6 +120,17 @@ export function MySchedulesPage() {
             setDeepLinkInfo(`🔔 Notificación: NRC ${deepLinkNrc}`);
         }
     }, [deepLinkNrc, editConsultaRealizada, editMaterias]);
+
+    // --- Cuando highlightNrc está presente sin edit, buscar en horarios guardados ---
+    useEffect(() => {
+        if (!highlightNrc || editingScheduleId || schedules.length === 0) return;
+        const match = schedules.find(s =>
+            s.selectedNRCs?.some(n => String(n) === String(highlightNrc))
+        );
+        if (match) {
+            setEditingScheduleId(match.id);
+        }
+    }, [highlightNrc, schedules, editingScheduleId]);
 
     // --- Cargar horario a editar cuando editingScheduleId cambia ---
     useEffect(() => {
@@ -370,6 +386,7 @@ export function MySchedulesPage() {
         setEditConsultaRealizada(false);
         setEditError(null);
         setDeepLinkNrc('');
+        setHighlightNrc('');
         setDeepLinkInfo('');
         // Limpiar URL param
         setSearchParams({});
@@ -624,6 +641,8 @@ export function MySchedulesPage() {
                                                 onSelectionChange={setEditSelectedNRCs}
                                                 availableSchedules={schedules}
                                                 currentScheduleId={editingScheduleId}
+                                                deepLinkNrc={deepLinkNrc}
+                                                highlightNrc={highlightNrc}
                                             />
                                         </div>
 

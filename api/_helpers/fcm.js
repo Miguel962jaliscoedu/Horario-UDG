@@ -65,7 +65,7 @@ export async function enviarFCM(uid, notification, data) {
                         link: data?.scheduleId 
                             ? `/mis-horarios?edit=${data.scheduleId}${data.nrc ? `&nrc=${data.nrc}` : ''}`
                             : data?.nrc 
-                                ? `/planear?nrc=${data.nrc}` 
+                                ? `/mis-horarios?nrc=${data.nrc}` 
                                 : '/',
                     },
                 },

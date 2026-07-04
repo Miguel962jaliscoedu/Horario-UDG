@@ -11,6 +11,8 @@ import {
     getUserNotifications,
     getMonitoredCourses,
     markNotificationRead,
+    deleteNotification,
+    deleteAllNotifications,
     stopMonitoring,
     saveNotificationPref,
     getNotificationPrefs,
@@ -121,7 +123,7 @@ export function NotificationsPage() {
         if (!scheduleId && nrc && user) {
             try {
                 const schedules = await getUserSchedules(user.uid);
-                const match = schedules.find(s => s.selectedNRCs?.includes(Number(nrc)));
+                const match = schedules.find(s => s.selectedNRCs?.some(n => String(n) === String(nrc)));
                 if (match) {
                     scheduleId = match.id;
                 }
@@ -130,12 +132,20 @@ export function NotificationsPage() {
             }
         }
 
+        // TODOS los tipos: si hay scheduleId, navegar a la edición del horario
+        // en Mis Horarios con el NRC correspondiente.
+        if (scheduleId) {
+            navigate(`/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}`);
+            return;
+        }
+
+        // Fallback por tipo cuando no hay horario vinculado
         switch (notif.type) {
             case 'seat_available':
-                navigate(scheduleId ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}` : (nrc ? `/planear?nrc=${nrc}` : '/planear'));
+                navigate(nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios');
                 break;
             case 'schedule_change':
-                navigate(scheduleId ? `/mis-horarios?edit=${scheduleId}${nrc ? `&nrc=${nrc}` : ''}` : (nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios'));
+                navigate(nrc ? `/mis-horarios?nrc=${nrc}` : '/mis-horarios');
                 break;
             case 'professor_change':
                 navigate(profesor ? `/profesores?q=${encodeURIComponent(profesor)}` : '/profesores');
@@ -144,13 +154,7 @@ export function NotificationsPage() {
                 navigate('/mis-notificaciones');
                 break;
             default:
-                if (scheduleId) {
-                    navigate(`/mis-horarios?edit=${scheduleId}`);
-                } else if (nrc) {
-                    navigate(`/planear?nrc=${nrc}`);
-                } else {
-                    navigate('/dashboard');
-                }
+                navigate(nrc ? `/mis-horarios?nrc=${nrc}` : '/dashboard');
         }
     };
 
@@ -162,6 +166,21 @@ export function NotificationsPage() {
         }
         setNotifications(prev => prev.map(n => ({ ...n, read: true })));
         showToast('Todas las notificaciones marcadas como leídas', 'success');
+    };
+
+    const handleDeleteNotification = async (e, notif) => {
+        e.stopPropagation();
+        if (!user) return;
+        await deleteNotification(user.uid, notif.id);
+        setNotifications(prev => prev.filter(n => n.id !== notif.id));
+        showToast('Notificación eliminada', 'info');
+    };
+
+    const handleClearAll = async () => {
+        if (!user) return;
+        await deleteAllNotifications(user.uid);
+        setNotifications([]);
+        showToast('Todas las notificaciones eliminadas', 'info');
     };
 
     /* --- Handlers para el modal de gestión de monitoreo --- */
@@ -232,7 +251,12 @@ export function NotificationsPage() {
                     <div className="notif-header-actions">
                         {unreadFiltered > 0 && (
                             <button className="notif-btn" onClick={handleMarkAllRead} type="button">
-                                ✓ Marcar todas leídas
+                                ✓ Leídas
+                            </button>
+                        )}
+                        {notifications.length > 0 && (
+                            <button className="notif-btn notif-btn-danger" onClick={handleClearAll} type="button">
+                                🗑 Eliminar todas
                             </button>
                         )}
                         <button className="notif-btn notif-btn-secondary" onClick={loadNotifications} type="button">
@@ -437,6 +461,14 @@ export function NotificationsPage() {
                                         <span className="notif-time">{formatDate(notif.createdAt)}</span>
                                     </div>
                                 </div>
+                                <button
+                                    className="notif-card-delete"
+                                    onClick={(e) => handleDeleteNotification(e, notif)}
+                                    title="Eliminar notificación"
+                                    type="button"
+                                >
+                                    ✕
+                                </button>
                                 {notif.data?.nrc && (
                                     <div className="notif-card-arrow">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
